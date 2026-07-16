@@ -27,10 +27,15 @@ class ContactGridItemView(
     var onLongPress: (() -> Unit)? = null
 
     init {
-        // Photo
+        // Photo — full bleed, same as home card
         val photoFile = contact.photoPath?.let { File(it) }
         if (photoFile != null && photoFile.exists()) {
-            binding.ivContactPhoto.setImageBitmap(BitmapFactory.decodeFile(photoFile.absolutePath))
+            val bmp = BitmapFactory.decodeFile(photoFile.absolutePath)
+            if (bmp != null) binding.ivContactPhoto.setImageBitmap(bmp)
+            else binding.ivContactPhoto.setBackgroundColor(0xFF2B6CB0.toInt())
+        } else {
+            binding.ivContactPhoto.setBackgroundColor(0xFF2B6CB0.toInt())
+            binding.nameScrim.alpha = 0f
         }
         binding.tvContactName.text = contact.name
 

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"><source path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res"><file name="ic_launcher" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/mipmap-mdpi/ic_launcher.xml" qualifiers="mdpi-v4" type="mipmap"/><file name="ic_launcher_round" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/mipmap-mdpi/ic_launcher_round.xml" qualifiers="mdpi-v4" type="mipmap"/><file name="bg_contact_card_add" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/drawable/bg_contact_card_add.xml" qualifiers="" type="drawable"/><file name="bg_tool_button_whatsapp" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/drawable/bg_tool_button_whatsapp.xml" qualifiers="" type="drawable"/><file name="ic_launcher_foreground" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/drawable/ic_launcher_foreground.xml" qualifiers="" type="drawable"/><file name="bg_contact_placeholder" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/drawable/bg_contact_placeholder.xml" qualifiers="" type="drawable"/><file name="bg_tool_button_camera" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/drawable/bg_tool_button_camera.xml" qualifiers="" type="drawable"/><file name="bg_contact_card" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/drawable/bg_contact_card.xml" qualifiers="" type="drawable"/><file name="bg_circle_photo" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/drawable/bg_circle_photo.xml" qualifiers="" type="drawable"/><file name="bg_sos_button" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/drawable/bg_sos_button.xml" qualifiers="" type="drawable"/><file name="bottom_sheet_contact_options" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/layout/bottom_sheet_contact_options.xml" qualifiers="" type="layout"/><file name="view_add_contact_card" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/layout/view_add_contact_card.xml" qualifiers="" type="layout"/><file name="item_app_grid" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/layout/item_app_grid.xml" qualifiers="" type="layout"/><file name="view_contact_card" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/layout/view_contact_card.xml" qualifiers="" type="layout"/><file name="activity_add_contact" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/layout/activity_add_contact.xml" qualifiers="" type="layout"/><file name="activity_home" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/layout/activity_home.xml" qualifiers="" type="layout"/><file name="activity_caretaker_help" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/layout/activity_caretaker_help.xml" qualifiers="" type="layout"/><file name="activity_contacts" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/layout/activity_contacts.xml" qualifiers="" type="layout"/><file name="activity_more_apps" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/layout/activity_more_apps.xml" qualifiers="" type="layout"/><file name="bottom_sheet_call_confirm" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/layout/bottom_sheet_call_confirm.xml" qualifiers="" type="layout"/><file path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/values/colors.xml" qualifiers=""><color name="color_bg_primary">#F7F3EE</color><color name="color_bg_secondary">#EEE9E1</color><color name="color_bg_card">#FFFFFF</color><color name="color_text_primary">#1A1A1A</color><color name="color_text_secondary">#6B6B6B</color><color name="color_text_on_dark">#FFFFFF</color><color name="color_accent_blue">#2B6CB0</color><color name="color_accent_blue_light">#EAF0FB</color><color name="color_accent_green">#276749</color><color name="color_accent_green_light">#E8F5EE</color><color name="color_accent_amber">#B7651D</color><color name="color_accent_amber_light">#FDF0E6</color><color name="color_sos_red">#C0392B</color><color name="color_sos_red_dark">#922B21</color><color name="color_sos_red_overlay">#80C0392B</color><color name="color_divider">#D9D3CB</color><color name="color_shadow">#18000000</color><color name="color_overlay">#60000000</color><color name="color_clock_face">#FFFFFF</color><color name="color_clock_border">#D9D3CB</color><color name="color_clock_hand">#1A1A1A</color><color name="color_clock_tick_major">#1A1A1A</color><color name="color_clock_tick_minor">#9B9590</color><color name="color_clock_center">#1A1A1A</color></file><file path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/values/dimens.xml" qualifiers=""><dimen name="space_xs">4dp</dimen><dimen name="space_sm">8dp</dimen><dimen name="space_md">16dp</dimen><dimen name="space_lg">24dp</dimen><dimen name="space_xl">32dp</dimen><dimen name="space_xxl">48dp</dimen><dimen name="screen_margin_horizontal">16dp</dimen><dimen name="screen_margin_top">16dp</dimen><dimen name="screen_margin_bottom">16dp</dimen><dimen name="contact_card_size_home">140dp</dimen><dimen name="contact_card_photo_size_home">88dp</dimen><dimen name="contact_card_corner_radius">24dp</dimen><dimen name="contact_card_size_contacts">100dp</dimen><dimen name="contact_card_photo_size_contacts">64dp</dimen><dimen name="tool_button_height">80dp</dimen><dimen name="tool_button_corner_radius">20dp</dimen><dimen name="tool_button_icon_size">40dp</dimen><dimen name="sos_button_height">80dp</dimen><dimen name="sos_button_corner_radius">20dp</dimen><dimen name="sos_progress_ring_stroke">4dp</dimen><dimen name="fab_caretaker_size">64dp</dimen><dimen name="fab_caretaker_icon_size">28dp</dimen><dimen name="fab_caretaker_margin_horizontal">16dp</dimen><dimen name="fab_caretaker_margin_bottom">24dp</dimen><dimen name="confirm_button_height">72dp</dimen><dimen name="confirm_photo_size">96dp</dimen><dimen name="confirm_card_corner_radius">32dp</dimen><dimen name="back_button_size">56dp</dimen><dimen name="clock_diameter">180dp</dimen><dimen name="clock_border_width">3dp</dimen><dimen name="clock_hand_hour_width">8dp</dimen><dimen name="clock_hand_minute_width">5dp</dimen><dimen name="clock_center_dot_size">12dp</dimen><dimen name="clock_tick_major_length">16dp</dimen><dimen name="clock_tick_major_width">4dp</dimen><dimen name="clock_tick_minor_length">8dp</dimen><dimen name="clock_tick_minor_width">2dp</dimen><dimen name="app_icon_size">64dp</dimen><dimen name="app_grid_item_size">80dp</dimen><dimen name="text_input_height">64dp</dimen><dimen name="text_input_multiline_height">96dp</dimen></file><file path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/values/themes.xml" qualifiers=""><style name="Theme.GrandmasLauncher" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/color_accent_blue</item>
+        <item name="colorPrimaryVariant">@color/color_accent_blue</item>
+        <item name="colorOnPrimary">@color/color_text_on_dark</item>
+        <item name="colorSecondary">@color/color_accent_amber</item>
+        <item name="colorOnSecondary">@color/color_text_on_dark</item>
+        <item name="android:colorBackground">@color/color_bg_primary</item>
+        <item name="android:windowBackground">@color/color_bg_primary</item>
+        <item name="android:statusBarColor">@color/color_bg_primary</item>
+        <item name="android:navigationBarColor">@color/color_bg_primary</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:fontFamily">sans-serif</item>
+        
+        <item name="android:windowAnimationStyle">@null</item>
+    </style><style name="Theme.GrandmasLauncher.SOS" parent="Theme.GrandmasLauncher">
+        <item name="android:colorBackground">@color/color_sos_red</item>
+        <item name="android:windowBackground">@color/color_sos_red</item>
+        <item name="android:statusBarColor">@color/color_sos_red</item>
+        <item name="android:navigationBarColor">@color/color_sos_red</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style></file><file path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/values/styles.xml" qualifiers=""><style name="TextAppearance.Grandma.Display" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style><style name="TextAppearance.Grandma.Heading" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style><style name="TextAppearance.Grandma.LabelLarge" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style><style name="TextAppearance.Grandma.LabelMedium" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/color_text_secondary</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style><style name="TextAppearance.Grandma.LabelSmall" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/color_text_secondary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style><style name="TextAppearance.Grandma.ButtonLarge" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_on_dark</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style><style name="TextAppearance.Grandma.SOS" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_on_dark</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style><style name="Widget.Grandma.ToolButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/tool_button_height</item>
+        <item name="android:gravity">center</item>
+        <item name="cornerRadius">@dimen/tool_button_corner_radius</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textAppearance">@style/TextAppearance.Grandma.LabelLarge</item>
+    </style><style name="Widget.Grandma.ToolButton.Camera" parent="Widget.Grandma.ToolButton">
+        <item name="android:backgroundTint">@color/color_accent_blue_light</item>
+        <item name="android:textColor">@color/color_accent_blue</item>
+        <item name="iconTint">@color/color_accent_blue</item>
+    </style><style name="Widget.Grandma.ToolButton.WhatsApp" parent="Widget.Grandma.ToolButton">
+        <item name="android:backgroundTint">@color/color_accent_green_light</item>
+        <item name="android:textColor">@color/color_accent_green</item>
+        <item name="iconTint">@color/color_accent_green</item>
+    </style><style name="Widget.Grandma.ConfirmButton.Yes" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">@dimen/confirm_button_height</item>
+        <item name="android:backgroundTint">@color/color_accent_green</item>
+        <item name="android:textColor">@color/color_text_on_dark</item>
+        <item name="android:textAppearance">@style/TextAppearance.Grandma.ButtonLarge</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style><style name="Widget.Grandma.ConfirmButton.No" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">@dimen/confirm_button_height</item>
+        <item name="android:backgroundTint">@color/color_bg_secondary</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:textAppearance">@style/TextAppearance.Grandma.ButtonLarge</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style><style name="Widget.Grandma.ConfirmButton.Amber" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">@dimen/confirm_button_height</item>
+        <item name="android:backgroundTint">@color/color_accent_amber</item>
+        <item name="android:textColor">@color/color_text_on_dark</item>
+        <item name="android:textAppearance">@style/TextAppearance.Grandma.ButtonLarge</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style><style name="Widget.Grandma.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/color_bg_card</item>
+        <item name="cardCornerRadius">@dimen/contact_card_corner_radius</item>
+        <item name="cardElevation">4dp</item>
+        <item name="cardPreventCornerOverlap">true</item>
+    </style></file><file path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/values/strings.xml" qualifiers=""><string name="app_name">Grandma\'s Launcher</string><string name="section_your_people">YOUR PEOPLE</string><string name="action_see_all">See All →</string><string name="action_add_contact">Add</string><string name="action_camera">Camera</string><string name="action_whatsapp">WhatsApp</string><string name="action_more_apps">More Apps</string><string name="action_sos">SOS</string><string name="sos_hold_hint">Hold to activate</string><string name="confirm_call_title">Calling %s?</string><string name="confirm_call_yes">YES, CALL</string><string name="confirm_call_no">NO, GO BACK</string><string name="sos_calling">CALLING EMERGENCY</string><string name="sos_cancel">CANCEL CALL</string><string name="screen_your_people">YOUR PEOPLE</string><string name="contact_options_call">Call</string><string name="contact_options_edit">Edit Contact</string><string name="contact_options_remove">Remove</string><string name="contact_options_cancel">Cancel</string><string name="screen_add_person">ADD PERSON</string><string name="add_contact_camera_prompt">Ask them to look at the camera</string><string name="add_contact_take_photo">Take Photo</string><string name="add_contact_choose_gallery">Choose from Gallery</string><string name="add_contact_name_prompt">What is their name?</string><string name="add_contact_name_hint">Type name here…</string><string name="add_contact_save">Save Contact</string><string name="screen_ask_for_help">ASK FOR HELP</string><string name="caretaker_help_subtitle">Your helper will be notified</string><string name="caretaker_note_label">Add a note (optional):</string><string name="caretaker_note_hint">Leave blank if not sure what to write</string><string name="caretaker_send">YES, SEND FOR HELP</string><string name="caretaker_cancel">GO BACK</string><string name="caretaker_email_subject">Help Request from Grandma\'s Launcher</string><string name="caretaker_email_body">A help request has been sent.\n\nTime: %1$s\n\nNote: %2$s</string><string name="caretaker_no_note">No note provided</string><string name="screen_all_apps">ALL APPS</string><string name="action_back">Back</string><string name="whatsapp_not_installed">WhatsApp is not installed on this phone</string></file><file name="file_paths" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/xml/file_paths.xml" qualifiers="" type="xml"/><file name="gradient_contact_name_scrim" path="/Users/vinodakshat/Desktop/sys-launcher/app/src/main/res/drawable/gradient_contact_name_scrim.xml" qualifiers="" type="drawable"/></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/vinodakshat/Desktop/sys-launcher/app/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"><source path="/Users/vinodakshat/Desktop/sys-launcher/app/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/vinodakshat/Desktop/sys-launcher/app/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"><source path="/Users/vinodakshat/Desktop/sys-launcher/app/build/generated/res/resValues/debug"/></dataSet><mergedItems/></merger>

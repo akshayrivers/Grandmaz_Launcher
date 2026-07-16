@@ -7,11 +7,18 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.GridLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.WindowCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import com.google.android.material.card.MaterialCardView
 import com.grandma.launcher.R
 import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.data.Contact
@@ -47,12 +54,36 @@ class HomeActivity : AppCompatActivity() {
     // ── Lifecycle ────────────────────────────────────────────────────────────
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Must be before super.onCreate — after that the theme is already applied
+        // and changing night mode has no effect on the current Activity.
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         super.onCreate(savedInstanceState)
+
+        // Tell the window to draw edge-to-edge (behind status + nav bars).
+        // Without this the system bars are opaque and insets come back as 0
+        // so our padding listener does nothing.
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         contactRepo = ContactRepository(this)
         appPrefs = AppPreferences(this)
+
+        // Now that the window draws edge-to-edge, apply insets as padding
+        // so our content is never hidden behind the status or nav bar.
+        val screenMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rootLayout) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                screenMargin,
+                systemBars.top + screenMargin,
+                screenMargin,
+                systemBars.bottom + screenMargin
+            )
+            insets
+        }
 
         setupDate()
         setupFab()
@@ -107,19 +138,32 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun addCardToGrid(view: View) {
+        val cardSize = resources.getDimensionPixelSize(R.dimen.contact_card_size_home)
+        val margin = resources.getDimensionPixelSize(R.dimen.space_xs)
+        val cornerRadius = resources.getDimension(R.dimen.contact_card_corner_radius)
+
+        // Wrap in MaterialCardView so the rounded corners clip the photo cleanly.
+        // Without this wrapper the photo bleeds outside the rounded bg drawable.
+        val card = MaterialCardView(this).apply {
+            radius = cornerRadius
+            cardElevation = resources.getDimension(R.dimen.space_sm)
+            useCompatPadding = false
+            clipChildren = true
+            clipToPadding = true
+        }
+        card.addView(view, android.widget.FrameLayout.LayoutParams(
+            android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+            android.widget.FrameLayout.LayoutParams.MATCH_PARENT
+        ))
+
         val params = GridLayout.LayoutParams().apply {
             width = 0
-            height = resources.getDimensionPixelSize(R.dimen.contact_card_size_home)
+            height = cardSize
             columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1, 1f)
             rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-            setMargins(
-                resources.getDimensionPixelSize(R.dimen.space_xs),
-                resources.getDimensionPixelSize(R.dimen.space_xs),
-                resources.getDimensionPixelSize(R.dimen.space_xs),
-                resources.getDimensionPixelSize(R.dimen.space_xs)
-            )
+            setMargins(margin, margin, margin, margin)
         }
-        binding.gridContacts.addView(view, params)
+        binding.gridContacts.addView(card, params)
     }
 
     private fun showCallConfirmation(contact: Contact) {
@@ -155,16 +199,35 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun openCamera() {
-        val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-        if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
+        // Try to open the camera app directly rather than ACTION_IMAGE_CAPTURE
+        // (which captures a photo for us — not what we want here).
+        // We try known camera package names first, then fall back to a chooser.
+        val cameraPackages = listOf(
+            "com.android.camera",
+            "com.android.camera2",
+            "com.miui.camera",           // Xiaomi / Redmi
+            "com.oneplus.camera",
+            "com.samsung.android.camera",
+            "com.google.android.GoogleCamera"
+        )
+        for (pkg in cameraPackages) {
+            val intent = packageManager.getLaunchIntentForPackage(pkg)
+            if (intent != null) {
+                startActivity(intent)
+                return
+            }
+        }
+        // Fallback — let the system choose any camera app
+        val fallback = Intent(android.provider.MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+        if (fallback.resolveActivity(packageManager) != null) {
+            startActivity(fallback)
         }
     }
 
     private fun openWhatsApp() {
         val pm = packageManager
         val whatsappPackage = "com.whatsapp"
-        return try {
+        try {
             pm.getPackageInfo(whatsappPackage, 0)
             val intent = pm.getLaunchIntentForPackage(whatsappPackage)
             if (intent != null) startActivity(intent)

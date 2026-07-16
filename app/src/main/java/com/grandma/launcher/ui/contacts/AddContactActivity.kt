@@ -1,14 +1,19 @@
 package com.grandma.launcher.ui.contacts
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.grandma.launcher.data.Contact
 import com.grandma.launcher.data.ContactRepository
@@ -16,25 +21,6 @@ import com.grandma.launcher.databinding.ActivityAddContactBinding
 import java.io.File
 import java.io.FileOutputStream
 
-/**
- * Add or edit a contact.
- *
- * Flow:
- *   Step 1 — Capture or pick a photo
- *   Step 2 — Enter the contact's name and phone number
- *   Step 3 — Save
- *
- * Photo storage: copied into app's private files/contact_photos/ directory.
- * This ensures the photo persists even if the original is deleted from gallery.
- * The contact record stores the absolute path to this private copy.
- *
- * Why both camera and gallery options?
- * - Camera: for adding a new contact in person (most common case)
- * - Gallery: for adding a contact from an existing photo
- *
- * The name field is typed by the caretaker/helper in Phase 1.
- * Phase 3 will add a voice recording option for non-literate caretakers.
- */
 class AddContactActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddContactBinding
@@ -46,21 +32,45 @@ class AddContactActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_CONTACT_ID = "contact_id"
-        private const val REQUEST_CAMERA = 2001
-        private const val REQUEST_GALLERY = 2002
     }
 
+    // ── Modern Activity Result API — replaces deprecated onActivityResult ─────
+
+    private val cameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) fireCameraIntent()
+        else Toast.makeText(this, "Camera permission is needed to take a photo", Toast.LENGTH_LONG).show()
+    }
+
+    private val cameraLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // Photo was written to cameraOutputUri by the camera app
+            cameraOutputUri?.let { processAndSavePhoto(it) }
+        }
+    }
+
+    private val galleryLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.data?.let { processAndSavePhoto(it) }
+        }
+    }
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         binding = ActivityAddContactBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         contactRepo = ContactRepository(this)
 
-        // Check if we're editing an existing contact
-        editingContactId = intent.getLongExtra(EXTRA_CONTACT_ID, -1L)
-            .takeIf { it != -1L }
-
+        editingContactId = intent.getLongExtra(EXTRA_CONTACT_ID, -1L).takeIf { it != -1L }
         editingContactId?.let { loadExistingContact(it) }
 
         binding.btnBack.setOnClickListener { finish() }
@@ -80,81 +90,85 @@ class AddContactActivity : AppCompatActivity() {
         }
     }
 
-    // ── Camera ───────────────────────────────────────────────────────────────
+    // ── Camera ────────────────────────────────────────────────────────────────
 
     private fun launchCamera() {
-        val photoFile = createTempPhotoFile()
+        when {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED -> fireCameraIntent()
+            else -> cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun fireCameraIntent() {
+        // Create a file in cache for the camera to write into
+        val photoFile = File(cacheDir.also { it.mkdirs() }, "contact_${System.currentTimeMillis()}.jpg")
         cameraOutputUri = FileProvider.getUriForFile(
             this,
             "com.grandma.launcher.fileprovider",
             photoFile
         )
+
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
             putExtra(MediaStore.EXTRA_OUTPUT, cameraOutputUri)
+            addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        if (intent.resolveActivity(packageManager) != null) {
-            startActivityForResult(intent, REQUEST_CAMERA)
+
+        // Grant URI permission explicitly to every app that can handle this intent.
+        // Required on MIUI — without this the camera app gets a SecurityException
+        // trying to write to the FileProvider URI.
+        packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            .forEach { resolveInfo ->
+                grantUriPermission(
+                    resolveInfo.activityInfo.packageName,
+                    cameraOutputUri,
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+
+        try {
+            cameraLauncher.launch(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Could not open camera: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
     private fun launchGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_GALLERY)
-    }
-
-    private fun createTempPhotoFile(): File {
-        val cacheDir = File(cacheDir, "camera").also { it.mkdirs() }
-        return File(cacheDir, "capture_${System.currentTimeMillis()}.jpg")
-    }
-
-    // ── Activity result ──────────────────────────────────────────────────────
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != Activity.RESULT_OK) return
-
-        when (requestCode) {
-            REQUEST_CAMERA -> {
-                val uri = cameraOutputUri ?: return
-                processAndSavePhoto(uri)
-            }
-            REQUEST_GALLERY -> {
-                val uri = data?.data ?: return
-                processAndSavePhoto(uri)
-            }
+        try {
+            galleryLauncher.launch(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Could not open gallery", Toast.LENGTH_SHORT).show()
         }
     }
 
-    /**
-     * Decodes the photo, compresses it, and copies it to private storage.
-     * We resize to 400×400 max to keep storage usage reasonable while
-     * maintaining enough quality for the circular contact photo display.
-     */
+    // ── Photo processing ──────────────────────────────────────────────────────
+
     private fun processAndSavePhoto(uri: Uri) {
         try {
             val inputStream = contentResolver.openInputStream(uri) ?: return
-            val originalBitmap = BitmapFactory.decodeStream(inputStream)
+            val original = BitmapFactory.decodeStream(inputStream)
             inputStream.close()
 
-            // Scale down if needed
-            val maxSize = 400
-            val scaled = if (originalBitmap.width > maxSize || originalBitmap.height > maxSize) {
-                val ratio = minOf(
-                    maxSize.toFloat() / originalBitmap.width,
-                    maxSize.toFloat() / originalBitmap.height
-                )
-                Bitmap.createScaledBitmap(
-                    originalBitmap,
-                    (originalBitmap.width * ratio).toInt(),
-                    (originalBitmap.height * ratio).toInt(),
-                    true
-                )
-            } else {
-                originalBitmap
+            if (original == null) {
+                Toast.makeText(this, "Could not read photo", Toast.LENGTH_SHORT).show()
+                return
             }
 
-            // Save to private storage
+            // Scale down to 400px max — enough for the contact card, keeps storage small
+            val maxSize = 400
+            val scaled = if (original.width > maxSize || original.height > maxSize) {
+                val ratio = minOf(maxSize.toFloat() / original.width, maxSize.toFloat() / original.height)
+                Bitmap.createScaledBitmap(
+                    original,
+                    (original.width * ratio).toInt(),
+                    (original.height * ratio).toInt(),
+                    true
+                )
+            } else original
+
+            // Save to app private storage so it survives gallery deletions
             val photosDir = File(filesDir, "contact_photos").also { it.mkdirs() }
             val destFile = File(photosDir, "contact_${System.currentTimeMillis()}.jpg")
             FileOutputStream(destFile).use { out ->
@@ -165,11 +179,11 @@ class AddContactActivity : AppCompatActivity() {
             binding.ivPhotoPreview.setImageBitmap(scaled)
 
         } catch (e: Exception) {
-            Toast.makeText(this, "Could not load photo", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Could not save photo: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    // ── Save ─────────────────────────────────────────────────────────────────
+    // ── Save ──────────────────────────────────────────────────────────────────
 
     private fun saveContact() {
         val name = binding.etContactName.text?.toString()?.trim() ?: ""
@@ -184,15 +198,13 @@ class AddContactActivity : AppCompatActivity() {
             return
         }
 
-        val contact = Contact(
+        contactRepo.save(Contact(
             id = editingContactId ?: System.currentTimeMillis(),
             name = name,
             photoPath = capturedPhotoPath,
             phone = phone,
             isFavourite = true
-        )
-
-        contactRepo.save(contact)
+        ))
         finish()
     }
 }

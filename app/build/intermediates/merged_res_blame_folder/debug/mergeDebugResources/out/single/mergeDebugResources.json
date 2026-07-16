@@ -1,0 +1,94 @@
+[
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/layout_view_contact_card.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/layout/view_contact_card.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/drawable_gradient_contact_name_scrim.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/drawable/gradient_contact_name_scrim.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/drawable_bg_tool_button_whatsapp.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/drawable/bg_tool_button_whatsapp.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/layout_view_add_contact_card.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/layout/view_add_contact_card.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/drawable_bg_sos_button.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/drawable/bg_sos_button.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/layout_bottom_sheet_contact_options.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/layout/bottom_sheet_contact_options.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/drawable_bg_contact_card.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/drawable/bg_contact_card.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/drawable_bg_tool_button_camera.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/drawable/bg_tool_button_camera.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/drawable_bg_contact_placeholder.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/drawable/bg_contact_placeholder.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/layout_bottom_sheet_call_confirm.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/layout/bottom_sheet_call_confirm.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/layout_activity_add_contact.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/layout/activity_add_contact.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/layout_item_app_grid.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/layout/item_app_grid.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/drawable_bg_circle_photo.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/drawable/bg_circle_photo.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/mipmap-mdpi_ic_launcher_round.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/mipmap-mdpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/mipmap-mdpi_ic_launcher.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/mipmap-mdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/drawable_bg_contact_card_add.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/drawable/bg_contact_card_add.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/layout_activity_more_apps.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/layout/activity_more_apps.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/layout_activity_home.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/layout/activity_home.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/xml_file_paths.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/xml/file_paths.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/layout_activity_caretaker_help.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/layout/activity_caretaker_help.xml"
+    },
+    {
+        "merged": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-debug-31:/layout_activity_contacts.xml.flat",
+        "source": "/Users/vinodakshat/.gradle/daemon/8.13/com.grandma.launcher.app-main-33:/layout/activity_contacts.xml"
+    },
+    {
+        "merged": "com.grandma.launcher.app-debug-31:/layout_activity_home.xml.flat",
+        "source": "com.grandma.launcher.app-main-33:/layout/activity_home.xml"
+    }
+]
