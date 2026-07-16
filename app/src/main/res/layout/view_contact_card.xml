@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Home screen contact card.
+    140×140dp — size is set programmatically via GridLayout params.
+    Photo is circular (88dp), name is below.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/bg_contact_card"
+    android:padding="@dimen/space_sm"
+    android:elevation="4dp">
+
+    <!-- Circular photo — clipped by a circle shape via clipToOutline -->
+    <ImageView
+        android:id="@+id/ivContactPhoto"
+        android:layout_width="@dimen/contact_card_photo_size_home"
+        android:layout_height="@dimen/contact_card_photo_size_home"
+        android:scaleType="centerCrop"
+        android:clipToOutline="true"
+        android:background="@drawable/bg_circle_photo"
+        android:contentDescription="Contact photo" />
+
+    <TextView
+        android:id="@+id/tvContactName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+        android:gravity="center"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+</LinearLayout>

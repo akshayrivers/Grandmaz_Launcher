@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Background for contact cards on home screen.
+     Rounded square with white fill and soft shadow handled by CardView. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/color_bg_card" />
+    <corners android:radius="24dp" />
+</shape>

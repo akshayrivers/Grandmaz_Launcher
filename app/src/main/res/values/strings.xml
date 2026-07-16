@@ -1,93 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Senior Launcher</string>
-    
-    <!-- Main Screen -->
-    <string name="quick_contacts">My Family</string>
-    <string name="quick_contacts_hint">Tap photo to call. Press and hold to change.</string>
-    <string name="voice_button">🎤 Voice Command</string>
-    <string name="recognized_default">Say: call son, gallery, youtube, whatsapp, help...</string>
-    
-    <!-- Quick Contacts -->
-    <string name="contact_1">Son</string>
-    <string name="contact_2">Daughter</string>
-    <string name="contact_3">Home</string>
-    <string name="contact_4">Help</string>
-    
-    <!-- Section Buttons -->
-    <string name="section_contacts">📞 Contacts</string>
-    <string name="section_gallery">🖼️ Photos</string>
-    <string name="section_youtube">▶️ Videos</string>
-    <string name="section_whatsapp">💬 WhatsApp</string>
-    <string name="section_flashlight">🔦 Torch</string>
-    <string name="section_speak_time">🕐 Time</string>
-    <string name="volume_down">🔉 Quieter</string>
-    <string name="volume_up">🔊 Louder</string>
-    <string name="section_ai">🤖 Ask Me</string>
-    <string name="section_config">⚙️ Setup</string>
-    
-    <!-- Setup Screen -->
-    <string name="setup_title">First Time Setup</string>
-    <string name="setup_subtitle">Please fill in family details</string>
-    <string name="caretaker_email">Caretaker Email</string>
-    <string name="helpers_csv">Helper Phone Numbers (separated by commas)</string>
-    <string name="son_number">Son\'s Phone Number</string>
-    <string name="daughter_number">Daughter\'s Phone Number</string>
-    <string name="home_number">Home Phone Number</string>
-    <string name="help_number">Emergency Help Number</string>
-    <string name="caretaker_pin">Caretaker PIN (4+ digits)</string>
-    <string name="language_label">Language</string>
-    <string name="plugin_label">Voice Type</string>
-    <string name="complete_setup">✓ Complete Setup</string>
-    
-    <!-- Actions -->
-    <string name="action_go_home">← Back to Home</string>
-    <string name="action_call_son">📞 Call Son</string>
-    <string name="action_call_help">🆘 Get Help</string>
-    <string name="action_reset_ui">🔄 Refresh Screen</string>
-    <string name="end_session">✓ Done</string>
-    
-    <!-- Contacts -->
-    <string name="add_contact">➕ Add Contact</string>
-    <string name="contact_name">Name</string>
-    <string name="contact_phone">Phone Number</string>
-    <string name="contact_role">Type (SON/DAUGHTER/HOME/HELP)</string>
-    <string name="pick_photo">📷 Choose Photo</string>
-    <string name="take_photo">📸 Take Photo</string>
-    <string name="import_from_phone">📥 Import Contact</string>
-    <string name="import_all_contacts">📥 Import All Contacts</string>
-    
-    <!-- AI Assistant -->
-    <string name="local_ai_title">🤖 Ask the Assistant</string>
-    <string name="local_ai_hint">Say what you want simply</string>
-    <string name="local_ai_run">🎤 Listen</string>
-    <string name="local_ai_installed">Voice assistant ready</string>
-    <string name="local_ai_missing">Voice assistant not installed yet</string>
-    <string name="install_local_ai">Install Voice Assistant</string>
-    
-    <!-- Caretaker Config -->
-    <string name="caretaker_config_title">Setup Configuration</string>
-    <string name="save_config">💾 Save Changes</string>
-    
-    <!-- Remote Assist -->
-    <string name="remote_assist_title">Live Help Session</string>
-    <string name="session_active">Caretaker connected</string>
-    <string name="session_timeout">Session will end in</string>
-    
-    <!-- Messages -->
-    <string name="no_number_configured">No phone number set</string>
-    <string name="phone_permission_denied">Cannot make calls - permission needed</string>
-    <string name="microphone_permission_denied">Cannot listen - microphone permission needed</string>
-    <string name="camera_permission_denied">Cannot take photos - camera permission needed</string>
-    <string name="contacts_permission_denied">Cannot access contacts - permission needed</string>
-    <string name="unable_to_call">Unable to make call</string>
-    <string name="unable_to_open_app">Application not found</string>
-    <string name="voice_recognition_unavailable">Voice recognition not available</string>
-    <string name="low_confidence_voice">Sorry, I didn\'t understand. Please speak again or use buttons.</string>
-    <string name="fill_all_fields">Please fill all fields</string>
-    <string name="pin_too_short">PIN must be at least 4 digits</string>
-    <string name="invalid_pin">Invalid PIN</string>
-    <string name="import_success">Contact imported</string>
-    <string name="import_failed">Could not import contact</string>
-    <string name="no_contacts">No contacts available</string>
+
+    <string name="app_name">Grandma\'s Launcher</string>
+
+    <!-- Home Screen -->
+    <string name="section_your_people">YOUR PEOPLE</string>
+    <string name="action_see_all">See All →</string>
+    <string name="action_add_contact">Add</string>
+    <string name="action_camera">Camera</string>
+    <string name="action_whatsapp">WhatsApp</string>
+    <string name="action_more_apps">More Apps</string>
+    <string name="action_sos">SOS</string>
+    <string name="sos_hold_hint">Hold to activate</string>
+
+    <!-- Call Confirmation -->
+    <string name="confirm_call_title">Calling %s?</string>
+    <string name="confirm_call_yes">YES, CALL</string>
+    <string name="confirm_call_no">NO, GO BACK</string>
+
+    <!-- SOS Screen -->
+    <string name="sos_calling">CALLING EMERGENCY</string>
+    <string name="sos_cancel">CANCEL CALL</string>
+
+    <!-- Contacts Screen -->
+    <string name="screen_your_people">YOUR PEOPLE</string>
+    <string name="contact_options_call">Call</string>
+    <string name="contact_options_edit">Edit Contact</string>
+    <string name="contact_options_remove">Remove</string>
+    <string name="contact_options_cancel">Cancel</string>
+
+    <!-- Add Contact Screen -->
+    <string name="screen_add_person">ADD PERSON</string>
+    <string name="add_contact_camera_prompt">Ask them to look at the camera</string>
+    <string name="add_contact_take_photo">Take Photo</string>
+    <string name="add_contact_choose_gallery">Choose from Gallery</string>
+    <string name="add_contact_name_prompt">What is their name?</string>
+    <string name="add_contact_name_hint">Type name here…</string>
+    <string name="add_contact_save">Save Contact</string>
+
+    <!-- Caretaker Help Screen -->
+    <string name="screen_ask_for_help">ASK FOR HELP</string>
+    <string name="caretaker_help_subtitle">Your helper will be notified</string>
+    <string name="caretaker_note_label">Add a note (optional):</string>
+    <string name="caretaker_note_hint">Leave blank if not sure what to write</string>
+    <string name="caretaker_send">YES, SEND FOR HELP</string>
+    <string name="caretaker_cancel">GO BACK</string>
+    <string name="caretaker_email_subject">Help Request from Grandma\'s Launcher</string>
+    <string name="caretaker_email_body">A help request has been sent.\n\nTime: %1$s\n\nNote: %2$s</string>
+    <string name="caretaker_no_note">No note provided</string>
+
+    <!-- More Apps Screen -->
+    <string name="screen_all_apps">ALL APPS</string>
+
+    <!-- Common -->
+    <string name="action_back">Back</string>
+    <string name="whatsapp_not_installed">WhatsApp is not installed on this phone</string>
+
 </resources>

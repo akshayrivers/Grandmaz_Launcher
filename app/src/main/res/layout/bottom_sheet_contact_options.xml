@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/color_bg_card">
+
+    <!-- Contact name header -->
+    <TextView
+        android:id="@+id/tvOptionsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space_lg"
+        android:textAppearance="@style/TextAppearance.Grandma.Heading"
+        android:textColor="@color/color_text_primary" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_divider" />
+
+    <!-- Edit -->
+    <TextView
+        android:id="@+id/btnEdit"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/space_lg"
+        android:paddingEnd="@dimen/space_lg"
+        android:text="@string/contact_options_edit"
+        android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:drawableStart="@android:drawable/ic_menu_edit"
+        android:drawablePadding="@dimen/space_md" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_divider" />
+
+    <!-- Remove -->
+    <TextView
+        android:id="@+id/btnRemove"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/space_lg"
+        android:paddingEnd="@dimen/space_lg"
+        android:text="@string/contact_options_remove"
+        android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+        android:textColor="@color/color_sos_red"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:drawableStart="@android:drawable/ic_menu_delete"
+        android:drawablePadding="@dimen/space_md"
+        android:drawableTint="@color/color_sos_red" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_divider" />
+
+    <!-- Cancel -->
+    <TextView
+        android:id="@+id/btnCancel"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/space_lg"
+        android:paddingEnd="@dimen/space_lg"
+        android:text="@string/contact_options_cancel"
+        android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+        android:textColor="@color/color_text_secondary"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true" />
+
+</LinearLayout>

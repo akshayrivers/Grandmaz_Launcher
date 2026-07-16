@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Call confirmation bottom sheet.
+    Shows the contact's photo + name, then two equal-size buttons.
+
+    Why equal button sizes?
+    We do not use the common manipulative pattern of making
+    "NO" small/grey and "YES" large/green. For an elderly or
+    confused user, both choices must be equally reachable.
+    Colour alone differentiates the action (green = call, neutral = back).
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="@dimen/space_xl"
+    android:background="@color/color_bg_card">
+
+    <ImageView
+        android:id="@+id/ivConfirmPhoto"
+        android:layout_width="@dimen/confirm_photo_size"
+        android:layout_height="@dimen/confirm_photo_size"
+        android:scaleType="centerCrop"
+        android:clipToOutline="true"
+        android:background="@drawable/bg_circle_photo"
+        android:contentDescription="Contact photo" />
+
+    <TextView
+        android:id="@+id/tvConfirmTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:textAppearance="@style/TextAppearance.Grandma.Heading"
+        android:gravity="center" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnConfirmYes"
+        style="@style/Widget.Grandma.ConfirmButton.Yes"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/confirm_button_height"
+        android:layout_marginTop="@dimen/space_xl"
+        android:text="@string/confirm_call_yes" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnConfirmNo"
+        style="@style/Widget.Grandma.ConfirmButton.No"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/confirm_button_height"
+        android:layout_marginTop="@dimen/space_md"
+        android:text="@string/confirm_call_no" />
+
+</LinearLayout>

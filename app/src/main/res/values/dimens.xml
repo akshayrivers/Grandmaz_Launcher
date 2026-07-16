@@ -1,28 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Button dimensions optimized for senior citizens (minimum 48dp touch target) -->
-    <dimen name="button_min_height">56dp</dimen>
-    <dimen name="button_min_width">80dp</dimen>
-    <dimen name="button_padding">16dp</dimen>
-    <dimen name="button_text_size">18sp</dimen>
-    
-    <!-- Text dimensions for better readability -->
-    <dimen name="text_heading_size">24sp</dimen>
-    <dimen name="text_body_size">18sp</dimen>
-    <dimen name="text_small_size">16sp</dimen>
-    <dimen name="text_label_size">16sp</dimen>
-    
-    <!-- Spacing -->
-    <dimen name="margin_large">24dp</dimen>
-    <dimen name="margin_medium">16dp</dimen>
-    <dimen name="margin_small">8dp</dimen>
-    <dimen name="margin_tiny">4dp</dimen>
-    
-    <!-- Corner radius for modern look -->
-    <dimen name="corner_radius_button">12dp</dimen>
-    <dimen name="corner_radius_card">16dp</dimen>
-    
-    <!-- Image sizes -->
-    <dimen name="contact_image_size">120dp</dimen>
-    <dimen name="contact_icon_size">64dp</dimen>
+
+    <!-- ═══════════════════════════════════════════════
+         SPACING SYSTEM — base unit: 8dp
+         Every value is a multiple of 8.
+         ═══════════════════════════════════════════════ -->
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_sm">8dp</dimen>
+    <dimen name="space_md">16dp</dimen>
+    <dimen name="space_lg">24dp</dimen>
+    <dimen name="space_xl">32dp</dimen>
+    <dimen name="space_xxl">48dp</dimen>
+
+    <!-- Screen edge margin — consistent on all screens -->
+    <dimen name="screen_margin_horizontal">16dp</dimen>
+    <dimen name="screen_margin_top">16dp</dimen>
+    <dimen name="screen_margin_bottom">16dp</dimen>
+
+    <!-- ═══════════════════════════════════════════════
+         TOUCH TARGET SIZES
+         Minimum 80dp for all interactive elements.
+         Primary actions 100dp+.
+         Research basis: MIT AgeLab tremor user study.
+         ═══════════════════════════════════════════════ -->
+
+    <!-- Contact card on home screen: 140dp
+         Large enough for a clear face photo + name.
+         Safe tap area for tremor users. -->
+    <dimen name="contact_card_size_home">140dp</dimen>
+    <dimen name="contact_card_photo_size_home">88dp</dimen>
+    <dimen name="contact_card_corner_radius">24dp</dimen>
+
+    <!-- Contact card on contacts screen: 100dp
+         3-per-row grid — still tremor-safe. -->
+    <dimen name="contact_card_size_contacts">100dp</dimen>
+    <dimen name="contact_card_photo_size_contacts">64dp</dimen>
+
+    <!-- Tool buttons (Camera, WhatsApp): 80dp tall -->
+    <dimen name="tool_button_height">80dp</dimen>
+    <dimen name="tool_button_corner_radius">20dp</dimen>
+    <dimen name="tool_button_icon_size">40dp</dimen>
+
+    <!-- SOS button: 80dp tall, full width -->
+    <dimen name="sos_button_height">80dp</dimen>
+    <dimen name="sos_button_corner_radius">20dp</dimen>
+    <dimen name="sos_progress_ring_stroke">4dp</dimen>
+
+    <!-- Caretaker FAB: 64dp — slightly larger than standard 56dp -->
+    <dimen name="fab_caretaker_size">64dp</dimen>
+    <dimen name="fab_caretaker_icon_size">28dp</dimen>
+    <dimen name="fab_caretaker_margin_horizontal">16dp</dimen>
+    <dimen name="fab_caretaker_margin_bottom">24dp</dimen>
+
+    <!-- Confirmation dialog buttons: 72dp -->
+    <dimen name="confirm_button_height">72dp</dimen>
+    <dimen name="confirm_photo_size">96dp</dimen>
+    <dimen name="confirm_card_corner_radius">32dp</dimen>
+
+    <!-- Back button: 56dp touch target -->
+    <dimen name="back_button_size">56dp</dimen>
+
+    <!-- Analog clock: 180dp diameter -->
+    <dimen name="clock_diameter">180dp</dimen>
+    <dimen name="clock_border_width">3dp</dimen>
+    <dimen name="clock_hand_hour_width">8dp</dimen>
+    <dimen name="clock_hand_minute_width">5dp</dimen>
+    <dimen name="clock_center_dot_size">12dp</dimen>
+    <dimen name="clock_tick_major_length">16dp</dimen>
+    <dimen name="clock_tick_major_width">4dp</dimen>
+    <dimen name="clock_tick_minor_length">8dp</dimen>
+    <dimen name="clock_tick_minor_width">2dp</dimen>
+
+    <!-- Apps grid icon size -->
+    <dimen name="app_icon_size">64dp</dimen>
+    <dimen name="app_grid_item_size">80dp</dimen>
+
+    <!-- Section header text input -->
+    <dimen name="text_input_height">64dp</dimen>
+    <dimen name="text_input_multiline_height">96dp</dimen>
+
 </resources>

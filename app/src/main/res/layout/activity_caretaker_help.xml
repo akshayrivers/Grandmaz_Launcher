@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_bg_primary">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/screen_margin_horizontal">
+
+            <!-- Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="@dimen/screen_margin_top"
+                android:paddingBottom="@dimen/space_md">
+
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="@dimen/back_button_size"
+                    android:layout_height="@dimen/back_button_size"
+                    android:src="@android:drawable/ic_media_previous"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_back" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:text="@string/screen_ask_for_help"
+                    android:textAppearance="@style/TextAppearance.Grandma.Display" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_divider"
+                android:layout_marginBottom="@dimen/space_xl" />
+
+            <!-- Icon + subtitle -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="🙋"
+                android:textSize="64sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="@string/caretaker_help_subtitle"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+                android:gravity="center" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_divider"
+                android:layout_marginTop="@dimen/space_xl"
+                android:layout_marginBottom="@dimen/space_lg" />
+
+            <!-- Optional note -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/caretaker_note_label"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+                android:layout_marginBottom="@dimen/space_sm" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/text_input_multiline_height"
+                    android:hint="@string/caretaker_note_hint"
+                    android:textSize="18sp"
+                    android:inputType="textMultiLine"
+                    android:gravity="top|start"
+                    android:imeOptions="actionDone" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Send / Cancel -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSendHelp"
+                style="@style/Widget.Grandma.ConfirmButton.Amber"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/confirm_button_height"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="@string/caretaker_send" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelHelp"
+                style="@style/Widget.Grandma.ConfirmButton.No"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/confirm_button_height"
+                android:layout_marginTop="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_xl"
+                android:text="@string/caretaker_cancel" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Caretaker FAB -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCaretaker"
+        android:layout_width="@dimen/fab_caretaker_size"
+        android:layout_height="@dimen/fab_caretaker_size"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/fab_caretaker_margin_horizontal"
+        android:contentDescription="Ask for help"
+        android:elevation="8dp"
+        app:backgroundTint="@color/color_accent_amber"
+        app:tint="@color/color_text_on_dark"
+        app:srcCompat="@android:drawable/ic_dialog_info"
+        app:fabSize="normal" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

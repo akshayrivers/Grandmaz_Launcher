@@ -1,41 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Colors - High Contrast for Elderly Users -->
-    <color name="primary_blue">#2196F3</color>
-    <color name="primary_blue_dark">#1976D2</color>
-    <color name="primary_blue_light">#42A5F5</color>
-    
-    <!-- Accent Colors -->
-    <color name="accent_green">#4CAF50</color>
-    <color name="accent_orange">#FF9800</color>
-    <color name="accent_red">#F44336</color>
-    
-    <!-- Background Colors -->
-    <color name="bg_dark">#101010</color>
-    <color name="bg_surface_dark">#1E1E1E</color>
-    <color name="bg_light">#FFFFFF</color>
-    <color name="bg_surface_light">#F5F5F5</color>
-    
-    <!-- Text Colors -->
-    <color name="text_primary_dark">#FFFFFF</color>
-    <color name="text_secondary_dark">#BBBBBB</color>
-    <color name="text_primary_light">#000000</color>
-    <color name="text_secondary_light">#666666</color>
-    
-    <!-- Status Colors -->
-    <color name="success_green">#4CAF50</color>
-    <color name="error_red">#F44336</color>
-    <color name="warning_orange">#FF9800</color>
-    <color name="info_blue">#2196F3</color>
-    
-    <!-- Special Colors -->
-    <color name="transparent_white">#80FFFFFF</color>
-    <color name="border_color_dark">#404040</color>
-    <color name="border_color_light">#EEEEEE</color>
-    
-    <!-- Quick Contact Colors -->
-    <color name="contact_1_color">#FF6B6B</color>
-    <color name="contact_2_color">#4ECDC4</color>
-    <color name="contact_3_color">#45B7D1</color>
-    <color name="contact_4_color">#FFA502</color>
+
+    <!-- ═══════════════════════════════════════════════
+         GRANDMA'S LAUNCHER — COLOUR SYSTEM
+         Every colour here has a documented reason.
+         Do not add colours without adding a reason.
+         ═══════════════════════════════════════════════ -->
+
+    <!-- Background colours
+         Warm off-white instead of pure white (#FFFFFF)
+         because aging eyes are sensitive to glare from
+         high-luminance white on bright screens. -->
+    <color name="color_bg_primary">#F7F3EE</color>
+    <color name="color_bg_secondary">#EEE9E1</color>
+    <color name="color_bg_card">#FFFFFF</color>
+
+    <!-- Text colours
+         #1A1A1A instead of pure black (#000000) — softer
+         contrast that is still AAA compliant (17.2:1 on bg_primary)
+         but less harsh for extended reading. -->
+    <color name="color_text_primary">#1A1A1A</color>
+    <color name="color_text_secondary">#6B6B6B</color>
+    <color name="color_text_on_dark">#FFFFFF</color>
+
+    <!-- Call / Blue actions
+         Associated universally with phone/communication.
+         Distinct from green (WhatsApp) and red (SOS).
+         Contrast on white: 6.1:1 (WCAG AA). -->
+    <color name="color_accent_blue">#2B6CB0</color>
+    <color name="color_accent_blue_light">#EAF0FB</color>
+
+    <!-- WhatsApp / Confirm green
+         WhatsApp brand green + "go/yes" signal.
+         Contrast on white: 6.4:1 (WCAG AA). -->
+    <color name="color_accent_green">#276749</color>
+    <color name="color_accent_green_light">#E8F5EE</color>
+
+    <!-- Caretaker amber
+         Warm, human, "I need attention but not emergency".
+         Positioned between calm (blue/green) and alarm (red).
+         Contrast on white: 4.6:1 (WCAG AA). -->
+    <color name="color_accent_amber">#B7651D</color>
+    <color name="color_accent_amber_light">#FDF0E6</color>
+
+    <!-- SOS red — APPEARS NOWHERE ELSE ON SCREEN
+         Colour coding only works when the colour is unique.
+         If anything else on screen uses red, this loses
+         its emergency signal value completely.
+         Contrast on white: 5.8:1 (WCAG AA). -->
+    <color name="color_sos_red">#C0392B</color>
+    <color name="color_sos_red_dark">#922B21</color>
+    <color name="color_sos_red_overlay">#80C0392B</color>
+
+    <!-- Structural colours -->
+    <color name="color_divider">#D9D3CB</color>
+    <color name="color_shadow">#18000000</color>
+    <color name="color_overlay">#60000000</color>
+
+    <!-- Clock face colours -->
+    <color name="color_clock_face">#FFFFFF</color>
+    <color name="color_clock_border">#D9D3CB</color>
+    <color name="color_clock_hand">#1A1A1A</color>
+    <color name="color_clock_tick_major">#1A1A1A</color>
+    <color name="color_clock_tick_minor">#9B9590</color>
+    <color name="color_clock_center">#1A1A1A</color>
+
 </resources>

@@ -1,35 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base Button Styles -->
-    <style name="SeniorButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:minHeight">@dimen/button_min_height</item>
-        <item name="android:minWidth">@dimen/button_min_width</item>
-        <item name="android:textSize">@dimen/button_text_size</item>
-        <item name="android:padding">@dimen/button_padding</item>
-        <item name="cornerRadius">@dimen/corner_radius_button</item>
-    </style>
-    
-    <!-- Text Styles for Accessibility -->
-    <style name="HeadingText">
-        <item name="android:textSize">@dimen/text_heading_size</item>
+
+    <!-- ═══════════════════════════════════════════
+         TYPOGRAPHY SCALE
+         All sizes from the design spec.
+         ═══════════════════════════════════════════ -->
+
+    <style name="TextAppearance.Grandma.Display" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="android:textSize">32sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_primary_dark</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
-    
-    <style name="BodyText">
-        <item name="android:textSize">@dimen/text_body_size</item>
-        <item name="android:textColor">@color/text_primary_dark</item>
-    </style>
-    
-    <style name="LabelText">
-        <item name="android:textSize">@dimen/text_label_size</item>
+
+    <style name="TextAppearance.Grandma.Heading" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_primary_dark</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
-    
-    <!-- Card Style -->
-    <style name="ContactCard">
-        <item name="android:background">@color/bg_surface_dark</item>
-        <item name="android:padding">@dimen/margin_medium</item>
+
+    <style name="TextAppearance.Grandma.LabelLarge" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
+
+    <style name="TextAppearance.Grandma.LabelMedium" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/color_text_secondary</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.Grandma.LabelSmall" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/color_text_secondary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.Grandma.ButtonLarge" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_on_dark</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearance.Grandma.SOS" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_on_dark</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════
+         BUTTON STYLES
+         ═══════════════════════════════════════════ -->
+
+    <!-- Tool button (Camera / WhatsApp) base -->
+    <style name="Widget.Grandma.ToolButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/tool_button_height</item>
+        <item name="android:gravity">center</item>
+        <item name="cornerRadius">@dimen/tool_button_corner_radius</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textAppearance">@style/TextAppearance.Grandma.LabelLarge</item>
+    </style>
+
+    <!-- Camera tool button -->
+    <style name="Widget.Grandma.ToolButton.Camera" parent="Widget.Grandma.ToolButton">
+        <item name="android:backgroundTint">@color/color_accent_blue_light</item>
+        <item name="android:textColor">@color/color_accent_blue</item>
+        <item name="iconTint">@color/color_accent_blue</item>
+    </style>
+
+    <!-- WhatsApp tool button -->
+    <style name="Widget.Grandma.ToolButton.WhatsApp" parent="Widget.Grandma.ToolButton">
+        <item name="android:backgroundTint">@color/color_accent_green_light</item>
+        <item name="android:textColor">@color/color_accent_green</item>
+        <item name="iconTint">@color/color_accent_green</item>
+    </style>
+
+    <!-- Confirm YES button — green, full width -->
+    <style name="Widget.Grandma.ConfirmButton.Yes" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">@dimen/confirm_button_height</item>
+        <item name="android:backgroundTint">@color/color_accent_green</item>
+        <item name="android:textColor">@color/color_text_on_dark</item>
+        <item name="android:textAppearance">@style/TextAppearance.Grandma.ButtonLarge</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Confirm NO button — neutral, full width -->
+    <style name="Widget.Grandma.ConfirmButton.No" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">@dimen/confirm_button_height</item>
+        <item name="android:backgroundTint">@color/color_bg_secondary</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:textAppearance">@style/TextAppearance.Grandma.ButtonLarge</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Caretaker send button — amber, full width -->
+    <style name="Widget.Grandma.ConfirmButton.Amber" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">@dimen/confirm_button_height</item>
+        <item name="android:backgroundTint">@color/color_accent_amber</item>
+        <item name="android:textColor">@color/color_text_on_dark</item>
+        <item name="android:textAppearance">@style/TextAppearance.Grandma.ButtonLarge</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════
+         CARD STYLE
+         ═══════════════════════════════════════════ -->
+
+    <style name="Widget.Grandma.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/color_bg_card</item>
+        <item name="cardCornerRadius">@dimen/contact_card_corner_radius</item>
+        <item name="cardElevation">4dp</item>
+        <item name="cardPreventCornerOverlap">true</item>
+    </style>
+
 </resources>

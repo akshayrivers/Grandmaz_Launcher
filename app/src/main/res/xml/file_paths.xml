@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FileProvider paths for camera photo capture.
+     We store contact photos in the app's private files directory
+     so they are not accessible to other apps and don't get
+     deleted when the user clears gallery/media. -->
+<paths>
+    <files-path
+        name="contact_photos"
+        path="contact_photos/" />
+    <cache-path
+        name="camera_capture"
+        path="camera/" />
+</paths>
