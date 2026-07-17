@@ -1,0 +1,88 @@
+# ==========================
+# Android / Gradle
+# ==========================
+.gradle/
+build/
+**/build/
+
+# Local configuration
+local.properties
+
+# Gradle cache
+.cxx/
+
+# Android Studio
+.idea/
+*.iml
+
+# ==========================
+# Kotlin
+# ==========================
+*.kotlin_module
+
+# ==========================
+# macOS
+# ==========================
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ==========================
+# Logs
+# ==========================
+*.log
+
+# ==========================
+# Generated files
+# ==========================
+captures/
+.externalNativeBuild/
+
+# ==========================
+# APKs / Bundles
+# ==========================
+*.apk
+*.aab
+*.ap_
+*.aar
+
+# ==========================
+# Java
+# ==========================
+*.class
+
+# ==========================
+# Temporary files
+# ==========================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ==========================
+# Keystores (Never commit)
+# ==========================
+*.jks
+*.keystore
+
+# ==========================
+# VS Code
+# ==========================
+.vscode/
+
+# ==========================
+# IntelliJ caches
+# ==========================
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/deploymentTargetDropDown.xml
+
+# ==========================
+# Firebase
+# ==========================
+google-services.json

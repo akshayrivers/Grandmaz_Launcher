@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Circular clip background for contact photos.
-     Used with android:clipToOutline="true" on ImageView.
-     The background defines the clip shape — circle. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="@color/color_bg_secondary" />
-</shape>
