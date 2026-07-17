@@ -1,39 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Base application theme.
-         NoActionBar — we draw our own top area on every screen.
-         This gives us full control of the layout without fighting
-         the system toolbar. -->
-    <!-- Force light mode always — this launcher must never go dark.
-         Dark mode inverts our carefully chosen warm palette and makes
-         the clock hands invisible (dark on dark). -->
-    <style name="Theme.GrandmasLauncher" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <!-- Adding support for dark themes too -->
+    <style name="Theme.GrandmasLauncher" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/color_accent_blue</item>
         <item name="colorPrimaryVariant">@color/color_accent_blue</item>
         <item name="colorOnPrimary">@color/color_text_on_dark</item>
+
         <item name="colorSecondary">@color/color_accent_amber</item>
         <item name="colorOnSecondary">@color/color_text_on_dark</item>
+
         <item name="android:colorBackground">@color/color_bg_primary</item>
         <item name="android:windowBackground">@color/color_bg_primary</item>
-        <item name="android:statusBarColor">@color/color_bg_primary</item>
-        <item name="android:navigationBarColor">@color/color_bg_primary</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:fontFamily">sans-serif</item>
-        <!-- Disable all default activity transition animations —
-             we define our own per-screen transitions -->
-        <item name="android:windowAnimationStyle">@null</item>
-    </style>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
 
-    <!-- SOS active screen — full red background -->
-    <style name="Theme.GrandmasLauncher.SOS" parent="Theme.GrandmasLauncher">
-        <item name="android:colorBackground">@color/color_sos_red</item>
-        <item name="android:windowBackground">@color/color_sos_red</item>
-        <item name="android:statusBarColor">@color/color_sos_red</item>
-        <item name="android:navigationBarColor">@color/color_sos_red</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
 
 </resources>

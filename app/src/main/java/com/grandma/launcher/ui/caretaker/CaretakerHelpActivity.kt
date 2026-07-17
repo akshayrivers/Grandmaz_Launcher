@@ -36,6 +36,7 @@ class CaretakerHelpActivity : AppCompatActivity() {
     private lateinit var appPrefs: AppPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityCaretakerHelpBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -47,6 +48,24 @@ class CaretakerHelpActivity : AppCompatActivity() {
         binding.btnCancelHelp.setOnClickListener { finish() }
 
         CaretakerFabHelper.attach(this, binding.fabCaretaker)
+
+        val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
+        val topMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_top)
+        val bottomMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_bottom)
+
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.caretakerHelpRootLayout) { view, insets ->
+            val systemBars = insets.getInsets(
+                androidx.core.view.WindowInsetsCompat.Type.systemBars() or
+                androidx.core.view.WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(
+                horizontalMargin,
+                topMargin + systemBars.top,
+                horizontalMargin,
+                bottomMargin + systemBars.bottom
+            )
+            insets
+        }
     }
 
     private fun sendHelpRequest() {

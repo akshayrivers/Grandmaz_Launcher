@@ -24,17 +24,17 @@
          Research basis: MIT AgeLab tremor user study.
          ═══════════════════════════════════════════════ -->
 
-    <!-- Contact card on home screen: 140dp
+    <!-- Contact card on home screen: 120dp
          Large enough for a clear face photo + name.
          Safe tap area for tremor users. -->
-    <dimen name="contact_card_size_home">140dp</dimen>
-    <dimen name="contact_card_photo_size_home">88dp</dimen>
+    <dimen name="contact_card_size_home">120dp</dimen>
+    <dimen name="contact_card_photo_size_home">72dp</dimen>
     <dimen name="contact_card_corner_radius">24dp</dimen>
 
-    <!-- Contact card on contacts screen: 100dp
-         3-per-row grid — still tremor-safe. -->
-    <dimen name="contact_card_size_contacts">100dp</dimen>
-    <dimen name="contact_card_photo_size_contacts">64dp</dimen>
+    <!-- Contact card on contacts screen: 140dp
+         2-per-row grid — tremor-safe and high visibility. -->
+    <dimen name="contact_card_size_contacts">140dp</dimen>
+    <dimen name="contact_card_photo_size_contacts">88dp</dimen>
 
     <!-- Tool buttons (Camera, WhatsApp): 80dp tall -->
     <dimen name="tool_button_height">80dp</dimen>

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.grandma.launcher.R
 import com.grandma.launcher.data.Contact
 import com.grandma.launcher.data.ContactRepository
 import com.grandma.launcher.databinding.ActivityAddContactBinding
@@ -63,7 +64,7 @@ class AddContactActivity : AppCompatActivity() {
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityAddContactBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -77,6 +78,24 @@ class AddContactActivity : AppCompatActivity() {
         binding.btnTakePhoto.setOnClickListener { launchCamera() }
         binding.btnChooseGallery.setOnClickListener { launchGallery() }
         binding.btnSaveContact.setOnClickListener { saveContact() }
+
+        val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
+        val topMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_top)
+        val bottomMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_bottom)
+
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.addContactRootLayout) { view, insets ->
+            val systemBars = insets.getInsets(
+                androidx.core.view.WindowInsetsCompat.Type.systemBars() or
+                androidx.core.view.WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(
+                horizontalMargin,
+                topMargin + systemBars.top,
+                horizontalMargin,
+                bottomMargin + systemBars.bottom
+            )
+            insets
+        }
     }
 
     private fun loadExistingContact(id: Long) {

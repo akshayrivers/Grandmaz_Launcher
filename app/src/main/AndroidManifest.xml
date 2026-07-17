@@ -10,6 +10,7 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
@@ -97,6 +98,23 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- Alarm Screen -->
+        <activity
+            android:name=".ui.alarm.AlarmActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.home.HomeActivity" />
+
+        <!-- Alarm broadcast receiver -->
+        <receiver
+            android:name=".ui.alarm.AlarmReceiver"
+            android:exported="false" />
+
+        <!-- Floating Caretaker Bubble Service -->
+        <service
+            android:name=".ui.caretaker.CaretakerFloatingService"
+            android:enabled="true"
+            android:exported="false" />
 
     </application>
 

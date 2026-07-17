@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import androidx.core.view.updateLayoutParams
+import android.view.ViewGroup
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -54,9 +56,6 @@ class HomeActivity : AppCompatActivity() {
     // ── Lifecycle ────────────────────────────────────────────────────────────
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Must be before super.onCreate — after that the theme is already applied
-        // and changing night mode has no effect on the current Activity.
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         super.onCreate(savedInstanceState)
 
@@ -71,19 +70,49 @@ class HomeActivity : AppCompatActivity() {
         contactRepo = ContactRepository(this)
         appPrefs = AppPreferences(this)
 
-        // Now that the window draws edge-to-edge, apply insets as padding
-        // so our content is never hidden behind the status or nav bar.
-        val screenMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
+        // Apply window insets while keeping our design-system margins.
+        // We only respect the status bar inset; the bottom spacing comes
+        // from our own layout so the launcher doesn't waste vertical space
+        // on gesture navigation devices.
+
+        val horizontalMargin =
+    resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
+
+        val topMargin =
+            resources.getDimensionPixelSize(R.dimen.screen_margin_top)
+
+        val bottomMargin =
+            resources.getDimensionPixelSize(R.dimen.screen_margin_bottom)
+
+        val fabBottomMargin =
+            resources.getDimensionPixelSize(R.dimen.fab_caretaker_margin_bottom)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.rootLayout) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(
-                screenMargin,
-                systemBars.top + screenMargin,
-                screenMargin,
-                systemBars.bottom + screenMargin
+
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or
+                WindowInsetsCompat.Type.displayCutout()
             )
+
+            view.updatePadding(
+                left = horizontalMargin,
+                top = topMargin + systemBars.top,
+                right = horizontalMargin,
+                bottom = bottomMargin
+            )
+
+            binding.fabCaretaker.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                this.bottomMargin = fabBottomMargin + systemBars.bottom
+            }
+
+            binding.tvMoreApps.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                this.bottomMargin = systemBars.bottom
+            }
+
             insets
         }
+
+        ViewCompat.requestApplyInsets(binding.rootLayout)
 
         setupDate()
         setupFab()
@@ -98,7 +127,17 @@ class HomeActivity : AppCompatActivity() {
         // Refresh contacts every time we return to home
         // (user may have added/removed a contact)
         loadContacts()
-        restartFabIdleTimer()
+        if (android.provider.Settings.canDrawOverlays(this)) {
+            binding.fabCaretaker.visibility = View.GONE
+            try {
+                startService(Intent(this, com.grandma.launcher.ui.caretaker.CaretakerFloatingService::class.java))
+            } catch (_: Exception) {}
+        } else {
+            binding.fabCaretaker.visibility = View.VISIBLE
+            restartFabIdleTimer()
+        }
+        binding.homeHeader.updateDate()
+        binding.homeHeader.updateWeather()
     }
 
     override fun onPause() {
@@ -109,8 +148,8 @@ class HomeActivity : AppCompatActivity() {
     // ── Date ─────────────────────────────────────────────────────────────────
 
     private fun setupDate() {
-        val formatter = SimpleDateFormat("EEEE, d MMMM", Locale.ENGLISH)
-        binding.tvDate.text = formatter.format(Date())
+        binding.homeHeader.updateDate()
+        binding.homeHeader.updateWeather()
     }
 
     // ── Contacts ─────────────────────────────────────────────────────────────
@@ -264,8 +303,25 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupFab() {
         binding.fabCaretaker.setOnClickListener {
-            startActivity(Intent(this, CaretakerHelpActivity::class.java))
-            restartFabIdleTimer()
+            if (!android.provider.Settings.canDrawOverlays(this)) {
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Enable Floating Caretaker")
+                    .setMessage("Would you like to make the Caretaker icon float on top of other apps? This helps you ask for help at any time, from any app.")
+                    .setPositiveButton("Enable") { _, _ ->
+                        val intent = Intent(
+                            android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            android.net.Uri.parse("package:$packageName")
+                        )
+                        startActivity(intent)
+                    }
+                    .setNegativeButton("Not Now") { _, _ ->
+                        startActivity(Intent(this, CaretakerHelpActivity::class.java))
+                    }
+                    .show()
+            } else {
+                startActivity(Intent(this, CaretakerHelpActivity::class.java))
+                restartFabIdleTimer()
+            }
         }
         // FAB starts active
         binding.fabCaretaker.alpha = FAB_ACTIVE_ALPHA
@@ -274,6 +330,7 @@ class HomeActivity : AppCompatActivity() {
     private fun restartFabIdleTimer() {
         // Cancel any pending fade
         binding.root.removeCallbacks(fabFadeRunnable)
+        if (binding.fabCaretaker.visibility != View.VISIBLE) return
         // Ensure FAB is fully visible
         binding.fabCaretaker.animate()
             .alpha(FAB_ACTIVE_ALPHA)
@@ -284,6 +341,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun fadeFabToIdle() {
+        if (binding.fabCaretaker.visibility != View.VISIBLE) return
         binding.fabCaretaker.animate()
             .alpha(FAB_IDLE_ALPHA)
             .setDuration(FAB_FADE_DURATION_MS)

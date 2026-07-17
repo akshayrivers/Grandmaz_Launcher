@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/contactsRootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_bg_primary">
@@ -50,12 +51,12 @@
                 android:background="@color/color_divider"
                 android:layout_marginBottom="@dimen/space_md" />
 
-            <!-- Contact grid — 3 columns, populated by activity -->
+            <!-- Contact grid — 2 columns, populated by activity -->
             <GridLayout
                 android:id="@+id/gridAllContacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3"
+                android:columnCount="2"
                 android:useDefaultMargins="false" />
 
         </LinearLayout>
@@ -72,7 +73,7 @@
         android:elevation="8dp"
         app:backgroundTint="@color/color_accent_amber"
         app:tint="@color/color_text_on_dark"
-        app:srcCompat="@android:drawable/ic_dialog_info"
+        app:srcCompat="@drawable/ic_caretaker_info"
         app:fabSize="normal" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Background -->
+    <color name="color_bg_primary">#121212</color>
+    <color name="color_bg_secondary">#1B1B1B</color>
+    <color name="color_bg_card">#242424</color>
+
+    <!-- Text -->
+    <color name="color_text_primary">#FFFFFF</color>
+    <color name="color_text_secondary">#C8C8C8</color>
+    <color name="color_text_on_dark">#FFFFFF</color>
+
+    <!-- Accents -->
+    <color name="color_accent_blue">#63A4FF</color>
+    <color name="color_accent_blue_light">#1F3554</color>
+
+    <color name="color_accent_green">#5CD68D</color>
+    <color name="color_accent_green_light">#1E3A2B</color>
+
+    <color name="color_accent_amber">#F4B266</color>
+    <color name="color_accent_amber_light">#4D3920</color>
+
+    <!-- SOS -->
+    <color name="color_sos_red">#E74C3C</color>
+    <color name="color_sos_red_dark">#B3392C</color>
+    <color name="color_sos_red_overlay">#80E74C3C</color>
+
+    <!-- Structure -->
+    <color name="color_divider">#3A3A3A</color>
+    <color name="color_shadow">#66000000</color>
+    <color name="color_overlay">#99000000</color>
+
+    <!-- Clock -->
+    <color name="color_clock_face">#2A2A2A</color>
+    <color name="color_clock_border">#5A5A5A</color>
+    <color name="color_clock_hand_hour">#FFFFFF</color>
+    <color name="color_clock_hand_minute">#FFFFFF</color>
+    <color name="color_clock_tick_major">#FFFFFF</color>
+    <color name="color_clock_tick_minor">#BDBDBD</color>
+    <color name="color_clock_center">#FFFFFF</color>
+
+</resources>

@@ -58,11 +58,12 @@
     <color name="color_overlay">#60000000</color>
 
     <!-- Clock face colours -->
-    <color name="color_clock_face">#FFFFFF</color>
-    <color name="color_clock_border">#D9D3CB</color>
-    <color name="color_clock_hand">#1A1A1A</color>
-    <color name="color_clock_tick_major">#1A1A1A</color>
-    <color name="color_clock_tick_minor">#9B9590</color>
-    <color name="color_clock_center">#1A1A1A</color>
+     <color name="color_clock_face">#FFFFFF</color>
+     <color name="color_clock_border">#D9D3CB</color>
+     <color name="color_clock_hand_hour">#1A1A1A</color>
+     <color name="color_clock_hand_minute">#1A1A1A</color>
+     <color name="color_clock_tick_major">#1A1A1A</color>
+     <color name="color_clock_tick_minor">#9B9590</color>
+     <color name="color_clock_center">#1A1A1A</color>
 
 </resources>

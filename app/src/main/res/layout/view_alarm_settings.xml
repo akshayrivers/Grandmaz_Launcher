@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="@dimen/space_md"
+    android:background="@color/color_bg_primary">
+
+    <TextView
+        android:id="@+id/tvSettingsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SET ALARM TIME"
+        android:textAppearance="@style/TextAppearance.Grandma.Heading"
+        android:layout_marginBottom="@dimen/space_sm" />
+
+    <com.grandma.launcher.ui.views.AnalogTimePickerView
+        android:id="@+id/timePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/space_md"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSettingsCancel"
+            style="@style/Widget.Grandma.ConfirmButton.No"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:text="GO BACK" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSettingsSave"
+            style="@style/Widget.Grandma.ConfirmButton.Yes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/space_sm"
+            android:text="SAVE ALARM" />
+
+    </LinearLayout>
+
+</LinearLayout>

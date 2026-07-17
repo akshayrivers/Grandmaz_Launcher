@@ -26,32 +26,15 @@
     android:layout_height="match_parent"
     android:background="@color/color_bg_primary">
 
-    <!-- ── ZONE 1: CLOCK ─────────────────────────────────────────────── -->
+    <!-- ── ZONE 1: HEADER (CLOCK + WEATHER) ─────────────────────────── -->
 
-    <com.grandma.launcher.ui.views.AnalogClockView
-        android:id="@+id/analogClock"
-        android:layout_width="@dimen/clock_diameter"
-        android:layout_height="@dimen/clock_diameter"
-        android:elevation="4dp"
+    <com.grandma.launcher.ui.home.HomeHeaderView
+        android:id="@+id/homeHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tvDate"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="ContentDescription" />
-
-    <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_sm"
-        android:textAppearance="@style/TextAppearance.Grandma.LabelSmall"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/analogClock"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:text="Wednesday, 16 July" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- ── ZONE 2: CONTACTS ──────────────────────────────────────────── -->
 
@@ -59,10 +42,10 @@
         android:id="@+id/tvYourPeople"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_lg"
+        android:layout_marginTop="@dimen/space_md"
         android:text="@string/section_your_people"
         android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
-        app:layout_constraintTop_toBottomOf="@id/tvDate"
+        app:layout_constraintTop_toBottomOf="@id/homeHeader"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tvSeeAll" />
 
@@ -70,14 +53,14 @@
         android:id="@+id/tvSeeAll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_lg"
+        android:layout_marginTop="@dimen/space_md"
         android:text="@string/action_see_all"
         android:textSize="14sp"
         android:textColor="@color/color_accent_blue"
         android:padding="@dimen/space_sm"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintTop_toBottomOf="@id/tvDate"
+        app:layout_constraintTop_toBottomOf="@id/homeHeader"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBaseline_toBaselineOf="@id/tvYourPeople" />
 
@@ -99,7 +82,7 @@
         android:id="@+id/dividerTools"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginTop="@dimen/space_lg"
+        android:layout_marginTop="@dimen/space_md"
         android:background="@color/color_divider"
         app:layout_constraintTop_toBottomOf="@id/gridContacts"
         app:layout_constraintStart_toStartOf="parent"
@@ -110,12 +93,12 @@
         style="@style/Widget.Grandma.ToolButton.Camera"
         android:layout_width="0dp"
         android:layout_height="@dimen/tool_button_height"
-        android:layout_marginTop="@dimen/space_md"
+        android:layout_marginTop="@dimen/space_sm"
         android:layout_marginEnd="@dimen/space_sm"
         android:text="@string/action_camera"
         app:icon="@android:drawable/ic_menu_camera"
         app:iconSize="@dimen/tool_button_icon_size"
-        app:iconGravity="start"
+        app:iconGravity="textStart"
         app:layout_constraintTop_toBottomOf="@id/dividerTools"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btnWhatsapp" />
@@ -125,12 +108,12 @@
         style="@style/Widget.Grandma.ToolButton.WhatsApp"
         android:layout_width="0dp"
         android:layout_height="@dimen/tool_button_height"
-        android:layout_marginTop="@dimen/space_md"
+        android:layout_marginTop="@dimen/space_sm"
         android:layout_marginStart="@dimen/space_sm"
         android:text="@string/action_whatsapp"
         app:icon="@android:drawable/sym_action_chat"
         app:iconSize="@dimen/tool_button_icon_size"
-        app:iconGravity="start"
+        app:iconGravity="textStart"
         app:layout_constraintTop_toBottomOf="@id/dividerTools"
         app:layout_constraintStart_toEndOf="@id/btnCamera"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -141,7 +124,7 @@
         android:id="@+id/sosButton"
         android:layout_width="0dp"
         android:layout_height="@dimen/sos_button_height"
-        android:layout_marginTop="@dimen/space_md"
+        android:layout_marginTop="@dimen/space_sm"
         app:layout_constraintTop_toBottomOf="@id/btnCamera"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -152,15 +135,22 @@
         android:id="@+id/tvMoreApps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_md"
-        android:layout_marginBottom="@dimen/space_md"
+        android:layout_marginTop="@dimen/space_sm"
+        android:layout_marginBottom="@dimen/space_sm"
         android:text="@string/action_more_apps"
-        android:textAppearance="@style/TextAppearance.Grandma.LabelSmall"
+        android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+        android:textColor="@color/color_accent_blue"
         android:drawableStart="@android:drawable/ic_menu_more"
-        android:drawablePadding="@dimen/space_xs"
+        android:drawableTint="@color/color_accent_blue"
+        android:drawablePadding="@dimen/space_sm"
         android:clickable="true"
         android:focusable="true"
-        android:padding="@dimen/space_sm"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/sosButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -184,7 +174,7 @@
         android:elevation="8dp"
         app:backgroundTint="@color/color_accent_amber"
         app:tint="@color/color_text_on_dark"
-        app:srcCompat="@android:drawable/ic_dialog_info"
+        app:srcCompat="@drawable/ic_caretaker_info"
         app:fabSize="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

@@ -10,6 +10,8 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.grandma.launcher.R
 import java.util.Calendar
 import kotlin.math.cos
 import kotlin.math.min
@@ -30,42 +32,42 @@ class AnalogClockView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    // ── Paints — ALL hardcoded, never from theme ──────────────────────────────
+    // ── Paints — From ContextCompat, never from theme ──────────────────────────────
 
     private val facePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.WHITE
+        color = ContextCompat.getColor(context, R.color.color_clock_face)
         style = Paint.Style.FILL
     }
 
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#D9D3CB")
+        color = ContextCompat.getColor(context, R.color.color_clock_border)
         style = Paint.Style.STROKE
         strokeWidth = 6f
     }
 
     private val hourHandPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#1A1A1A")
+        color = ContextCompat.getColor(context, R.color.color_clock_hand_hour)
         style = Paint.Style.STROKE
         strokeWidth = 14f
         strokeCap = Paint.Cap.ROUND
     }
 
     private val minuteHandPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#1A1A1A")
+        color = ContextCompat.getColor(context, R.color.color_clock_hand_minute)
         style = Paint.Style.STROKE
         strokeWidth = 8f
         strokeCap = Paint.Cap.ROUND
     }
 
     private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#1A1A1A")
+        color = ContextCompat.getColor(context, R.color.color_clock_tick_major)
         style = Paint.Style.STROKE
         strokeWidth = 6f
         strokeCap = Paint.Cap.ROUND
     }
 
     private val centerDotPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#1A1A1A")
+        color = ContextCompat.getColor(context, R.color.color_clock_center)
         style = Paint.Style.FILL
     }
 
@@ -126,6 +128,14 @@ class AnalogClockView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         if (radius <= 0f) return // safety — nothing to draw
+
+        // Resolve colors dynamically in case theme changes
+        facePaint.color = ContextCompat.getColor(context, R.color.color_clock_face)
+        borderPaint.color = ContextCompat.getColor(context, R.color.color_clock_border)
+        hourHandPaint.color = ContextCompat.getColor(context, R.color.color_clock_hand_hour)
+        minuteHandPaint.color = ContextCompat.getColor(context, R.color.color_clock_hand_minute)
+        tickPaint.color = ContextCompat.getColor(context, R.color.color_clock_tick_major)
+        centerDotPaint.color = ContextCompat.getColor(context, R.color.color_clock_center)
 
         drawFace(canvas)
         drawTicks(canvas)

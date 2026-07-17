@@ -31,6 +31,7 @@ class ContactsActivity : AppCompatActivity() {
     private lateinit var contactRepo: ContactRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityContactsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -40,6 +41,24 @@ class ContactsActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
 
         CaretakerFabHelper.attach(this, binding.fabCaretaker)
+
+        val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
+        val topMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_top)
+        val bottomMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_bottom)
+
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.contactsRootLayout) { view, insets ->
+            val systemBars = insets.getInsets(
+                androidx.core.view.WindowInsetsCompat.Type.systemBars() or
+                androidx.core.view.WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(
+                horizontalMargin,
+                topMargin + systemBars.top,
+                horizontalMargin,
+                bottomMargin + systemBars.bottom
+            )
+            insets
+        }
     }
 
     override fun onResume() {

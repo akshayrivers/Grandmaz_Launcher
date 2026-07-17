@@ -3,6 +3,8 @@ package com.grandma.launcher.ui.views
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PathMeasure
 import android.graphics.RectF
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -83,6 +85,8 @@ class SosButtonView @JvmOverloads constructor(
     private var holdProgress = 0f          // 0.0 → 1.0
     private var pressStartTime = 0L
     private val ringRect = RectF()
+    private val fullSosPath = Path()
+    private val progressPath = Path()
 
     private val vibrator: Vibrator? = context.getSystemService()
 
@@ -197,6 +201,55 @@ class SosButtonView @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
         val inset = ringStrokeWidth / 2f
         ringRect.set(inset, inset, w - inset, h - inset)
+
+        // Compute the path tracing the exact rounded rectangle boundary
+        fullSosPath.reset()
+        val left = inset
+        val top = inset
+        val right = w.toFloat() - inset
+        val bottom = h.toFloat() - inset
+        val cx = w.toFloat() / 2f
+
+        // Start at top center
+        fullSosPath.moveTo(cx, top)
+        // Line to top right corner start
+        fullSosPath.lineTo(right - cornerRadius, top)
+        // Top-Right corner curve
+        fullSosPath.arcTo(
+            RectF(right - 2 * cornerRadius, top, right, top + 2 * cornerRadius),
+            -90f,
+            90f,
+            false
+        )
+        // Line to bottom right corner start
+        fullSosPath.lineTo(right, bottom - cornerRadius)
+        // Bottom-Right corner curve
+        fullSosPath.arcTo(
+            RectF(right - 2 * cornerRadius, bottom - 2 * cornerRadius, right, bottom),
+            0f,
+            90f,
+            false
+        )
+        // Line to bottom left corner start
+        fullSosPath.lineTo(left + cornerRadius, bottom)
+        // Bottom-Left corner curve
+        fullSosPath.arcTo(
+            RectF(left, bottom - 2 * cornerRadius, left + 2 * cornerRadius, bottom),
+            90f,
+            90f,
+            false
+        )
+        // Line to top left corner start
+        fullSosPath.lineTo(left, top + cornerRadius)
+        // Top-Left corner curve
+        fullSosPath.arcTo(
+            RectF(left, top, left + 2 * cornerRadius, top + 2 * cornerRadius),
+            180f,
+            90f,
+            false
+        )
+        // Line back to top center
+        fullSosPath.lineTo(cx, top)
     }
 
     // ── Drawing ──────────────────────────────────────────────────────────────
@@ -209,15 +262,13 @@ class SosButtonView @JvmOverloads constructor(
         val bgPaint = if (isPressed) backgroundPressedPaint else backgroundPaint
         canvas.drawRoundRect(0f, 0f, w, h, cornerRadius, cornerRadius, bgPaint)
 
-        // Progress ring — draws clockwise from top (-90°)
+        // Progress boundary outline — draws clockwise from top center
         if (holdProgress > 0f) {
-            canvas.drawArc(
-                ringRect,
-                -90f,                    // Start at top
-                360f * holdProgress,     // Sweep clockwise
-                false,
-                ringPaint
-            )
+            progressPath.reset()
+            val pathMeasure = PathMeasure(fullSosPath, false)
+            val length = pathMeasure.length
+            pathMeasure.getSegment(0f, length * holdProgress, progressPath, true)
+            canvas.drawPath(progressPath, ringPaint)
         }
 
         // "SOS" label — centered
