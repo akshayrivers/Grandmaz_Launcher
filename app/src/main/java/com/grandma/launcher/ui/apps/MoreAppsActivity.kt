@@ -46,6 +46,11 @@ class MoreAppsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnBack.setOnClickListener { finish() }
+        binding.btnCaretakerSettings.setOnClickListener {
+            com.grandma.launcher.ui.caretaker.CaretakerPinDialog.show(this) {
+                startActivity(Intent(this, com.grandma.launcher.ui.setup.SetupActivity::class.java))
+            }
+        }
 
         val apps = queryInstalledApps()
         binding.rvApps.layoutManager = GridLayoutManager(this, 3)
