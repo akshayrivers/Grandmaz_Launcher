@@ -48,7 +48,7 @@ class SetupActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK && result.data != null) {
                 val accountName = result.data?.getStringExtra(android.accounts.AccountManager.KEY_ACCOUNT_NAME)
-                if (!accountName.isNull_Empty()) {
+                if (!accountName.isNullOrEmpty()) {
                     appPrefs.caretakerEmail = accountName
                     appPrefs.caretakerName = accountName.substringBefore("@").replace(".", " ").capitalizeWords()
                     appPrefs.caretakerGoogleId = accountName
