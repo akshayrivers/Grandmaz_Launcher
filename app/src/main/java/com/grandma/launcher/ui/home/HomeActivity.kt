@@ -70,6 +70,12 @@ class HomeActivity : AppCompatActivity() {
         contactRepo = ContactRepository(this)
         appPrefs = AppPreferences(this)
 
+        if (!appPrefs.isSetupComplete) {
+            startActivity(Intent(this, com.grandma.launcher.ui.setup.SetupActivity::class.java))
+            finish()
+            return
+        }
+
         // Apply window insets while keeping our design-system margins.
         // We only respect the status bar inset; the bottom spacing comes
         // from our own layout so the launcher doesn't waste vertical space

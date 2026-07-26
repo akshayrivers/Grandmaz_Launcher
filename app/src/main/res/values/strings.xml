@@ -56,4 +56,33 @@
     <string name="action_back">Back</string>
     <string name="whatsapp_not_installed">WhatsApp is not installed on this phone</string>
 
+    <!-- Setup Wizard -->
+    <string name="setup_title">Caretaker Setup Wizard</string>
+    <string name="setup_subtitle">Configure sys-launcher for senior citizen care</string>
+    <string name="setup_step_1_title">1. Caretaker Account</string>
+    <string name="setup_step_1_desc">Sign in with Google to register as the caretaker for remote support and emergency alerts.</string>
+    <string name="setup_google_signin">Sign in with Google</string>
+    <string name="setup_google_signed_in">Signed in as %s</string>
+    <string name="setup_step_2_title">2. Emergency Contact</string>
+    <string name="setup_step_2_desc">Specify emergency SOS call number and caretaker email for help requests.</string>
+    <string name="setup_emergency_number_label">Emergency SOS Call Number:</string>
+    <string name="setup_caretaker_email_label">Caretaker Email Address:</string>
+    <string name="setup_step_3_title">3. Caretaker Security PIN</string>
+    <string name="setup_step_3_desc">Set a 4-digit PIN to restrict launcher settings access to caretakers only.</string>
+    <string name="setup_pin_label">4-Digit Caretaker PIN:</string>
+    <string name="setup_pin_confirm_label">Confirm 4-Digit PIN:</string>
+    <string name="setup_step_4_title">4. Launcher and Permissions</string>
+    <string name="setup_step_4_desc">Set sys-launcher as the default home app and grant essential permissions.</string>
+    <string name="setup_set_default_launcher">Set as Default Launcher</string>
+    <string name="setup_grant_permissions">Grant Phone and Contacts Permissions</string>
+    <string name="setup_btn_next">Next Step</string>
+    <string name="setup_btn_complete">Complete Setup and Launch</string>
+
+    <!-- PIN Authentication Dialog -->
+    <string name="pin_dialog_title">Caretaker Authentication</string>
+    <string name="pin_dialog_subtitle">Enter 4-digit Caretaker PIN to open settings</string>
+    <string name="pin_dialog_error">Incorrect PIN. Please try again.</string>
+    <string name="pin_dialog_confirm">Unlock</string>
+    <string name="pin_dialog_cancel">Cancel</string>
+
 </resources>

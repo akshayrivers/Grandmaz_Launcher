@@ -62,6 +62,12 @@
             </intent-filter>
         </activity>
 
+        <!-- Caretaker Setup Wizard Activity -->
+        <activity
+            android:name=".ui.setup.SetupActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Contacts Screen -->
         <activity
             android:name=".ui.contacts.ContactsActivity"

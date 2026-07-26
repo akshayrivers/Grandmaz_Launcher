@@ -111,6 +111,23 @@
         <item name="android:stateListAnimator">@null</item>
     </style>
 
+    <style name="TextAppearance.Grandma.CardName" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- Caretaker blue button — blue, full width -->
+    <style name="Widget.Grandma.ConfirmButton.Blue" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">@dimen/confirm_button_height</item>
+        <item name="android:backgroundTint">@color/color_accent_blue</item>
+        <item name="android:textColor">@color/color_text_on_dark</item>
+        <item name="android:textAppearance">@style/TextAppearance.Grandma.ButtonLarge</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
     <!-- Caretaker send button — amber, full width -->
     <style name="Widget.Grandma.ConfirmButton.Amber" parent="Widget.MaterialComponents.Button">
         <item name="android:minHeight">@dimen/confirm_button_height</item>

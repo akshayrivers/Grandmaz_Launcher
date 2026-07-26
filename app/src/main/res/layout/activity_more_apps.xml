@@ -37,6 +37,15 @@
                 android:layout_marginStart="@dimen/space_sm"
                 android:text="@string/screen_all_apps"
                 android:textAppearance="@style/TextAppearance.Grandma.Display" />
+
+            <ImageButton
+                android:id="@+id/btnCaretakerSettings"
+                android:layout_width="@dimen/back_button_size"
+                android:layout_height="@dimen/back_button_size"
+                android:src="@android:drawable/ic_menu_preferences"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Caretaker Settings"
+                app:tint="@color/color_accent_amber" />
         </LinearLayout>
 
         <View
