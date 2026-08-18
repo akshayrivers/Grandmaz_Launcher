@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.grandma.launcher.R
 import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.databinding.ActivityCaretakerHelpBinding
+import androidx.lifecycle.lifecycleScope
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -91,6 +92,23 @@ class CaretakerHelpActivity : AppCompatActivity() {
         val subject = getString(R.string.caretaker_email_subject)
         val body = getString(R.string.caretaker_email_body, timestamp, note)
 
+        // Send to backend API
+        val helpRepo = com.grandma.launcher.remote.HelpRequestRepository(this)
+        lifecycleScope.launchWhenStarted {
+            val result = helpRepo.createHelpRequest(
+                title = "Help requested from launcher",
+                description = note,
+                type = com.grandma.launcher.remote.HelpRequestRepository.HelpType.GENERAL
+            )
+            if (result is com.grandma.launcher.network.ApiClient.Result.Success) {
+                Toast.makeText(
+                    this@CaretakerHelpActivity,
+                    "Help request sent to Caretaker Dashboard!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = android.net.Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(caretakerEmail))
@@ -98,14 +116,11 @@ class CaretakerHelpActivity : AppCompatActivity() {
             putExtra(Intent.EXTRA_TEXT, body)
         }
 
-        if (intent.resolveActivity(packageManager) != null) {
+        try {
             startActivity(intent)
-        } else {
-            Toast.makeText(
-                this,
-                "No email app found on this phone",
-                Toast.LENGTH_SHORT
-            ).show()
+        } catch (e: Exception) {
+            // Mail client optional when backend request is sent
+            finish()
         }
     }
 }
