@@ -3,8 +3,11 @@ package com.grandma.launcher.remote
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+<<<<<<< Updated upstream
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+=======
+>>>>>>> Stashed changes
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.BatteryManager

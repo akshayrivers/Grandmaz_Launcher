@@ -39,7 +39,11 @@ object DeviceSecurityManager {
 
     /**
      * Signs the given challenge string using the stored RSA private key.
+<<<<<<< Updated upstream
      * Returns the signature formatted as a hex string (or base64 if required).
+=======
+     * Returns the signature formatted as a hex string.
+>>>>>>> Stashed changes
      */
     fun signChallenge(challenge: String, appPrefs: AppPreferences): String {
         ensureKeyPair(appPrefs)
@@ -50,7 +54,10 @@ object DeviceSecurityManager {
         signer.update(challenge.toByteArray(Charsets.UTF_8))
         val signatureBytes = signer.sign()
 
+<<<<<<< Updated upstream
         // Backend accepts base64 or hex signature for verification
+=======
+>>>>>>> Stashed changes
         return bytesToHex(signatureBytes)
     }
 

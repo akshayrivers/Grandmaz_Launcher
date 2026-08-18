@@ -18,18 +18,8 @@ import java.util.Locale
  * The user taps the amber FAB → arrives here.
  * They (or a helper nearby) can add an optional note.
  * Tapping "Send" fires a mailto: Intent which opens the
- * device's email app pre-filled with the caretaker's address.
- *
- * Phase 1: mailto: Intent — simple, no backend required.
- * Phase 2: This screen will call an API endpoint instead,
- *           enabling push notifications to the caretaker's PWA.
- *           The UI will not need to change — only the send action.
- *
- * Why mailto: and not a direct send?
- * - No backend, no API keys, no server costs in Phase 1
- * - The caretaker's email provider handles delivery
- * - The user (or nearby helper) sees the email being sent
- *   which provides reassurance that it worked
+ * device's email app pre-filled with the caretaker's address,
+ * and posts the Help Request to the Fastify Backend API.
  */
 class CaretakerHelpActivity : AppCompatActivity() {
 
@@ -119,7 +109,10 @@ class CaretakerHelpActivity : AppCompatActivity() {
         try {
             startActivity(intent)
         } catch (e: Exception) {
+<<<<<<< Updated upstream
             // Mail client optional when backend request is sent
+=======
+>>>>>>> Stashed changes
             finish()
         }
     }
