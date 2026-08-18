@@ -109,10 +109,6 @@ class CaretakerHelpActivity : AppCompatActivity() {
         try {
             startActivity(intent)
         } catch (e: Exception) {
-<<<<<<< Updated upstream
-            // Mail client optional when backend request is sent
-=======
->>>>>>> Stashed changes
             finish()
         }
     }

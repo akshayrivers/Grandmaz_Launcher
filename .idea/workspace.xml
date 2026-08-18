@@ -10,8 +10,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eab8ac18-4cd5-43af-9ef7-ca593fc07356" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.excalidraw" beforeDir="false" afterPath="$PROJECT_DIR$/.excalidraw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/data/AppPreferences.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/data/AppPreferences.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/network/ApiClient.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/network/ApiClient.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/network/DeviceSecurityManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/network/DeviceSecurityManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/remote/CaretakerInvitationRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/remote/CaretakerInvitationRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/remote/DeviceRegistrationRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/remote/DeviceRegistrationRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/remote/DeviceSyncManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/remote/DeviceSyncManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/remote/StateSnapshotRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/remote/StateSnapshotRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/caretaker/CaretakerHelpActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/caretaker/CaretakerHelpActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/setup/SetupActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/setup/SetupActivity.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,7 +30,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=sww4ib5t6tl7qcg6)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -67,7 +76,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Phase-II-Caretaker",
+    "git-widget-placeholder": "backend/api__integration",
     "kotlin-language-version-configured": "true",
     "settings.editor.selected.configurable": "AndroidSdkUpdater"
   }

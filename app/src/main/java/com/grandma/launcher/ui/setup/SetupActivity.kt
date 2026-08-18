@@ -296,15 +296,15 @@ class SetupActivity : AppCompatActivity() {
     private fun completeSetup() {
         appPrefs.isSetupComplete = true
 
-        // Register device & send caretaker magic-link invitation asynchronously
-        val caretakerEmail = appPrefs.caretakerEmail
+        // Register device & send caretaker magic-link invitations to all registered caretakers
+        val caretakerEmails = appPrefs.getCaretakerEmails()
         lifecycleScope.launchWhenStarted {
             val regRepo = com.grandma.launcher.remote.DeviceRegistrationRepository(this@SetupActivity)
             regRepo.registerAndVerifyDevice()
 
-            if (caretakerEmail.isNotBlank()) {
+            if (caretakerEmails.isNotEmpty()) {
                 val invRepo = com.grandma.launcher.remote.CaretakerInvitationRepository(this@SetupActivity)
-                invRepo.sendCaretakerInvitation(caretakerEmail)
+                invRepo.sendCaretakerInvitations(caretakerEmails)
             }
         }
 

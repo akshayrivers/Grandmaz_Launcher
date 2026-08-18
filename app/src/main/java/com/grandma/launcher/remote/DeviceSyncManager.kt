@@ -38,11 +38,8 @@ class DeviceSyncManager(private val context: Context) {
 
             while (isActive && isLoopRunning) {
                 try {
-                    // 1. Post state snapshot
+                    // Post state snapshot
                     stateSnapshotRepo.postSnapshot()
-
-                    // 2. Poll & execute pending commands
-                    commandManager.pollAndExecuteCommands()
                 } catch (e: Exception) {
                     Log.e(TAG, "Error in DeviceSyncManager loop: ${e.localizedMessage}", e)
                 }

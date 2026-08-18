@@ -26,4 +26,10 @@ class CaretakerInvitationRepository(private val context: Context) {
 
         ApiClient.postJson(baseUrl, "api/invitations", body)
     }
+
+    suspend fun sendCaretakerInvitations(emails: List<String>, deviceName: String = "Grandma's Phone"): List<ApiClient.Result<JSONObject>> = withContext(Dispatchers.IO) {
+        emails.distinct().map { email ->
+            sendCaretakerInvitation(email, deviceName)
+        }
+    }
 }

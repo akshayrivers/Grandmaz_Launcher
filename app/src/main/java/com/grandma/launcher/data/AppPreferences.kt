@@ -36,12 +36,53 @@ class AppPreferences(context: Context) {
         set(value) = prefs.edit().putString(KEY_CARETAKER_NAME, value).apply()
 
     /**
-     * Caretaker email address for help requests.
-     * Empty string means the help button will show a "not configured" message.
+     * Primary caretaker email address.
      */
     var caretakerEmail: String
-        get() = prefs.getString(KEY_CARETAKER_EMAIL, "") ?: ""
-        set(value) = prefs.edit().putString(KEY_CARETAKER_EMAIL, value).apply()
+        get() = getCaretakerEmails().firstOrNull() ?: prefs.getString(KEY_CARETAKER_EMAIL, "") ?: ""
+        set(value) {
+            if (value.isNotBlank()) {
+                addCaretakerEmail(value)
+            } else {
+                prefs.edit().putString(KEY_CARETAKER_EMAIL, "").apply()
+            }
+        }
+
+    /**
+     * List of all linked caretaker email addresses for multiple caretaker support.
+     */
+    fun getCaretakerEmails(): List<String> {
+        val raw = prefs.getString(KEY_CARETAKER_EMAILS_LIST, "") ?: ""
+        if (raw.isNotBlank()) {
+            return raw.split(",").map { it.trim() }.filter { it.isNotBlank() }.distinct()
+        }
+        val legacy = prefs.getString(KEY_CARETAKER_EMAIL, "") ?: ""
+        return if (legacy.isNotBlank()) listOf(legacy.trim()) else emptyList()
+    }
+
+    fun addCaretakerEmail(email: String) {
+        val trimmed = email.trim()
+        if (trimmed.isBlank()) return
+        val current = getCaretakerEmails().toMutableList()
+        if (!current.contains(trimmed)) {
+            current.add(trimmed)
+            prefs.edit()
+                .putString(KEY_CARETAKER_EMAILS_LIST, current.joinToString(","))
+                .putString(KEY_CARETAKER_EMAIL, current.first())
+                .apply()
+        }
+    }
+
+    fun removeCaretakerEmail(email: String) {
+        val trimmed = email.trim()
+        val current = getCaretakerEmails().toMutableList()
+        if (current.remove(trimmed)) {
+            prefs.edit()
+                .putString(KEY_CARETAKER_EMAILS_LIST, current.joinToString(","))
+                .putString(KEY_CARETAKER_EMAIL, current.firstOrNull() ?: "")
+                .apply()
+        }
+    }
 
     /**
      * Caretaker's Google profile photo URL.
@@ -135,6 +176,7 @@ class AppPreferences(context: Context) {
         private const val KEY_CARETAKER_GOOGLE_ID = "caretaker_google_id"
         private const val KEY_CARETAKER_NAME = "caretaker_name"
         private const val KEY_CARETAKER_EMAIL = "caretaker_email"
+        private const val KEY_CARETAKER_EMAILS_LIST = "caretaker_emails_list"
         private const val KEY_CARETAKER_PHOTO_URL = "caretaker_photo_url"
         private const val KEY_CARETAKER_PIN = "caretaker_pin"
         private const val KEY_EMERGENCY_NUMBER = "emergency_number"
@@ -146,7 +188,7 @@ class AppPreferences(context: Context) {
         private const val KEY_IS_DEVICE_VERIFIED = "is_device_verified"
         private const val KEY_LAST_SYNC_TIMESTAMP = "last_sync_timestamp"
 
-        const val DEFAULT_BACKEND_BASE_URL = "http://10.0.2.2:3000"
+        const val DEFAULT_BACKEND_BASE_URL = "http://172.20.10.3:3000"
         const val DEFAULT_EMERGENCY_NUMBER = "112"
         const val DEFAULT_FAB_IDLE_DELAY_MS = 8000L
         const val SOS_HOLD_DURATION_MS = 3000L

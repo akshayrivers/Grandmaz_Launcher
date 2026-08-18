@@ -7,6 +7,8 @@ import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.network.DeviceSecurityManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.json.JSONObject
 
 /**
@@ -16,9 +18,18 @@ class DeviceRegistrationRepository(private val context: Context) {
 
     private val appPrefs = AppPreferences(context)
 
-    suspend fun registerAndVerifyDevice(): ApiClient.Result<Boolean> = withContext(Dispatchers.IO) {
-        val baseUrl = appPrefs.backendBaseUrl
-        val deviceId = appPrefs.deviceId
+    companion object {
+        private val registrationMutex = Mutex()
+    }
+
+    suspend fun registerAndVerifyDevice(forceReverify: Boolean = false): ApiClient.Result<Boolean> = withContext(Dispatchers.IO) {
+        registrationMutex.withLock {
+            if (appPrefs.isDeviceVerified && !forceReverify) {
+                return@withContext ApiClient.Result.Success(true)
+            }
+
+            val baseUrl = appPrefs.backendBaseUrl
+            val deviceId = appPrefs.deviceId
 
         // 1. Ensure RSA KeyPair exists
         DeviceSecurityManager.ensureKeyPair(appPrefs)
@@ -49,22 +60,20 @@ class DeviceRegistrationRepository(private val context: Context) {
             )
         }
 
-        // Step 2: POST /api/devices/challenge
-        val challengeBody = JSONObject().apply {
-            put("deviceId", deviceId)
+        val regData = (regResult as ApiClient.Result.Success).data
+        var challengeStr = regData.optString("challenge", "")
+
+        // Fallback: POST /api/devices/challenge if not in register response
+        if (challengeStr.isBlank()) {
+            val challengeBody = JSONObject().apply {
+                put("deviceId", deviceId)
+            }
+            val challengeResult = ApiClient.postJson(baseUrl, "api/devices/challenge", challengeBody)
+            if (challengeResult is ApiClient.Result.Success) {
+                challengeStr = challengeResult.data.optString("challenge", "")
+            }
         }
 
-        val challengeResult = ApiClient.postJson(baseUrl, "api/devices/challenge", challengeBody)
-        if (challengeResult is ApiClient.Result.Error) {
-            appPrefs.isDeviceVerified = false
-            return@withContext ApiClient.Result.Error(
-                challengeResult.statusCode,
-                "Challenge request failed: ${challengeResult.message}"
-            )
-        }
-
-        val challengeData = (challengeResult as ApiClient.Result.Success).data
-        val challengeStr = challengeData.optString("challenge", "")
         if (challengeStr.isBlank()) {
             appPrefs.isDeviceVerified = false
             return@withContext ApiClient.Result.Error(-1, "Server returned empty challenge")
@@ -81,7 +90,7 @@ class DeviceRegistrationRepository(private val context: Context) {
         }
 
         val verifyResult = ApiClient.postJson(baseUrl, "api/devices/verify-signature", verifyBody)
-        return@withContext when (verifyResult) {
+        when (verifyResult) {
             is ApiClient.Result.Success -> {
                 val isVerified = verifyResult.data.optBoolean("is_verified", true)
                 appPrefs.isDeviceVerified = isVerified
@@ -91,6 +100,7 @@ class DeviceRegistrationRepository(private val context: Context) {
                 appPrefs.isDeviceVerified = false
                 ApiClient.Result.Error(verifyResult.statusCode, "Signature verification failed: ${verifyResult.message}")
             }
+        }
         }
     }
 }
