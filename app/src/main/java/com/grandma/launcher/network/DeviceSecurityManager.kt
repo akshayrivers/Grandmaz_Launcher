@@ -40,12 +40,12 @@ object DeviceSecurityManager {
 
     /**
      * Signs the given challenge string using the stored RSA private key.
-     * Returns the signature formatted as a hex string (or base64 if required).
+     * Returns the signature formatted as a base64 string.
      */
     fun signChallenge(challenge: String, appPrefs: AppPreferences): String {
         ensureKeyPair(appPrefs)
         val privateKey = parsePrivateKeyPem(appPrefs.devicePrivateKeyPem)
-        
+
         val signer = Signature.getInstance(SIGNATURE_ALGORITHM)
         signer.initSign(privateKey)
         signer.update(challenge.toByteArray(Charsets.UTF_8))
@@ -53,6 +53,25 @@ object DeviceSecurityManager {
 
         // Backend expects base64 signature (Buffer.from(signature, "base64"))
         return Base64.encodeToString(signatureBytes, Base64.NO_WRAP)
+    }
+
+    /**
+     * Verifies a base64 signature produced by [signChallenge] against the stored
+     * RSA public key. Used by the device side of the challenge-response handshake
+     * to sanity-check the flow before the backend round-trip.
+     */
+    fun verifySignature(challenge: String, signatureBase64: String, appPrefs: AppPreferences): Boolean {
+        ensureKeyPair(appPrefs)
+        return try {
+            val publicKey = parsePublicKeyPem(appPrefs.devicePublicKeyPem)
+            val signatureBytes = Base64.decode(signatureBase64, Base64.NO_WRAP)
+            val verifier = Signature.getInstance(SIGNATURE_ALGORITHM)
+            verifier.initVerify(publicKey)
+            verifier.update(challenge.toByteArray(Charsets.UTF_8))
+            verifier.verify(signatureBytes)
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun formatPublicKeyPem(publicKey: PublicKey): String {
@@ -74,6 +93,17 @@ object DeviceSecurityManager {
         val keySpec = PKCS8EncodedKeySpec(decoded)
         val keyFactory = KeyFactory.getInstance(RSA_ALGORITHM)
         return keyFactory.generatePrivate(keySpec)
+    }
+
+    private fun parsePublicKeyPem(pem: String): PublicKey {
+        val cleanPem = pem
+            .replace("-----BEGIN PUBLIC KEY-----", "")
+            .replace("-----END PUBLIC KEY-----", "")
+            .replace("\\s+".toRegex(), "")
+        val decoded = Base64.decode(cleanPem, Base64.DEFAULT)
+        val keySpec = X509EncodedKeySpec(decoded)
+        val keyFactory = KeyFactory.getInstance(RSA_ALGORITHM)
+        return keyFactory.generatePublic(keySpec)
     }
 
     private fun bytesToHex(bytes: ByteArray): String {

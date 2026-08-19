@@ -37,6 +37,19 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+            isIncludeAndroidResources = true
+            all { test ->
+                test.testLogging {
+                    showStandardStreams = true
+                    events("passed", "failed", "skipped")
+                }
+            }
+        }
+    }
 }
 
 dependencies {
@@ -47,4 +60,8 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services)
     implementation(libs.play.services.auth)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
 }
