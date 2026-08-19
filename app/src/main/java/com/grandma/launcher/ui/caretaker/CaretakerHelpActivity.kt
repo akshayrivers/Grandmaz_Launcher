@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.grandma.launcher.R
 import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.databinding.ActivityCaretakerHelpBinding
+import androidx.lifecycle.lifecycleScope
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -17,18 +18,8 @@ import java.util.Locale
  * The user taps the amber FAB → arrives here.
  * They (or a helper nearby) can add an optional note.
  * Tapping "Send" fires a mailto: Intent which opens the
- * device's email app pre-filled with the caretaker's address.
- *
- * Phase 1: mailto: Intent — simple, no backend required.
- * Phase 2: This screen will call an API endpoint instead,
- *           enabling push notifications to the caretaker's PWA.
- *           The UI will not need to change — only the send action.
- *
- * Why mailto: and not a direct send?
- * - No backend, no API keys, no server costs in Phase 1
- * - The caretaker's email provider handles delivery
- * - The user (or nearby helper) sees the email being sent
- *   which provides reassurance that it worked
+ * device's email app pre-filled with the caretaker's address,
+ * and posts the Help Request to the Fastify Backend API.
  */
 class CaretakerHelpActivity : AppCompatActivity() {
 
@@ -91,6 +82,23 @@ class CaretakerHelpActivity : AppCompatActivity() {
         val subject = getString(R.string.caretaker_email_subject)
         val body = getString(R.string.caretaker_email_body, timestamp, note)
 
+        // Send to backend API
+        val helpRepo = com.grandma.launcher.remote.HelpRequestRepository(this)
+        lifecycleScope.launchWhenStarted {
+            val result = helpRepo.createHelpRequest(
+                title = "Help requested from launcher",
+                description = note,
+                type = com.grandma.launcher.remote.HelpRequestRepository.HelpType.GENERAL
+            )
+            if (result is com.grandma.launcher.network.ApiClient.Result.Success) {
+                Toast.makeText(
+                    this@CaretakerHelpActivity,
+                    "Help request sent to Caretaker Dashboard!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = android.net.Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(caretakerEmail))
@@ -98,14 +106,10 @@ class CaretakerHelpActivity : AppCompatActivity() {
             putExtra(Intent.EXTRA_TEXT, body)
         }
 
-        if (intent.resolveActivity(packageManager) != null) {
+        try {
             startActivity(intent)
-        } else {
-            Toast.makeText(
-                this,
-                "No email app found on this phone",
-                Toast.LENGTH_SHORT
-            ).show()
+        } catch (e: Exception) {
+            finish()
         }
     }
 }

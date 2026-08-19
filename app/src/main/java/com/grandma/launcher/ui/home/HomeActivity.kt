@@ -31,6 +31,7 @@ import com.grandma.launcher.ui.caretaker.CaretakerHelpActivity
 import com.grandma.launcher.ui.contacts.AddContactActivity
 import com.grandma.launcher.ui.contacts.ContactsActivity
 import com.grandma.launcher.ui.contacts.CallConfirmBottomSheet
+import androidx.lifecycle.lifecycleScope
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -144,6 +145,9 @@ class HomeActivity : AppCompatActivity() {
         }
         binding.homeHeader.updateDate()
         binding.homeHeader.updateWeather()
+
+        // Start background sync manager (registration, snapshot, remote tasks)
+        com.grandma.launcher.remote.DeviceSyncManager.getInstance(this).startSyncLoop()
     }
 
     override fun onPause() {
@@ -291,6 +295,17 @@ class HomeActivity : AppCompatActivity() {
 
     private fun triggerSos() {
         val emergencyNumber = appPrefs.emergencyNumber
+        
+        // Post high priority SOS Help Request to Fastify Backend API
+        val helpRepo = com.grandma.launcher.remote.HelpRequestRepository(this)
+        lifecycleScope.launchWhenStarted {
+            helpRepo.createHelpRequest(
+                title = "EMERGENCY SOS TRIGGERED",
+                description = "User activated SOS emergency button on Grandma's Launcher",
+                type = com.grandma.launcher.remote.HelpRequestRepository.HelpType.SOS
+            )
+        }
+
         val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$emergencyNumber"))
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
             == PackageManager.PERMISSION_GRANTED

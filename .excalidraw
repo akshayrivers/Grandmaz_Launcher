@@ -575,11 +575,16 @@
       "index": "ax",
       "roundness": null,
       "seed": 1267034105,
-      "version": 75,
-      "versionNonce": 2027931065,
+      "version": 76,
+      "versionNonce": 771111577,
       "isDeleted": false,
-      "boundElements": null,
-      "updated": 1785094844185,
+      "boundElements": [
+        {
+          "id": "dNtaNBRP2ADIDKvub4a26",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1785152461789,
       "link": null,
       "locked": false,
       "text": "Device Manager",
@@ -4520,8 +4525,8 @@
     {
       "id": "dNtaNBRP2ADIDKvub4a26",
       "type": "arrow",
-      "x": -436.40200099002357,
-      "y": 639.4728814402432,
+      "x": -436.9499485974651,
+      "y": 638.9249338328016,
       "width": 1067.319592369663,
       "height": 303.6311495071859,
       "angle": 0,
@@ -4537,11 +4542,11 @@
       "index": "b1i",
       "roundness": null,
       "seed": 716213559,
-      "version": 128,
-      "versionNonce": 1472838071,
+      "version": 131,
+      "versionNonce": 1214611321,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1785099544958,
+      "updated": 1785152461790,
       "link": null,
       "locked": false,
       "points": [
@@ -4556,14 +4561,14 @@
       ],
       "lastCommittedPoint": null,
       "startBinding": {
-        "elementId": "2pkPU5WpdRDNzTiHiL_pX",
-        "focus": 0.6276242626160672,
-        "gap": 5.562449761548692
+        "elementId": "-fNfXYHArbxtcdhkyTNOt",
+        "focus": 1.1465290562596393,
+        "gap": 14
       },
       "endBinding": {
         "elementId": "lgsP4rhjFEgs_wSE7rcGU",
-        "focus": 0.6295281638667872,
-        "gap": 10.118624485000055
+        "focus": 0.643064111964999,
+        "gap": 5.4315476546202035
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",

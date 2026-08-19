@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import androidx.lifecycle.lifecycleScope
 import com.grandma.launcher.R
 import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.databinding.ActivitySetupBinding
@@ -294,7 +295,20 @@ class SetupActivity : AppCompatActivity() {
 
     private fun completeSetup() {
         appPrefs.isSetupComplete = true
-        Toast.makeText(this, "Setup complete! Welcome to Grandma's Launcher.", Toast.LENGTH_LONG).show()
+
+        // Register device & send caretaker magic-link invitations to all registered caretakers
+        val caretakerEmails = appPrefs.getCaretakerEmails()
+        lifecycleScope.launchWhenStarted {
+            val regRepo = com.grandma.launcher.remote.DeviceRegistrationRepository(this@SetupActivity)
+            regRepo.registerAndVerifyDevice()
+
+            if (caretakerEmails.isNotEmpty()) {
+                val invRepo = com.grandma.launcher.remote.CaretakerInvitationRepository(this@SetupActivity)
+                invRepo.sendCaretakerInvitations(caretakerEmails)
+            }
+        }
+
+        Toast.makeText(this, "Setup complete! Magic link invitation sent to caretaker.", Toast.LENGTH_LONG).show()
 
         val intent = Intent(this, HomeActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

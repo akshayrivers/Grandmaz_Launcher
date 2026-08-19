@@ -36,12 +36,53 @@ class AppPreferences(context: Context) {
         set(value) = prefs.edit().putString(KEY_CARETAKER_NAME, value).apply()
 
     /**
-     * Caretaker email address for help requests.
-     * Empty string means the help button will show a "not configured" message.
+     * Primary caretaker email address.
      */
     var caretakerEmail: String
-        get() = prefs.getString(KEY_CARETAKER_EMAIL, "") ?: ""
-        set(value) = prefs.edit().putString(KEY_CARETAKER_EMAIL, value).apply()
+        get() = getCaretakerEmails().firstOrNull() ?: prefs.getString(KEY_CARETAKER_EMAIL, "") ?: ""
+        set(value) {
+            if (value.isNotBlank()) {
+                addCaretakerEmail(value)
+            } else {
+                prefs.edit().putString(KEY_CARETAKER_EMAIL, "").apply()
+            }
+        }
+
+    /**
+     * List of all linked caretaker email addresses for multiple caretaker support.
+     */
+    fun getCaretakerEmails(): List<String> {
+        val raw = prefs.getString(KEY_CARETAKER_EMAILS_LIST, "") ?: ""
+        if (raw.isNotBlank()) {
+            return raw.split(",").map { it.trim() }.filter { it.isNotBlank() }.distinct()
+        }
+        val legacy = prefs.getString(KEY_CARETAKER_EMAIL, "") ?: ""
+        return if (legacy.isNotBlank()) listOf(legacy.trim()) else emptyList()
+    }
+
+    fun addCaretakerEmail(email: String) {
+        val trimmed = email.trim()
+        if (trimmed.isBlank()) return
+        val current = getCaretakerEmails().toMutableList()
+        if (!current.contains(trimmed)) {
+            current.add(trimmed)
+            prefs.edit()
+                .putString(KEY_CARETAKER_EMAILS_LIST, current.joinToString(","))
+                .putString(KEY_CARETAKER_EMAIL, current.first())
+                .apply()
+        }
+    }
+
+    fun removeCaretakerEmail(email: String) {
+        val trimmed = email.trim()
+        val current = getCaretakerEmails().toMutableList()
+        if (current.remove(trimmed)) {
+            prefs.edit()
+                .putString(KEY_CARETAKER_EMAILS_LIST, current.joinToString(","))
+                .putString(KEY_CARETAKER_EMAIL, current.firstOrNull() ?: "")
+                .apply()
+        }
+    }
 
     /**
      * Caretaker's Google profile photo URL.
@@ -75,6 +116,55 @@ class AppPreferences(context: Context) {
         get() = prefs.getLong(KEY_FAB_IDLE_DELAY, DEFAULT_FAB_IDLE_DELAY_MS)
         set(value) = prefs.edit().putLong(KEY_FAB_IDLE_DELAY, value).apply()
 
+    /**
+     * Backend REST API Base URL.
+     */
+    var backendBaseUrl: String
+        get() = prefs.getString(KEY_BACKEND_BASE_URL, DEFAULT_BACKEND_BASE_URL) ?: DEFAULT_BACKEND_BASE_URL
+        set(value) = prefs.edit().putString(KEY_BACKEND_BASE_URL, value.trimEnd('/')).apply()
+
+    /**
+     * Unique Device ID for backend challenge-response registration.
+     */
+    var deviceId: String
+        get() {
+            var id = prefs.getString(KEY_DEVICE_ID, "") ?: ""
+            if (id.isEmpty()) {
+                id = "device_" + java.util.UUID.randomUUID().toString()
+                prefs.edit().putString(KEY_DEVICE_ID, id).apply()
+            }
+            return id
+        }
+        set(value) = prefs.edit().putString(KEY_DEVICE_ID, value).apply()
+
+    /**
+     * Device RSA Public Key in PEM format.
+     */
+    var devicePublicKeyPem: String
+        get() = prefs.getString(KEY_DEVICE_PUBLIC_KEY, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_DEVICE_PUBLIC_KEY, value).apply()
+
+    /**
+     * Device RSA Private Key in PEM format.
+     */
+    var devicePrivateKeyPem: String
+        get() = prefs.getString(KEY_DEVICE_PRIVATE_KEY, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_DEVICE_PRIVATE_KEY, value).apply()
+
+    /**
+     * Verification status with backend.
+     */
+    var isDeviceVerified: Boolean
+        get() = prefs.getBoolean(KEY_IS_DEVICE_VERIFIED, false)
+        set(value) = prefs.edit().putBoolean(KEY_IS_DEVICE_VERIFIED, value).apply()
+
+    /**
+     * Last background state sync timestamp in millis.
+     */
+    var lastSyncTimestamp: Long
+        get() = prefs.getLong(KEY_LAST_SYNC_TIMESTAMP, 0L)
+        set(value) = prefs.edit().putLong(KEY_LAST_SYNC_TIMESTAMP, value).apply()
+
     fun verifyPin(pinInput: String): Boolean {
         if (caretakerPin.isEmpty()) return true
         return caretakerPin == pinInput
@@ -86,11 +176,19 @@ class AppPreferences(context: Context) {
         private const val KEY_CARETAKER_GOOGLE_ID = "caretaker_google_id"
         private const val KEY_CARETAKER_NAME = "caretaker_name"
         private const val KEY_CARETAKER_EMAIL = "caretaker_email"
+        private const val KEY_CARETAKER_EMAILS_LIST = "caretaker_emails_list"
         private const val KEY_CARETAKER_PHOTO_URL = "caretaker_photo_url"
         private const val KEY_CARETAKER_PIN = "caretaker_pin"
         private const val KEY_EMERGENCY_NUMBER = "emergency_number"
         private const val KEY_FAB_IDLE_DELAY = "fab_idle_delay_ms"
+        private const val KEY_BACKEND_BASE_URL = "backend_base_url"
+        private const val KEY_DEVICE_ID = "device_id"
+        private const val KEY_DEVICE_PUBLIC_KEY = "device_public_key"
+        private const val KEY_DEVICE_PRIVATE_KEY = "device_private_key"
+        private const val KEY_IS_DEVICE_VERIFIED = "is_device_verified"
+        private const val KEY_LAST_SYNC_TIMESTAMP = "last_sync_timestamp"
 
+        const val DEFAULT_BACKEND_BASE_URL = "http://172.20.10.3:3000"
         const val DEFAULT_EMERGENCY_NUMBER = "112"
         const val DEFAULT_FAB_IDLE_DELAY_MS = 8000L
         const val SOS_HOLD_DURATION_MS = 3000L
