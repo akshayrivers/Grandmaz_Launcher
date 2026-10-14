@@ -69,8 +69,10 @@ class DeviceSyncManager private constructor(private val context: Context) {
         logIfError("snapshot", snapshot)
         val commands = commandManager.pollAndExecuteCommands()
         logIfError("commands", commands)
+        val config = DeviceConfigRepository(context, tokens).sync()
+        logIfError("config", config)
 
-        snapshot !is ApiClient.Result.Error && commands !is ApiClient.Result.Error
+        snapshot !is ApiClient.Result.Error && commands !is ApiClient.Result.Error && config !is ApiClient.Result.Error
     }
 
     private fun logIfError(step: String, result: ApiClient.Result<*>) {

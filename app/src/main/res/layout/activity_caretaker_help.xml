@@ -107,6 +107,14 @@
                 android:text="@string/caretaker_send" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditHome"
+                style="@style/Widget.Grandma.ConfirmButton.Amber"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/confirm_button_height"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="@string/caretaker_edit_home" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCancelHelp"
                 style="@style/Widget.Grandma.ConfirmButton.No"
                 android:layout_width="match_parent"

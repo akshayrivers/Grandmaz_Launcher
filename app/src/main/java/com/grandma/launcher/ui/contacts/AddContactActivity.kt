@@ -224,6 +224,8 @@ class AddContactActivity : AppCompatActivity() {
             phone = phone,
             isFavourite = true
         ))
+        com.grandma.launcher.remote.DeviceConfigRepository(this).noteLocalEdits()
+        com.grandma.launcher.remote.DeviceSyncManager.getInstance(this).requestSyncNow(force = true)
         finish()
     }
 }

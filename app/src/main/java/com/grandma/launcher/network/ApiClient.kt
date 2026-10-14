@@ -24,7 +24,8 @@ object ApiClient {
             val statusCode: Int,
             val message: String,
             val code: String? = null,
-            val cause: Throwable? = null
+            val cause: Throwable? = null,
+            val details: JSONObject? = null
         ) : Result<Nothing>() {
             val isNetworkError: Boolean get() = statusCode == NETWORK_ERROR
         }
@@ -56,10 +57,11 @@ object ApiClient {
         method: String,
         endpoint: String,
         body: JSONObject? = null,
-        tokens: DeviceTokenProvider
+        tokens: DeviceTokenProvider,
+        extraHeaders: Map<String, String> = emptyMap()
     ): Result<Any?> = withContext(Dispatchers.IO) {
         require(endpoint.startsWith(DEVICE_API_PREFIX)) { "Not a device endpoint: $endpoint" }
-        withDeviceAuthRetry(tokens) { token -> execute(method, endpoint, body, token) }
+        withDeviceAuthRetry(tokens) { token -> execute(method, endpoint, body, token, extraHeaders) }
     }
 
     internal suspend fun <T> withDeviceAuthRetry(
@@ -84,11 +86,13 @@ object ApiClient {
         method: String,
         endpoint: String,
         body: JSONObject?,
-        bearerToken: String?
+        bearerToken: String?,
+        extraHeaders: Map<String, String> = emptyMap()
     ): Result<Any?> {
         val headers = mutableMapOf("Accept" to "application/json")
         if (body != null) headers["Content-Type"] = "application/json"
         if (bearerToken != null) headers["Authorization"] = "Bearer $bearerToken"
+        headers.putAll(extraHeaders)
 
         val request = HttpRequest(
             method = method,
@@ -121,7 +125,8 @@ object ApiClient {
         return Result.Error(
             statusCode = response.statusCode,
             message = error?.optString("message")?.takeIf { it.isNotBlank() } ?: "HTTP ${response.statusCode}",
-            code = error?.optString("code")?.takeIf { it.isNotBlank() }
+            code = error?.optString("code")?.takeIf { it.isNotBlank() },
+            details = error?.optJSONObject("details")
         )
     }
 }

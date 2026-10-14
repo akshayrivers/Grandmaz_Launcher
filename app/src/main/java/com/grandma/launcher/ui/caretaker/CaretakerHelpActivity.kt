@@ -38,6 +38,9 @@ class CaretakerHelpActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
         binding.btnSendHelp.setOnClickListener { sendHelpRequest() }
         binding.btnCancelHelp.setOnClickListener { finish() }
+        binding.btnEditHome.setOnClickListener {
+            startActivity(Intent(this, CaretakerConfigActivity::class.java))
+        }
 
         CaretakerFabHelper.attach(this, binding.fabCaretaker)
 

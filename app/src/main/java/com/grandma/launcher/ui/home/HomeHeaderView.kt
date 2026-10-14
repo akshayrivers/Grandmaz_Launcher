@@ -117,6 +117,7 @@ class HomeHeaderView @JvmOverloads constructor(
 
     fun updateWeather() {
         val weather = weatherRepo.getCurrentWeather()
-        weatherCard.bind(weather)
+        val city = com.grandma.launcher.data.AppPreferences(context).weatherCity
+        weatherCard.bind(if (city.isNotBlank()) weather.copy(locationName = city) else weather)
     }
 }

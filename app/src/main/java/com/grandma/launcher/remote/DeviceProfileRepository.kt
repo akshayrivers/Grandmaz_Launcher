@@ -23,12 +23,16 @@ class DeviceProfileRepository(
             is ApiClient.Result.Success -> {
                 val caretakers = (result.data as? JSONObject)?.optJSONArray("caretakers")
                 var primary: JSONObject? = null
+                val wantedId = appPrefs.primaryCaretakerUserId
                 if (caretakers != null) {
                     for (i in 0 until caretakers.length()) {
                         val c = caretakers.optJSONObject(i) ?: continue
-                        if (c.optString("role") == ROLE_PRIMARY) {
+                        if (wantedId.isNotBlank() && c.optString("caretakerId") == wantedId) {
                             primary = c
                             break
+                        }
+                        if (primary == null && c.optString("role") == ROLE_PRIMARY) {
+                            primary = c
                         }
                     }
                 }

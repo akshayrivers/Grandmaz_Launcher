@@ -233,6 +233,37 @@ class AppPreferences(context: Context) {
         get() = prefs.getLong(KEY_LAST_SYNC_TIMESTAMP, 0L)
         set(value) = prefs.edit().putLong(KEY_LAST_SYNC_TIMESTAMP, value).apply()
 
+    /** Cached device-config version. 0 means nothing has been saved on the server yet. */
+    var configVersion: Int
+        get() = prefs.getInt(KEY_CONFIG_VERSION, 0)
+        set(value) = prefs.edit().putInt(KEY_CONFIG_VERSION, value).apply()
+
+    /** Local caretaker edits that still need PUT /api/device/config. */
+    var configDirty: Boolean
+        get() = prefs.getBoolean(KEY_CONFIG_DIRTY, false)
+        set(value) = prefs.edit().putBoolean(KEY_CONFIG_DIRTY, value).apply()
+
+    var weatherCity: String
+        get() = prefs.getString(KEY_WEATHER_CITY, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_WEATHER_CITY, value).apply()
+
+    var weatherMode: String
+        get() = prefs.getString(KEY_WEATHER_MODE, "city") ?: "city"
+        set(value) = prefs.edit().putString(KEY_WEATHER_MODE, value).apply()
+
+    var inactivityReturnSec: Int
+        get() = prefs.getInt(KEY_INACTIVITY_RETURN_SEC, 60)
+        set(value) = prefs.edit().putInt(KEY_INACTIVITY_RETURN_SEC, value).apply()
+
+    var smsFallbackEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SMS_FALLBACK, true)
+        set(value) = prefs.edit().putBoolean(KEY_SMS_FALLBACK, value).apply()
+
+    /** users.id of the caretaker SOS should call, when the config names one. */
+    var primaryCaretakerUserId: String
+        get() = prefs.getString(KEY_PRIMARY_CARETAKER_USER_ID, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_PRIMARY_CARETAKER_USER_ID, value).apply()
+
     /**
      * One-time upgrade from the pre-Phase-0 storage layout. The old RSA identity (private
      * key in plain prefs) is discarded: the backend refuses a new key for an existing
@@ -286,6 +317,13 @@ class AppPreferences(context: Context) {
         private const val KEY_FCM_TOKEN = "fcm_token"
         private const val KEY_PENDING_MESSAGE = "pending_caretaker_message"
         private const val KEY_LAST_SYNC_TIMESTAMP = "last_sync_timestamp"
+        private const val KEY_CONFIG_VERSION = "config_version"
+        private const val KEY_CONFIG_DIRTY = "config_dirty"
+        private const val KEY_WEATHER_CITY = "weather_city"
+        private const val KEY_WEATHER_MODE = "weather_mode"
+        private const val KEY_INACTIVITY_RETURN_SEC = "inactivity_return_sec"
+        private const val KEY_SMS_FALLBACK = "sms_fallback"
+        private const val KEY_PRIMARY_CARETAKER_USER_ID = "primary_caretaker_user_id"
         private const val KEY_SECURITY_SCHEMA = "security_schema_version"
 
         // Pre-Phase-0 keys: only read/removed by migrations.

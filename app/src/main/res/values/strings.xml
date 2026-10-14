@@ -45,6 +45,13 @@
     <string name="caretaker_note_hint">Leave blank if not sure what to write</string>
     <string name="caretaker_send">YES, SEND FOR HELP</string>
     <string name="caretaker_cancel">GO BACK</string>
+    <string name="caretaker_edit_home">Edit home and weather</string>
+    <string name="caretaker_weather_city_label">Weather city</string>
+    <string name="caretaker_weather_city_hint">Jammu</string>
+    <string name="caretaker_save_home">Save on this phone</string>
+    <string name="caretaker_config_version">Saved version %1$d</string>
+    <string name="caretaker_config_conflict">Someone else changed the phone. Open this screen again.</string>
+    <string name="caretaker_config_save_failed">Could not save. Check the connection.</string>
     <string name="caretaker_email_subject">Help Request from Grandma\'s Launcher</string>
     <string name="caretaker_email_body">A help request has been sent.\n\nTime: %1$s\n\nNote: %2$s</string>
     <string name="caretaker_no_note">No note provided</string>
