@@ -264,6 +264,18 @@ class AppPreferences(context: Context) {
         get() = prefs.getString(KEY_PRIMARY_CARETAKER_USER_ID, "") ?: ""
         set(value) = prefs.edit().putString(KEY_PRIMARY_CARETAKER_USER_ID, value).apply()
 
+    /** E.164 numbers of linked caretakers, for the SOS SMS fallback. */
+    var caretakerPhones: List<String>
+        get() = (prefs.getString(KEY_CARETAKER_PHONES, "") ?: "")
+            .split(",")
+            .map { it.trim() }
+            .filter { it.startsWith("+") }
+        set(value) = prefs.edit().putString(KEY_CARETAKER_PHONES, value.distinct().joinToString(",")).apply()
+
+    var activeSosEventId: String
+        get() = prefs.getString(KEY_ACTIVE_SOS_EVENT, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_ACTIVE_SOS_EVENT, value).apply()
+
     /**
      * One-time upgrade from the pre-Phase-0 storage layout. The old RSA identity (private
      * key in plain prefs) is discarded: the backend refuses a new key for an existing
@@ -324,6 +336,8 @@ class AppPreferences(context: Context) {
         private const val KEY_INACTIVITY_RETURN_SEC = "inactivity_return_sec"
         private const val KEY_SMS_FALLBACK = "sms_fallback"
         private const val KEY_PRIMARY_CARETAKER_USER_ID = "primary_caretaker_user_id"
+        private const val KEY_CARETAKER_PHONES = "caretaker_phones"
+        private const val KEY_ACTIVE_SOS_EVENT = "active_sos_event_id"
         private const val KEY_SECURITY_SCHEMA = "security_schema_version"
 
         // Pre-Phase-0 keys: only read/removed by migrations.

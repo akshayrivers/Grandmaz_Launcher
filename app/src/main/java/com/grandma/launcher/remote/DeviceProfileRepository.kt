@@ -39,6 +39,7 @@ class DeviceProfileRepository(
                 appPrefs.isPaired = primary != null
                 appPrefs.primaryCaretakerPhone =
                     if (primary == null || primary.isNull("phoneE164")) "" else primary.optString("phoneE164")
+                appPrefs.caretakerPhones = SosCoordinator.phonesFromCaretakers(caretakers)
                 ApiClient.Result.Success(Unit)
             }
         }

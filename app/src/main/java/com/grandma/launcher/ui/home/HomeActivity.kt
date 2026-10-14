@@ -25,7 +25,7 @@ import com.grandma.launcher.data.ContactRepository
 import com.grandma.launcher.databinding.ActivityHomeBinding
 import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceSyncManager
-import com.grandma.launcher.remote.HelpRequestRepository
+import com.grandma.launcher.remote.SosCoordinator
 import com.grandma.launcher.ui.apps.MoreAppsActivity
 import com.grandma.launcher.ui.caretaker.CaretakerHelpActivity
 import com.grandma.launcher.ui.common.CallLauncher
@@ -41,6 +41,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var contactRepo: ContactRepository
     private lateinit var appPrefs: AppPreferences
     private val callLauncher = CallLauncher(this)
+    private val sosCoordinator by lazy { SosCoordinator(this, appScope) }
 
     // Runnable that fades the FAB after idle period
     private val fabFadeRunnable = Runnable { fadeFabToIdle() }
@@ -282,23 +283,23 @@ class HomeActivity : AppCompatActivity() {
         binding.sosButton.onSosActivated = {
             triggerSos()
         }
+        if (sosCoordinator.isActive()) {
+            binding.btnStopAlerts.visibility = View.VISIBLE
+            binding.btnStopAlerts.setOnClickListener {
+                sosCoordinator.cancel()
+                binding.btnStopAlerts.visibility = View.GONE
+            }
+        }
     }
 
     private fun triggerSos() {
-        // The call goes first and never waits for the network; the alert runs in the
-        // app scope because this activity stops as soon as the dialer opens.
+        // The call goes first and is never cancelled by "Stop alerts".
         callLauncher.call(appPrefs.sosNumber, askPermission = false)
-
-        val helpRepo = HelpRequestRepository(applicationContext)
-        appScope.launch {
-            val result = helpRepo.createHelpRequest(
-                title = "EMERGENCY SOS TRIGGERED",
-                description = "User activated SOS emergency button on Grandma's Launcher",
-                type = HelpRequestRepository.HelpType.SOS
-            )
-            if (result is ApiClient.Result.Error) {
-                Log.e(TAG, "SOS help request failed: ${result.statusCode} ${result.code}")
-            }
+        sosCoordinator.start()
+        binding.btnStopAlerts.visibility = View.VISIBLE
+        binding.btnStopAlerts.setOnClickListener {
+            sosCoordinator.cancel()
+            binding.btnStopAlerts.visibility = View.GONE
         }
     }
 

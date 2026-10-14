@@ -12,6 +12,7 @@
     <string name="action_more_apps">More Apps</string>
     <string name="action_sos">SOS</string>
     <string name="sos_hold_hint">Hold to activate</string>
+    <string name="sos_stop_alerts">Stop alerts</string>
 
     <!-- Call Confirmation -->
     <string name="confirm_call_title">Calling %s?</string>

@@ -129,6 +129,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStopAlerts"
+        style="@style/Widget.Grandma.ConfirmButton.No"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/confirm_button_height"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="@string/sos_stop_alerts"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/sosButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- ── ZONE 5: MORE APPS ─────────────────────────────────────────── -->
 
     <TextView
@@ -151,7 +163,7 @@
         android:paddingBottom="12dp"
         android:background="?attr/selectableItemBackground"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/sosButton"
+        app:layout_constraintTop_toBottomOf="@id/btnStopAlerts"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
