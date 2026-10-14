@@ -49,6 +49,9 @@ class MoreAppsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnBack.setOnClickListener { finish() }
+        binding.btnTalk.setOnClickListener {
+            startActivity(Intent(this, com.grandma.launcher.ui.assistant.TalkActivity::class.java))
+        }
         inactivity = InactivityReturn(this, binding.moreAppsRootLayout)
         binding.btnCaretakerSettings.setOnClickListener {
             com.grandma.launcher.ui.caretaker.CaretakerPinDialog.show(this) {

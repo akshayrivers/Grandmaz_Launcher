@@ -48,6 +48,15 @@
                 app:tint="@color/color_accent_amber" />
         </LinearLayout>
 
+        <ImageButton
+            android:id="@+id/btnTalk"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginBottom="@dimen/space_md"
+            android:background="@color/color_bg_primary"
+            android:contentDescription="@string/talk_button"
+            android:src="@android:drawable/ic_btn_speak_now" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

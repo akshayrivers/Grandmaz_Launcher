@@ -19,6 +19,11 @@
     <string name="reminder_taken">Taken</string>
     <string name="reminder_snooze">Snooze</string>
     <string name="reminder_missed">Not now</string>
+    <string name="talk_button">Talk</string>
+    <string name="talk_hold">Hold, then let go</string>
+    <string name="talk_checking">…</string>
+    <string name="talk_unavailable">The helper is not available yet.</string>
+    <string name="talk_unavailable_spoken">Abhi madad uplabdh nahin hai</string>
 
     <!-- Call Confirmation -->
     <string name="confirm_call_title">Calling %s?</string>

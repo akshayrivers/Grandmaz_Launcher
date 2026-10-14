@@ -173,6 +173,11 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true" />
 
+        <activity
+            android:name=".ui.assistant.TalkActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.home.HomeActivity" />
+
         <!-- Floating Caretaker Bubble Service -->
         <service
             android:name=".ui.caretaker.CaretakerFloatingService"
