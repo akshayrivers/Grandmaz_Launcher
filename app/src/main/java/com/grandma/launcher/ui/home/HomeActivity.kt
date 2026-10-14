@@ -28,11 +28,13 @@ import com.grandma.launcher.remote.DeviceSyncManager
 import com.grandma.launcher.remote.SosCoordinator
 import com.grandma.launcher.ui.apps.MoreAppsActivity
 import com.grandma.launcher.ui.caretaker.CaretakerHelpActivity
+import com.grandma.launcher.ui.caretaker.CaretakerPinDialog
 import com.grandma.launcher.ui.common.CallLauncher
 import com.grandma.launcher.ui.contacts.AddContactActivity
 import com.grandma.launcher.ui.contacts.ContactsActivity
 import com.grandma.launcher.ui.contacts.CallConfirmBottomSheet
 import com.grandma.launcher.ui.message.MessageActivity
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
@@ -126,6 +128,8 @@ class HomeActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this) { }
 
         setupDate()
+        setupClockHold()
+        setupHouse()
         setupFab()
         setupToolButtons()
         setupSosButton()
@@ -167,6 +171,27 @@ class HomeActivity : AppCompatActivity() {
     private fun setupDate() {
         binding.homeHeader.updateDate()
         binding.homeHeader.updateWeather()
+        lifecycleScope.launch {
+            val weather = com.grandma.launcher.data.WeatherRepository(this@HomeActivity).refresh()
+            binding.homeHeader.showWeather(weather)
+        }
+    }
+
+    private fun setupClockHold() {
+        binding.homeHeader.onClockLongPress = {
+            CaretakerPinDialog.show(this) {
+                startActivity(Intent(this, CaretakerHelpActivity::class.java))
+            }
+        }
+    }
+
+    private fun setupHouse() {
+        binding.btnHouse.setOnClickListener {
+            startActivity(
+                Intent(this, HomeActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            )
+        }
     }
 
     // ── Contacts ─────────────────────────────────────────────────────────────
@@ -175,21 +200,12 @@ class HomeActivity : AppCompatActivity() {
         binding.gridContacts.removeAllViews()
 
         val favourites = contactRepo.getFavourites().take(MAX_HOME_CONTACTS)
-        val slotsUsed = favourites.size
-        val showAddSlot = slotsUsed < MAX_HOME_CONTACTS
 
         // Add contact cards
         favourites.forEach { contact ->
             val card = ContactCardView(this, contact)
             card.onTap = { showCallConfirmation(contact) }
             addCardToGrid(card)
-        }
-
-        // Add "Add Contact" slot if there's room
-        if (showAddSlot) {
-            val addCard = AddContactCardView(this)
-            addCard.setOnClickListener { openAddContact() }
-            addCardToGrid(addCard)
         }
     }
 
@@ -377,6 +393,9 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupSeeAll() {
         binding.tvSeeAll.setOnClickListener {
+            startActivity(Intent(this, ContactsActivity::class.java))
+        }
+        binding.btnMorePeople.setOnClickListener {
             startActivity(Intent(this, ContactsActivity::class.java))
         }
     }

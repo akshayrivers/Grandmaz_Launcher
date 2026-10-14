@@ -26,9 +26,9 @@
                 android:id="@+id/btnBack"
                 android:layout_width="@dimen/back_button_size"
                 android:layout_height="@dimen/back_button_size"
-                android:src="@android:drawable/ic_media_previous"
+                android:src="@drawable/ic_house"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/action_back" />
+                android:contentDescription="@string/action_home" />
 
             <TextView
                 android:layout_width="0dp"

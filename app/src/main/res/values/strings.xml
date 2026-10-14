@@ -6,6 +6,10 @@
     <!-- Home Screen -->
     <string name="section_your_people">YOUR PEOPLE</string>
     <string name="action_see_all">See All →</string>
+    <string name="action_more_people">More people</string>
+    <string name="action_home">Home</string>
+    <string name="action_more_people">More people</string>
+    <string name="action_home">Home</string>
     <string name="action_add_contact">Add</string>
     <string name="action_camera">Camera</string>
     <string name="action_whatsapp">WhatsApp</string>

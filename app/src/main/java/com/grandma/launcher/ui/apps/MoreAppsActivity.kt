@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.grandma.launcher.R
 import com.grandma.launcher.databinding.ActivityMoreAppsBinding
 import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
+import com.grandma.launcher.ui.common.InactivityReturn
 
 /**
  * Displays all installed apps in a grid.
@@ -38,6 +40,7 @@ import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 class MoreAppsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMoreAppsBinding
+    private lateinit var inactivity: InactivityReturn
 
     override fun onCreate(savedInstanceState: Bundle?) {
         androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -46,6 +49,7 @@ class MoreAppsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnBack.setOnClickListener { finish() }
+        inactivity = InactivityReturn(this, binding.moreAppsRootLayout)
         binding.btnCaretakerSettings.setOnClickListener {
             com.grandma.launcher.ui.caretaker.CaretakerPinDialog.show(this) {
                 startActivity(Intent(this, com.grandma.launcher.ui.setup.SetupActivity::class.java))
@@ -77,6 +81,21 @@ class MoreAppsActivity : AppCompatActivity() {
             )
             insets
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        inactivity.arm()
+    }
+
+    override fun onPause() {
+        inactivity.stop()
+        super.onPause()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev?.action == MotionEvent.ACTION_DOWN) inactivity.arm()
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun queryInstalledApps(): List<ResolveInfo> {

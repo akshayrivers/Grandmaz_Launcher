@@ -2,6 +2,7 @@ package com.grandma.launcher.ui.contacts
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.GridLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import com.grandma.launcher.data.ContactRepository
 import com.grandma.launcher.databinding.ActivityContactsBinding
 import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import com.grandma.launcher.ui.common.CallLauncher
+import com.grandma.launcher.ui.common.InactivityReturn
 
 /**
  * Full contacts screen — photo grid, 3 per row.
@@ -29,6 +31,7 @@ class ContactsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityContactsBinding
     private lateinit var contactRepo: ContactRepository
     private val callLauncher = CallLauncher(this)
+    private lateinit var inactivity: InactivityReturn
 
     override fun onCreate(savedInstanceState: Bundle?) {
         androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -39,6 +42,7 @@ class ContactsActivity : AppCompatActivity() {
         contactRepo = ContactRepository(this)
 
         binding.btnBack.setOnClickListener { finish() }
+        inactivity = InactivityReturn(this, binding.contactsRootLayout)
 
         CaretakerFabHelper.attach(this, binding.fabCaretaker)
 
@@ -64,6 +68,17 @@ class ContactsActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadContacts()
+        inactivity.arm()
+    }
+
+    override fun onPause() {
+        inactivity.stop()
+        super.onPause()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev?.action == MotionEvent.ACTION_DOWN) inactivity.arm()
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun loadContacts() {

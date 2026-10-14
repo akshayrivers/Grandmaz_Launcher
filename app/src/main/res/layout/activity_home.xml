@@ -47,22 +47,15 @@
         android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
         app:layout_constraintTop_toBottomOf="@id/homeHeader"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/tvSeeAll" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/tvSeeAll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_md"
-        android:text="@string/action_see_all"
-        android:textSize="14sp"
-        android:textColor="@color/color_accent_blue"
-        android:padding="@dimen/space_sm"
-        android:clickable="true"
-        android:focusable="true"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/homeHeader"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@id/tvYourPeople" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Contact cards grid (2×2) — managed by HomeActivity -->
     <GridLayout
@@ -76,6 +69,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMorePeople"
+        style="@style/Widget.Grandma.ConfirmButton.No"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="@string/action_more_people"
+        app:icon="@android:drawable/ic_menu_myplaces"
+        app:iconGravity="textStart"
+        app:layout_constraintTop_toBottomOf="@id/gridContacts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- ── ZONE 3: TOOLS ─────────────────────────────────────────────── -->
 
     <View
@@ -84,7 +90,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="@dimen/space_md"
         android:background="@color/color_divider"
-        app:layout_constraintTop_toBottomOf="@id/gridContacts"
+        app:layout_constraintTop_toBottomOf="@id/btnMorePeople"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -167,6 +173,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnHouse"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="@dimen/space_sm"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/action_home"
+        android:padding="16dp"
+        android:src="@drawable/ic_house"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- ── CARETAKER FAB ─────────────────────────────────────────────── -->
     <!--

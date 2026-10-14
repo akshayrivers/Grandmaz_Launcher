@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.grandma.launcher.R
+import com.grandma.launcher.data.WeatherData
 import com.grandma.launcher.data.WeatherRepository
 import com.grandma.launcher.ui.alarm.AlarmActivity
 import com.grandma.launcher.ui.views.AnalogClockView
@@ -31,6 +32,7 @@ class HomeHeaderView @JvmOverloads constructor(
     private val dateText: TextView
     private val weatherCard: WeatherCardView
     private val weatherRepo = WeatherRepository(context)
+    var onClockLongPress: (() -> Unit)? = null
 
     init {
         orientation = HORIZONTAL
@@ -45,6 +47,10 @@ class HomeHeaderView @JvmOverloads constructor(
             // Intuitive gesture: tapping the clock face launches the Alarms
             setOnClickListener {
                 context.startActivity(Intent(context, AlarmActivity::class.java))
+            }
+            setOnLongClickListener {
+                onClockLongPress?.invoke()
+                true
             }
         }
         addView(clockView)
@@ -116,8 +122,10 @@ class HomeHeaderView @JvmOverloads constructor(
     }
 
     fun updateWeather() {
-        val weather = weatherRepo.getCurrentWeather()
-        val city = com.grandma.launcher.data.AppPreferences(context).weatherCity
-        weatherCard.bind(if (city.isNotBlank()) weather.copy(locationName = city) else weather)
+        weatherCard.bind(weatherRepo.getCurrentWeather())
+    }
+
+    fun showWeather(data: WeatherData) {
+        weatherCard.bind(data)
     }
 }
