@@ -147,3 +147,4 @@ class ContactRepository(context: Context) {
             }
         }
     }
+}

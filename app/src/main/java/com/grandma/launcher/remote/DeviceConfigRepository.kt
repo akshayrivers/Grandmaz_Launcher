@@ -125,7 +125,7 @@ class DeviceConfigRepository(
         prefs.weatherMode = weather?.optString("mode").takeUnless { it.isNullOrBlank() } ?: "city"
         prefs.weatherCity = nullableString(weather, "city") ?: ""
         prefs.inactivityReturnSec = home?.optInt("inactivityReturnSec", 60)?.coerceIn(15, 600) ?: 60
-        com.grandma.launcher.ui.alarm.AlarmScheduler.rescheduleMedicine(context)
+        com.grandma.launcher.ui.alarm.AlarmScheduler.rescheduleMedicine(appContext)
 
         val remoteContacts = config.optJSONArray("contacts") ?: JSONArray()
         val existing = contacts.getAll()

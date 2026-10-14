@@ -12,6 +12,16 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 
+data class WeatherData(
+    val temperatureCelsius: Int,
+    val condition: WeatherCondition,
+    val locationName: String
+)
+
+enum class WeatherCondition {
+    SUNNY, CLOUDY, RAINY, THUNDERSTORM, SNOWY
+}
+
 /**
  * Real weather from Open-Meteo. A caretaker-set city is used first; otherwise the last
  * coarse location. Results are cached for 45 minutes. No API key.
