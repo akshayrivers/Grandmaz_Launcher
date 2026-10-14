@@ -38,7 +38,7 @@ camelCase for new fields and convert old ones deliberately across all three repo
 
 ## Stack & commands
 
-Kotlin 2.0.21, AGP 8.13.2, compileSdk/targetSdk 34, minSdk 26, Java 1.8 target, ViewBinding on.
+Kotlin 2.0.21, AGP 8.13.2, compileSdk/targetSdk 36, minSdk 26, Java 1.8 target, ViewBinding on.
 Deps: AndroidX core/appcompat/constraintlayout, Material, androidx.credentials, play-services-auth.
 Tests: JUnit 4 + Robolectric 4.14.1 (JVM, no emulator). JDK 21 works. No ktlint/detekt configured.
 
