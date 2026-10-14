@@ -40,6 +40,9 @@
     <string name="add_contact_save">Save Contact</string>
     <string name="add_contact_import">Import from phone contacts</string>
     <string name="add_contact_whatsapp">WhatsApp video</string>
+    <string name="add_contact_record_name">Record their name</string>
+    <string name="add_contact_stop_recording">Stop and save the clip</string>
+    <string name="add_contact_clip_saved">Name clip saved</string>
 
     <!-- Caretaker Help Screen -->
     <string name="screen_ask_for_help">ASK FOR HELP</string>

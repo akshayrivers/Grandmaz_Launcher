@@ -224,6 +224,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun showCallConfirmation(contact: Contact) {
         CallConfirmBottomSheet.show(supportFragmentManager, contact) {
+            com.grandma.launcher.voice.VoiceManager(this).speak(contact.name, contact.nameClipId)
             if (contact.whatsapp) {
                 com.grandma.launcher.ui.common.WhatsAppCaller.call(this, contact) {
                     callLauncher.call(contact.phone)

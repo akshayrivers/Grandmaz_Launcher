@@ -15,11 +15,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import com.grandma.launcher.R
 import com.grandma.launcher.data.Contact
 import com.grandma.launcher.data.ContactPhone
 import com.grandma.launcher.data.ContactRepository
 import com.grandma.launcher.databinding.ActivityAddContactBinding
+import com.grandma.launcher.network.ApiClient
+import com.grandma.launcher.remote.DeviceRegistrationRepository
+import com.grandma.launcher.voice.ClipRecorder
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 
@@ -32,6 +37,8 @@ class AddContactActivity : AppCompatActivity() {
     private var cameraOutputUri: Uri? = null
     private var editingContactId: Long? = null
     private var importedPhones: List<ContactPhone> = emptyList()
+    private var nameClipId: String? = null
+    private var recorder: com.grandma.launcher.voice.ClipRecorder? = null
 
     companion object {
         const val EXTRA_CONTACT_ID = "contact_id"
@@ -80,6 +87,7 @@ class AddContactActivity : AppCompatActivity() {
         binding.btnTakePhoto.setOnClickListener { launchCamera() }
         binding.btnChooseGallery.setOnClickListener { launchGallery() }
         binding.btnImportContact.setOnClickListener { launchImport() }
+        binding.btnRecordName.setOnClickListener { toggleRecording() }
         binding.btnSaveContact.setOnClickListener { saveContact() }
 
         val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
@@ -107,6 +115,7 @@ class AddContactActivity : AppCompatActivity() {
         binding.etContactPhone.setText(contact.phone)
         binding.cbWhatsapp.isChecked = contact.whatsapp
         importedPhones = contact.phones
+        nameClipId = contact.nameClipId
         capturedPhotoPath = contact.photoPath
         contact.photoPath?.let {
             val bmp = BitmapFactory.decodeFile(it)
@@ -285,6 +294,42 @@ class AddContactActivity : AppCompatActivity() {
 
     // ── Save ──────────────────────────────────────────────────────────────────
 
+    private fun toggleRecording() {
+        if (recorder != null) {
+            val active = recorder ?: return
+            recorder = null
+            binding.btnRecordName.isEnabled = false
+            lifecycleScope.launch {
+                when (val result = active.stopAndUpload()) {
+                    is ApiClient.Result.Success -> {
+                        nameClipId = result.data
+                        Toast.makeText(this@AddContactActivity, getString(R.string.add_contact_clip_saved), Toast.LENGTH_SHORT).show()
+                    }
+                    is ApiClient.Result.Error ->
+                        Toast.makeText(this@AddContactActivity, result.message, Toast.LENGTH_LONG).show()
+                }
+                binding.btnRecordName.isEnabled = true
+                binding.btnRecordName.setText(R.string.add_contact_record_name)
+            }
+            return
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            audioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            return
+        }
+        val file = File(filesDir, "voice/recording.m4a")
+        val next = ClipRecorder(file, DeviceRegistrationRepository(this))
+        next.start()
+        recorder = next
+        binding.btnRecordName.setText(R.string.add_contact_stop_recording)
+    }
+
+    private val audioPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) toggleRecording()
+    }
+
     private fun saveContact() {
         val name = binding.etContactName.text?.toString()?.trim() ?: ""
         val phone = binding.etContactPhone.text?.toString()?.trim() ?: ""
@@ -309,7 +354,8 @@ class AddContactActivity : AppCompatActivity() {
             phone = phones.firstOrNull { it.isDefault }?.e164 ?: phone,
             isFavourite = true,
             phones = phones,
-            whatsapp = phones.any { it.whatsapp }
+            whatsapp = phones.any { it.whatsapp },
+            nameClipId = nameClipId
         ))
         com.grandma.launcher.remote.DeviceConfigRepository(this).noteLocalEdits()
         com.grandma.launcher.remote.DeviceSyncManager.getInstance(this).requestSyncNow(force = true)
