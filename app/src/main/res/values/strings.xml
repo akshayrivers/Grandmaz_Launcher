@@ -38,6 +38,8 @@
     <string name="add_contact_name_prompt">What is their name?</string>
     <string name="add_contact_name_hint">Type name here…</string>
     <string name="add_contact_save">Save Contact</string>
+    <string name="add_contact_import">Import from phone contacts</string>
+    <string name="add_contact_whatsapp">WhatsApp video</string>
 
     <!-- Caretaker Help Screen -->
     <string name="screen_ask_for_help">ASK FOR HELP</string>

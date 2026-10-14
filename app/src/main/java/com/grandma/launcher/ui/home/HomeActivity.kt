@@ -224,7 +224,13 @@ class HomeActivity : AppCompatActivity() {
 
     private fun showCallConfirmation(contact: Contact) {
         CallConfirmBottomSheet.show(supportFragmentManager, contact) {
-            callLauncher.call(contact.phone)
+            if (contact.whatsapp) {
+                com.grandma.launcher.ui.common.WhatsAppCaller.call(this, contact) {
+                    callLauncher.call(contact.phone)
+                }
+            } else {
+                callLauncher.call(contact.phone)
+            }
         }
     }
 

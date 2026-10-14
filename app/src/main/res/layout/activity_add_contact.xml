@@ -136,6 +136,23 @@
                 android:imeOptions="actionDone" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnImportContact"
+            style="@style/Widget.Grandma.ConfirmButton.No"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/confirm_button_height"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="@string/add_contact_import" />
+
+        <CheckBox
+            android:id="@+id/cbWhatsapp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:minHeight="80dp"
+            android:text="@string/add_contact_whatsapp"
+            android:textSize="20sp" />
+
         <!-- Save button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveContact"

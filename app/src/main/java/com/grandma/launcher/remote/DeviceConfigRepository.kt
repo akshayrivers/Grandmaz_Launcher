@@ -153,6 +153,9 @@ class DeviceConfigRepository(
             )
         }
         contacts.replaceAll(merged + existing.filter { it.remoteId == null || it.remoteId !in seen })
+        contacts.getAll().forEach { contact ->
+            com.grandma.launcher.data.SystemContacts.ensureWhatsAppContact(appContext, contact)
+        }
     }
 
     private fun contactsToJson(local: List<Contact>): JSONArray {

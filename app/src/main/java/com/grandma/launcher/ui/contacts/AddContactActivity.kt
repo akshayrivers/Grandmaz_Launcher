@@ -8,7 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
+import android.provider.ContactsContract
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.grandma.launcher.R
 import com.grandma.launcher.data.Contact
+import com.grandma.launcher.data.ContactPhone
 import com.grandma.launcher.data.ContactRepository
 import com.grandma.launcher.databinding.ActivityAddContactBinding
 import java.io.File
@@ -30,6 +31,7 @@ class AddContactActivity : AppCompatActivity() {
     private var capturedPhotoPath: String? = null
     private var cameraOutputUri: Uri? = null
     private var editingContactId: Long? = null
+    private var importedPhones: List<ContactPhone> = emptyList()
 
     companion object {
         const val EXTRA_CONTACT_ID = "contact_id"
@@ -77,6 +79,7 @@ class AddContactActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
         binding.btnTakePhoto.setOnClickListener { launchCamera() }
         binding.btnChooseGallery.setOnClickListener { launchGallery() }
+        binding.btnImportContact.setOnClickListener { launchImport() }
         binding.btnSaveContact.setOnClickListener { saveContact() }
 
         val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
@@ -102,10 +105,88 @@ class AddContactActivity : AppCompatActivity() {
         val contact = contactRepo.getAll().find { it.id == id } ?: return
         binding.etContactName.setText(contact.name)
         binding.etContactPhone.setText(contact.phone)
+        binding.cbWhatsapp.isChecked = contact.whatsapp
+        importedPhones = contact.phones
         capturedPhotoPath = contact.photoPath
         contact.photoPath?.let {
             val bmp = BitmapFactory.decodeFile(it)
             if (bmp != null) binding.ivPhotoPreview.setImageBitmap(bmp)
+        }
+    }
+
+    private val importLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
+        val uri = result.data?.data ?: return@registerForActivityResult
+        readImportedContact(uri)
+    }
+
+    private val contactsPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) fireImport()
+    }
+
+    private fun launchImport() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            fireImport()
+        } else {
+            contactsPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
+        }
+    }
+
+    private fun fireImport() {
+        importLauncher.launch(Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI))
+    }
+
+    private fun readImportedContact(uri: Uri) {
+        val cursor = contentResolver.query(
+            uri,
+            arrayOf(
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+            ),
+            null, null, null
+        ) ?: return
+        cursor.use {
+            if (!it.moveToFirst()) return
+            val name = it.getString(0).orEmpty()
+            val number = it.getString(1).orEmpty()
+            val contactId = it.getString(2)
+            if (name.isNotBlank()) binding.etContactName.setText(name)
+            binding.etContactPhone.setText(number)
+            importedPhones = loadAllNumbers(contactId).ifEmpty {
+                listOf(ContactPhone(id = "pimport", label = "", e164 = number.filter { ch -> ch == '+' || ch.isDigit() }, whatsapp = false, isDefault = true))
+            }
+        }
+    }
+
+    private fun loadAllNumbers(contactId: String?): List<ContactPhone> {
+        if (contactId.isNullOrBlank()) return emptyList()
+        val cursor = contentResolver.query(
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+            arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+            "${ContactsContract.CommonDataKinds.Phone.CONTACT_ID} = ?",
+            arrayOf(contactId),
+            null
+        ) ?: return emptyList()
+        return cursor.use {
+            val phones = mutableListOf<ContactPhone>()
+            var index = 0
+            while (it.moveToNext()) {
+                val raw = it.getString(0).orEmpty()
+                val e164 = raw.filter { ch -> ch == '+' || ch.isDigit() }
+                if (e164.isBlank()) continue
+                phones += ContactPhone(
+                    id = "p$index",
+                    label = "",
+                    e164 = e164,
+                    whatsapp = false,
+                    isDefault = index == 0
+                )
+                index++
+            }
+            phones
         }
     }
 
@@ -217,12 +298,18 @@ class AddContactActivity : AppCompatActivity() {
             return
         }
 
+        val id = editingContactId ?: System.currentTimeMillis()
+        val phones = importedPhones.ifEmpty {
+            listOf(ContactPhone(id = "p$id", label = "", e164 = phone, whatsapp = binding.cbWhatsapp.isChecked, isDefault = true))
+        }.map { it.copy(whatsapp = it.whatsapp || binding.cbWhatsapp.isChecked) }
         contactRepo.save(Contact(
-            id = editingContactId ?: System.currentTimeMillis(),
+            id = id,
             name = name,
             photoPath = capturedPhotoPath,
-            phone = phone,
-            isFavourite = true
+            phone = phones.firstOrNull { it.isDefault }?.e164 ?: phone,
+            isFavourite = true,
+            phones = phones,
+            whatsapp = phones.any { it.whatsapp }
         ))
         com.grandma.launcher.remote.DeviceConfigRepository(this).noteLocalEdits()
         com.grandma.launcher.remote.DeviceSyncManager.getInstance(this).requestSyncNow(force = true)
