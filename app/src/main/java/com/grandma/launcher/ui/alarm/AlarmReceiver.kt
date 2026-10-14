@@ -1,15 +1,19 @@
 package com.grandma.launcher.ui.alarm
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.grandma.launcher.R
 import com.grandma.launcher.ui.home.HomeActivity
 
@@ -64,6 +68,18 @@ class AlarmReceiver : BroadcastReceiver() {
             .setVibrate(longArrayOf(0, 500, 250, 500))
             .build()
 
+        // POST_NOTIFICATIONS is requested during setup; without it the alarm cannot be shown.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.e(TAG, "Alarm fired but notification permission is not granted")
+            return
+        }
         notificationManager.notify(1001, notification)
+    }
+
+    private companion object {
+        const val TAG = "AlarmReceiver"
     }
 }

@@ -2,68 +2,75 @@ package com.grandma.launcher.ui.setup
 
 import android.Manifest
 import android.app.role.RoleManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Patterns
 import android.view.View
-import android.widget.Toast
+import android.view.inputmethod.EditorInfo
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.grandma.launcher.R
+import com.grandma.launcher.appScope
 import com.grandma.launcher.data.AppPreferences
+import com.grandma.launcher.data.PinHasher
+import com.grandma.launcher.data.PinManager
 import com.grandma.launcher.databinding.ActivitySetupBinding
+import com.grandma.launcher.remote.DeviceSyncManager
+import com.grandma.launcher.remote.PairingCoordinator
+import com.grandma.launcher.ui.common.PhoneCaller
 import com.grandma.launcher.ui.home.HomeActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+/**
+ * One-time setup by a family helper (English text is fine here; grandma never uses it):
+ * language → main caretaker email → pairing code (wait for acceptance) → PIN →
+ * home screen role + permissions.
+ *
+ * Registration and invitation creation run in the application scope
+ * ([PairingCoordinator]), so leaving this screen never cancels them.
+ */
 class SetupActivity : AppCompatActivity() {
+
+    private enum class Step { LANGUAGE, EMAIL, PAIRING, PIN, PERMISSIONS }
 
     private lateinit var binding: ActivitySetupBinding
     private lateinit var appPrefs: AppPreferences
-    private var currentStep = 1
+    private lateinit var pairing: PairingCoordinator
+    private var step = Step.LANGUAGE
+    private var pairingDone = false
+    private var savingPin = false
 
-    // Google Sign-In launcher
-    private val googleSignInLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                handleGoogleSignInSuccess(account)
-            } catch (e: ApiException) {
-                // If standard Google Sign-In requires OAuth client ID configuration,
-                // fall back gracefully to picking account email from Google accounts on device
-                fallbackAccountPicker()
-            }
-        }
-
-    // Account picker fallback launcher
-    private val accountPickerLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK && result.data != null) {
-                val accountName = result.data?.getStringExtra(android.accounts.AccountManager.KEY_ACCOUNT_NAME)
-                if (!accountName.isNullOrEmpty()) {
-                    appPrefs.caretakerEmail = accountName
-                    appPrefs.caretakerName = accountName.substringBefore("@").replace(".", " ").capitalizeWords()
-                    appPrefs.caretakerGoogleId = accountName
-                    updateSignedInUi(appPrefs.caretakerName, appPrefs.caretakerEmail)
-                    Toast.makeText(this, "Signed in as $accountName", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-    // RoleManager launcher for Default Launcher prompt
     private val defaultLauncherLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            checkDefaultLauncherStatus()
+            refreshPermissionStatus()
         }
+
+    private val callPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            callPermissionAsked = true
+            refreshPermissionStatus()
+            if (!granted) binding.tvCallPermissionStatus.requestFocus()
+        }
+
+    private val optionalPermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            refreshPermissionStatus()
+        }
+
+    private var callPermissionAsked = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,242 +80,383 @@ class SetupActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         appPrefs = AppPreferences(this)
+        pairing = PairingCoordinator.getInstance(this)
+        pairing.restore()
 
-        setupStepNavigation()
-        setupGoogleAuth()
-        setupStep2()
-        setupStep3()
-        setupStep4()
-
-        updateStepUi()
-    }
-
-    private fun setupStepNavigation() {
-        binding.btnNextStep.setOnClickListener {
-            if (validateCurrentStep()) {
-                if (currentStep < 4) {
-                    currentStep++
-                    updateStepUi()
-                } else {
-                    completeSetup()
-                }
-            }
-        }
-
-        binding.btnBackStep.setOnClickListener {
-            if (currentStep > 1) {
-                currentStep--
-                updateStepUi()
-            }
-        }
-    }
-
-    private fun updateStepUi() {
-        binding.tvStepIndicator.text = "Step $currentStep of 4"
-
-        binding.layoutStep1.visibility = if (currentStep == 1) View.VISIBLE else View.GONE
-        binding.layoutStep2.visibility = if (currentStep == 2) View.VISIBLE else View.GONE
-        binding.layoutStep3.visibility = if (currentStep == 3) View.VISIBLE else View.GONE
-        binding.layoutStep4.visibility = if (currentStep == 4) View.VISIBLE else View.GONE
-
-        binding.btnBackStep.visibility = if (currentStep > 1) View.VISIBLE else View.GONE
-
-        binding.btnNextStep.text = if (currentStep == 4) {
-            getString(R.string.setup_btn_complete)
-        } else {
-            getString(R.string.setup_btn_next)
-        }
-    }
-
-    private fun validateCurrentStep(): Boolean {
-        return when (currentStep) {
-            1 -> {
-                if (appPrefs.caretakerEmail.isEmpty()) {
-                    Toast.makeText(this, "Please sign in with Google or enter caretaker email", Toast.LENGTH_SHORT).show()
-                    return false
-                }
-                true
-            }
-            2 -> {
-                val emergencyNum = binding.etEmergencyNumber.text.toString().trim()
-                val caretakerEmail = binding.etCaretakerEmail.text.toString().trim()
-
-                if (emergencyNum.isEmpty()) {
-                    binding.etEmergencyNumber.error = "Emergency number required"
-                    return false
-                }
-                if (caretakerEmail.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(caretakerEmail).matches()) {
-                    binding.etCaretakerEmail.error = "Valid caretaker email required"
-                    return false
-                }
-
-                appPrefs.emergencyNumber = emergencyNum
-                appPrefs.caretakerEmail = caretakerEmail
-                true
-            }
-            3 -> {
-                val pin = binding.etPin.text.toString().trim()
-                val pinConfirm = binding.etPinConfirm.text.toString().trim()
-
-                if (pin.length != 4) {
-                    binding.etPin.error = "PIN must be exactly 4 digits"
-                    return false
-                }
-                if (pin != pinConfirm) {
-                    binding.etPinConfirm.error = "PINs do not match"
-                    return false
-                }
-
-                appPrefs.caretakerPin = pin
-                true
-            }
-            4 -> {
-                true
-            }
-            else -> true
-        }
-    }
-
-    // ── Google Auth ──────────────────────────────────────────────────────────
-
-    private fun setupGoogleAuth() {
-        if (appPrefs.caretakerEmail.isNotEmpty()) {
-            updateSignedInUi(appPrefs.caretakerName, appPrefs.caretakerEmail)
-        }
-
-        binding.btnGoogleSignIn.setOnClickListener {
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestProfile()
-                .build()
-
-            val googleSignInClient = GoogleSignIn.getClient(this, gso)
-            val signInIntent = googleSignInClient.signInIntent
-            try {
-                googleSignInLauncher.launch(signInIntent)
-            } catch (e: Exception) {
-                fallbackAccountPicker()
-            }
-        }
-    }
-
-    private fun handleGoogleSignInSuccess(account: GoogleSignInAccount?) {
-        if (account != null) {
-            val email = account.email ?: ""
-            val name = account.displayName ?: email.substringBefore("@")
-            val id = account.id ?: email
-            val photoUrl = account.photoUrl?.toString() ?: ""
-
-            appPrefs.caretakerEmail = email
-            appPrefs.caretakerName = name
-            appPrefs.caretakerGoogleId = id
-            appPrefs.caretakerPhotoUrl = photoUrl
-
-            updateSignedInUi(name, email)
-            Toast.makeText(this, "Signed in as $name", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun fallbackAccountPicker() {
-        try {
-            val intent = android.accounts.AccountManager.newChooseAccountIntent(
-                null, null, arrayOf("com.google"), null, null, null, null
+        val horizontal = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.setupRootLayout) { view, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout() or
+                    WindowInsetsCompat.Type.ime()
             )
-            accountPickerLauncher.launch(intent)
-        } catch (e: Exception) {
-            Toast.makeText(this, "Could not open Google account picker", Toast.LENGTH_SHORT).show()
+            view.setPadding(horizontal, bars.top, horizontal, bars.bottom)
+            insets
+        }
+
+        step = savedInstanceState?.getString(STATE_STEP)?.let { Step.valueOf(it) }
+            ?: if (appPrefs.pendingInvitationId.isNotEmpty()) Step.PAIRING else Step.LANGUAGE
+        callPermissionAsked = savedInstanceState?.getBoolean(STATE_CALL_ASKED) ?: false
+
+        setupLanguageStep()
+        setupEmailStep()
+        setupPairingStep()
+        setupPinStep()
+        setupPermissionsStep()
+        setupNavigation()
+
+        lifecycleScope.launch {
+            pairing.state.collect { renderPairing(it) }
+        }
+
+        showStep(step)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        pairing.watch()
+    }
+
+    override fun onStop() {
+        pairing.unwatch()
+        super.onStop()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshPermissionStatus()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_STEP, step.name)
+        outState.putBoolean(STATE_CALL_ASKED, callPermissionAsked)
+    }
+
+    // ── Navigation ───────────────────────────────────────────────────────────
+
+    private fun setupNavigation() {
+        binding.btnNextStep.setOnClickListener { onPrimaryAction() }
+        binding.btnBackStep.setOnClickListener { goBack() }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (step == Step.LANGUAGE) {
+                    // First-time setup must not drop back to an unconfigured launcher.
+                    if (appPrefs.isSetupComplete) finish()
+                } else {
+                    goBack()
+                }
+            }
+        })
+    }
+
+    private fun goBack() {
+        val previous = Step.values().getOrNull(step.ordinal - 1) ?: return
+        showStep(previous)
+    }
+
+    private fun showStep(target: Step) {
+        step = target
+        binding.tvStepIndicator.text = getString(R.string.setup_step_indicator, target.ordinal + 1, Step.values().size)
+        binding.layoutStepLanguage.visibility = visibleIf(target == Step.LANGUAGE)
+        binding.layoutStepEmail.visibility = visibleIf(target == Step.EMAIL)
+        binding.layoutStepPairing.visibility = visibleIf(target == Step.PAIRING)
+        binding.layoutStepPin.visibility = visibleIf(target == Step.PIN)
+        binding.layoutStepPermissions.visibility = visibleIf(target == Step.PERMISSIONS)
+
+        binding.btnBackStep.visibility = visibleIf(target != Step.LANGUAGE)
+        binding.btnNextStep.visibility = visibleIf(target != Step.LANGUAGE)
+        when (target) {
+            Step.LANGUAGE -> Unit
+            Step.EMAIL -> updateEmailButton()
+            Step.PAIRING -> {
+                binding.btnNextStep.setText(R.string.setup_btn_next)
+                setNextEnabled(pairingDone)
+            }
+            Step.PIN -> {
+                binding.btnNextStep.setText(R.string.setup_btn_save_pin)
+                setNextEnabled(!savingPin)
+            }
+            Step.PERMISSIONS -> {
+                binding.btnNextStep.setText(R.string.setup_btn_complete)
+                setNextEnabled(true)
+                refreshPermissionStatus()
+            }
         }
     }
 
-    private fun updateSignedInUi(name: String, email: String) {
-        binding.layoutSignedInState.visibility = View.VISIBLE
-        binding.tvCaretakerName.text = name.ifEmpty { "Caretaker" }
-        binding.tvCaretakerEmail.text = email
-        binding.tvAvatarInitial.text = (name.ifEmpty { email }).firstOrNull()?.uppercase() ?: "C"
-
-        // Also pre-fill email input in Step 2
-        binding.etCaretakerEmail.setText(email)
+    private fun onPrimaryAction() {
+        when (step) {
+            Step.LANGUAGE -> Unit
+            Step.EMAIL -> submitEmail()
+            Step.PAIRING -> if (pairingDone) showStep(Step.PIN)
+            Step.PIN -> submitPin()
+            Step.PERMISSIONS -> completeSetup()
+        }
     }
 
-    // ── Step 2 ──────────────────────────────────────────────────────────────
+    private fun setNextEnabled(enabled: Boolean) {
+        binding.btnNextStep.isEnabled = enabled
+        binding.btnNextStep.alpha = if (enabled) 1f else DISABLED_ALPHA
+    }
 
-    private fun setupStep2() {
-        binding.etEmergencyNumber.setText(appPrefs.emergencyNumber)
+    // ── Step: language ───────────────────────────────────────────────────────
+
+    private fun setupLanguageStep() {
+        binding.btnLanguageHindi.setOnClickListener { chooseLanguage(AppPreferences.LANGUAGE_HINDI) }
+        binding.btnLanguageEnglish.setOnClickListener { chooseLanguage(AppPreferences.LANGUAGE_ENGLISH) }
+    }
+
+    private fun chooseLanguage(language: String) {
+        appPrefs.language = language
+        showStep(Step.EMAIL)
+    }
+
+    // ── Step: caretaker email ────────────────────────────────────────────────
+
+    private fun setupEmailStep() {
         binding.etCaretakerEmail.setText(appPrefs.caretakerEmail)
-    }
-
-    // ── Step 3 ──────────────────────────────────────────────────────────────
-
-    private fun setupStep3() {
-        if (appPrefs.caretakerPin.isNotEmpty()) {
-            binding.etPin.setText(appPrefs.caretakerPin)
-            binding.etPinConfirm.setText(appPrefs.caretakerPin)
+        binding.etCaretakerEmail.doAfterTextChanged {
+            binding.tilCaretakerEmail.error = null
+            updateEmailButton()
+        }
+        binding.etCaretakerEmail.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                submitEmail()
+                true
+            } else {
+                false
+            }
         }
     }
 
-    // ── Step 4 ──────────────────────────────────────────────────────────────
+    private fun updateEmailButton() {
+        val keepExisting = appPrefs.isPaired && binding.etCaretakerEmail.text.isNullOrBlank()
+        binding.tvEmailAlreadyLinked.visibility = visibleIf(appPrefs.isPaired)
+        binding.btnNextStep.setText(if (keepExisting) R.string.setup_btn_keep_caretaker else R.string.setup_btn_send_invitation)
+        setNextEnabled(true)
+    }
 
-    private fun setupStep4() {
-        binding.btnSetDefaultLauncher.setOnClickListener {
-            promptSetDefaultLauncher()
+    private fun submitEmail() {
+        val email = binding.etCaretakerEmail.text?.toString()?.trim().orEmpty()
+        if (email.isEmpty() && appPrefs.isPaired) {
+            showStep(Step.PIN)
+            return
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.tilCaretakerEmail.error = getString(R.string.setup_email_invalid)
+            return
+        }
+        appPrefs.setPrimaryCaretakerEmail(email)
+        pairing.startPairing(email)
+        showStep(Step.PAIRING)
+    }
+
+    // ── Step: pairing code ───────────────────────────────────────────────────
+
+    private fun setupPairingStep() {
+        binding.btnPairingRetry.setOnClickListener {
+            val email = appPrefs.caretakerEmail
+            if (email.isBlank()) showStep(Step.EMAIL) else pairing.startPairing(email)
+        }
+    }
+
+    private fun renderPairing(state: PairingCoordinator.State) {
+        val b = binding
+        var code: String? = null
+        var busy = false
+        var retry = false
+        val statusRes: Int
+        var statusColor = R.color.color_text_primary
+        pairingDone = false
+
+        when (state) {
+            PairingCoordinator.State.Idle -> {
+                // e.g. the process died while the invitation was being created
+                statusRes = R.string.setup_pairing_idle
+                retry = true
+            }
+            PairingCoordinator.State.Sending -> {
+                statusRes = R.string.setup_pairing_sending
+                busy = true
+            }
+            is PairingCoordinator.State.Waiting -> {
+                code = formatCode(state.pairingCode)
+                busy = true
+                if (state.connectionProblem) {
+                    statusRes = R.string.setup_pairing_connection_problem
+                    statusColor = R.color.color_accent_amber
+                } else {
+                    statusRes = R.string.setup_pairing_waiting
+                }
+            }
+            PairingCoordinator.State.Linked -> {
+                statusRes = R.string.setup_pairing_linked
+                statusColor = R.color.color_accent_green
+                pairingDone = true
+            }
+            PairingCoordinator.State.AlreadyLinked -> {
+                statusRes = R.string.setup_pairing_already_linked
+                statusColor = R.color.color_accent_green
+                pairingDone = true
+            }
+            is PairingCoordinator.State.Failed -> {
+                retry = true
+                statusColor = R.color.color_accent_amber
+                statusRes = when (state.reason) {
+                    PairingCoordinator.FailureReason.EXPIRED -> R.string.setup_pairing_expired
+                    PairingCoordinator.FailureReason.LOCKED -> R.string.setup_pairing_locked
+                    PairingCoordinator.FailureReason.REVOKED -> R.string.setup_pairing_revoked
+                    PairingCoordinator.FailureReason.NETWORK -> R.string.setup_pairing_network
+                    PairingCoordinator.FailureReason.SERVER -> R.string.setup_pairing_server
+                }
+            }
         }
 
-        binding.btnGrantPermissions.setOnClickListener {
-            requestPermissions()
+        b.tvPairingCode.visibility = visibleIf(code != null)
+        b.tvPairingCode.text = code.orEmpty()
+        b.progressPairing.visibility = visibleIf(busy)
+        b.btnPairingRetry.visibility = visibleIf(retry)
+        b.tvPairingStatus.setText(statusRes)
+        b.tvPairingStatus.setTextColor(ContextCompat.getColor(this, statusColor))
+        if (step == Step.PAIRING) setNextEnabled(pairingDone)
+    }
+
+    private fun formatCode(code: String): String =
+        if (code.length == 6) "${code.substring(0, 3)} ${code.substring(3)}" else code
+
+    // ── Step: PIN ────────────────────────────────────────────────────────────
+
+    private fun setupPinStep() {
+        // Never prefilled: the stored value is a hash and the PIN must be chosen fresh.
+        binding.etPin.doAfterTextChanged { binding.tilPin.error = null }
+        binding.etPinConfirm.doAfterTextChanged { binding.tilPinConfirm.error = null }
+        binding.etPinConfirm.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                submitPin()
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    private fun submitPin() {
+        if (savingPin) return
+        val pin = binding.etPin.text?.toString().orEmpty()
+        val confirm = binding.etPinConfirm.text?.toString().orEmpty()
+        if (!PinHasher.isValidFormat(pin)) {
+            binding.tilPin.error = getString(R.string.setup_pin_invalid)
+            return
+        }
+        if (pin != confirm) {
+            binding.tilPinConfirm.error = getString(R.string.setup_pin_mismatch)
+            return
+        }
+        savingPin = true
+        setNextEnabled(false)
+        val pinManager = PinManager(appPrefs)
+        lifecycleScope.launch {
+            withContext(Dispatchers.Default) { pinManager.setPin(pin) }
+            savingPin = false
+            binding.etPin.text = null
+            binding.etPinConfirm.text = null
+            showStep(Step.PERMISSIONS)
+        }
+    }
+
+    // ── Step: home screen + permissions ──────────────────────────────────────
+
+    private fun setupPermissionsStep() {
+        binding.btnSetDefaultLauncher.setOnClickListener { promptSetDefaultLauncher() }
+        binding.btnGrantCallPermission.setOnClickListener { requestCallPermission() }
+        binding.btnGrantOptionalPermissions.setOnClickListener {
+            val optional = mutableListOf(Manifest.permission.READ_CONTACTS, Manifest.permission.CAMERA)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                optional += Manifest.permission.POST_NOTIFICATIONS
+            }
+            optionalPermissionsLauncher.launch(optional.toTypedArray())
         }
     }
 
     private fun promptSetDefaultLauncher() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val roleManager = getSystemService(Context.ROLE_SERVICE) as RoleManager
+            val roleManager = getSystemService(RoleManager::class.java)
             if (roleManager.isRoleAvailable(RoleManager.ROLE_HOME) && !roleManager.isRoleHeld(RoleManager.ROLE_HOME)) {
-                val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_HOME)
-                defaultLauncherLauncher.launch(intent)
-                return
+                try {
+                    defaultLauncherLauncher.launch(roleManager.createRequestRoleIntent(RoleManager.ROLE_HOME))
+                    return
+                } catch (_: Exception) {
+                }
             }
         }
-
-        // Fallback for older Android versions
-        val intent = Intent(Settings.ACTION_HOME_SETTINGS)
-        startActivity(intent)
-    }
-
-    private fun checkDefaultLauncherStatus() {
-        Toast.makeText(this, "Launcher default status updated", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun requestPermissions() {
-        val permissions = arrayOf(
-            Manifest.permission.CALL_PHONE,
-            Manifest.permission.READ_CONTACTS,
-            Manifest.permission.CAMERA
-        )
-        val missing = permissions.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        try {
+            defaultLauncherLauncher.launch(Intent(Settings.ACTION_HOME_SETTINGS))
+        } catch (_: Exception) {
+            defaultLauncherLauncher.launch(Intent(Settings.ACTION_SETTINGS))
         }
-        if (missing.isNotEmpty()) {
-            requestPermissions(missing.toTypedArray(), 2001)
+    }
+
+    private fun requestCallPermission() {
+        if (PhoneCaller.hasCallPermission(this)) {
+            refreshPermissionStatus()
+            return
+        }
+        if (isCallPermissionPermanentlyDenied()) {
+            startActivity(
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null))
+            )
         } else {
-            Toast.makeText(this, "All permissions already granted!", Toast.LENGTH_SHORT).show()
+            callPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
         }
+    }
+
+    private fun isCallPermissionPermanentlyDenied(): Boolean =
+        callPermissionAsked && !PhoneCaller.hasCallPermission(this) &&
+            !shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE)
+
+    private fun isDefaultLauncher(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = getSystemService(RoleManager::class.java)
+            if (roleManager.isRoleAvailable(RoleManager.ROLE_HOME)) return roleManager.isRoleHeld(RoleManager.ROLE_HOME)
+        }
+        val home = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
+        return packageManager.resolveActivity(home, PackageManager.MATCH_DEFAULT_ONLY)
+            ?.activityInfo?.packageName == packageName
+    }
+
+    private fun refreshPermissionStatus() {
+        if (!::binding.isInitialized) return
+        val isHome = isDefaultLauncher()
+        binding.tvLauncherStatus.setText(if (isHome) R.string.setup_launcher_is_default else R.string.setup_launcher_not_default)
+        binding.tvLauncherStatus.setTextColor(
+            ContextCompat.getColor(this, if (isHome) R.color.color_accent_green else R.color.color_text_secondary)
+        )
+
+        val canCall = PhoneCaller.hasCallPermission(this)
+        binding.tvCallPermissionStatus.setText(
+            when {
+                canCall -> R.string.setup_call_permission_granted
+                isCallPermissionPermanentlyDenied() -> R.string.setup_call_permission_settings
+                else -> R.string.setup_call_permission_needed
+            }
+        )
+        binding.tvCallPermissionStatus.setTextColor(
+            ContextCompat.getColor(this, if (canCall) R.color.color_accent_green else R.color.color_accent_amber)
+        )
     }
 
     private fun completeSetup() {
-        appPrefs.isSetupComplete = true
-
-        // Register device & send caretaker magic-link invitations to all registered caretakers
-        val caretakerEmails = appPrefs.getCaretakerEmails()
-        lifecycleScope.launchWhenStarted {
-            val regRepo = com.grandma.launcher.remote.DeviceRegistrationRepository(this@SetupActivity)
-            regRepo.registerAndVerifyDevice()
-
-            if (caretakerEmails.isNotEmpty()) {
-                val invRepo = com.grandma.launcher.remote.CaretakerInvitationRepository(this@SetupActivity)
-                invRepo.sendCaretakerInvitations(caretakerEmails)
-            }
+        if (!PhoneCaller.hasCallPermission(this)) {
+            refreshPermissionStatus()
+            requestCallPermission()
+            return
         }
-
-        Toast.makeText(this, "Setup complete! Magic link invitation sent to caretaker.", Toast.LENGTH_LONG).show()
+        appPrefs.isSetupComplete = true
+        val sync = DeviceSyncManager.getInstance(this)
+        appScope.launch {
+            sync.schedulePeriodicSync()
+            sync.requestSyncNow(force = true)
+        }
 
         val intent = Intent(this, HomeActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -316,7 +464,11 @@ class SetupActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun String.capitalizeWords(): String {
-        return split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
+    private fun visibleIf(condition: Boolean) = if (condition) View.VISIBLE else View.GONE
+
+    private companion object {
+        const val STATE_STEP = "setup_step"
+        const val STATE_CALL_ASKED = "call_permission_asked"
+        const val DISABLED_ALPHA = 0.4f
     }
 }

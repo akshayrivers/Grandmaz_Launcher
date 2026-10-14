@@ -5,9 +5,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.grandma.launcher.R
+import com.grandma.launcher.appScope
 import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.databinding.ActivityCaretakerHelpBinding
-import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -82,21 +83,14 @@ class CaretakerHelpActivity : AppCompatActivity() {
         val subject = getString(R.string.caretaker_email_subject)
         val body = getString(R.string.caretaker_email_body, timestamp, note)
 
-        // Send to backend API
-        val helpRepo = com.grandma.launcher.remote.HelpRequestRepository(this)
-        lifecycleScope.launchWhenStarted {
-            val result = helpRepo.createHelpRequest(
+        // App scope: the mail app opens immediately and this activity stops.
+        val helpRepo = com.grandma.launcher.remote.HelpRequestRepository(applicationContext)
+        appScope.launch {
+            helpRepo.createHelpRequest(
                 title = "Help requested from launcher",
                 description = note,
                 type = com.grandma.launcher.remote.HelpRequestRepository.HelpType.GENERAL
             )
-            if (result is com.grandma.launcher.network.ApiClient.Result.Success) {
-                Toast.makeText(
-                    this@CaretakerHelpActivity,
-                    "Help request sent to Caretaker Dashboard!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
         }
 
         val intent = Intent(Intent.ACTION_SENDTO).apply {

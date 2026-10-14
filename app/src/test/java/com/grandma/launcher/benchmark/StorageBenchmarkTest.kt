@@ -108,16 +108,7 @@ class StorageBenchmarkTest {
             ) { prefs.getCaretakerEmails() }
         )
 
-        BenchmarkRunner.addToReport(
-            BenchmarkRunner.measure(
-                "verifyPin()",
-                iterations = 10_000,
-                warmupIterations = 5_000
-            ) {
-                prefs.caretakerPin = "1234"
-                prefs.verifyPin("1234")
-            }
-        )
+        // PIN verification is PBKDF2 (intentionally slow) — see CryptoBenchmarkTest.pinHashing.
 
         // One-time lazy costs — measured directly, small n
         val t0 = System.nanoTime()

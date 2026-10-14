@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Adding support for dark themes too -->
-    <style name="Theme.GrandmasLauncher" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- Always light: dark mode (incl. MIUI's forced dark) made the clock unreadable.
+         See phase1-discussion.md, lesson 1. -->
+    <style name="Theme.GrandmasLauncher" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/color_accent_blue</item>
         <item name="colorPrimaryVariant">@color/color_accent_blue</item>
         <item name="colorOnPrimary">@color/color_text_on_dark</item>

@@ -52,6 +52,11 @@
     <dimen name="fab_caretaker_margin_horizontal">16dp</dimen>
     <dimen name="fab_caretaker_margin_bottom">24dp</dimen>
 
+    <!-- Minimum for every interactive element (product rule 4) -->
+    <dimen name="touch_target_min">80dp</dimen>
+    <!-- Primary actions: 100dp+ -->
+    <dimen name="primary_action_height">104dp</dimen>
+
     <!-- Confirmation dialog buttons: 72dp -->
     <dimen name="confirm_button_height">72dp</dimen>
     <dimen name="confirm_photo_size">96dp</dimen>

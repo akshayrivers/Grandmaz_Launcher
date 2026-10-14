@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/setupRootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_bg_primary">
+    android:background="@color/color_bg_primary"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/screen_margin_horizontal"
+    android:paddingEnd="@dimen/screen_margin_horizontal">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/screen_margin_horizontal">
+            android:orientation="vertical">
 
-            <!-- Title & Header -->
             <TextView
                 android:id="@+id/tvSetupTitle"
                 android:layout_width="match_parent"
@@ -26,10 +28,9 @@
                 android:paddingTop="@dimen/screen_margin_top"
                 android:text="@string/setup_title"
                 android:textAppearance="@style/TextAppearance.Grandma.Display"
-                android:textColor="@color/color_accent_blue" />
+                android:textColor="@color/color_accent_amber" />
 
             <TextView
-                android:id="@+id/tvSetupSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_xs"
@@ -37,151 +38,60 @@
                 android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
                 android:textColor="@color/color_text_secondary" />
 
-            <View
+            <TextView
+                android:id="@+id/tvStepIndicator"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/color_divider"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_md"
-                android:layout_marginBottom="@dimen/space_md" />
+                android:layout_marginBottom="@dimen/space_md"
+                android:textColor="@color/color_accent_amber"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Step 1 of 5" />
 
-            <!-- Step Progress Indicator -->
+            <!-- ═══════════ STEP: LANGUAGE ═══════════ -->
             <LinearLayout
+                android:id="@+id/layoutStepLanguage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginBottom="@dimen/space_lg">
-
-                <TextView
-                    android:id="@+id/tvStepIndicator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Step 1 of 4"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/color_accent_amber" />
-            </LinearLayout>
-
-            <!-- ═══════════════════════════════════════════
-                 STEP 1: CARETAKER GOOGLE ACCOUNT
-                 ═══════════════════════════════════════════ -->
-            <LinearLayout
-                android:id="@+id/layoutStep1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/setup_step_1_title"
-                    android:textAppearance="@style/TextAppearance.Grandma.CardName"
-                    android:textColor="@color/color_text_primary" />
+                    android:text="@string/setup_language_title"
+                    android:textAppearance="@style/TextAppearance.Grandma.Heading" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_xs"
-                    android:text="@string/setup_step_1_desc"
+                    android:text="@string/setup_language_desc"
                     android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
                     android:textColor="@color/color_text_secondary" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardGoogleLogin"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLanguageHindi"
+                    style="@style/Widget.Grandma.ConfirmButton.No"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/primary_action_height"
                     android:layout_marginTop="@dimen/space_lg"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="@color/color_divider"
-                    app:strokeWidth="1dp"
-                    app:cardBackgroundColor="@color/color_bg_card">
+                    android:text="@string/setup_language_hindi"
+                    android:textSize="24sp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="@dimen/space_lg"
-                        android:gravity="center">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnGoogleSignIn"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:text="@string/setup_google_signin"
-                            android:textSize="16sp"
-                            android:textAllCaps="false"
-                            app:cornerRadius="12dp"
-                            app:backgroundTint="@color/color_accent_blue"
-                            app:icon="@android:drawable/ic_dialog_info"
-                            app:iconGravity="textStart"
-                            app:iconPadding="12dp" />
-
-                        <!-- Signed In Info Card (Hidden by default) -->
-                        <LinearLayout
-                            android:id="@+id/layoutSignedInState"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingTop="@dimen/space_md"
-                            android:visibility="gone">
-
-                            <TextView
-                                android:id="@+id/tvAvatarInitial"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:background="@drawable/shape_contact_avatar_bg"
-                                android:gravity="center"
-                                android:text="C"
-                                android:textColor="@color/color_text_on_dark"
-                                android:textSize="22sp"
-                                android:textStyle="bold" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_marginStart="@dimen/space_md"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/tvCaretakerName"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Caretaker Name"
-                                    android:textStyle="bold"
-                                    android:textSize="16sp"
-                                    android:textColor="@color/color_text_primary" />
-
-                                <TextView
-                                    android:id="@+id/tvCaretakerEmail"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="caretaker@gmail.com"
-                                    android:textSize="14sp"
-                                    android:textColor="@color/color_text_secondary" />
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="✓ Verified"
-                                android:textColor="@color/color_accent_green"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLanguageEnglish"
+                    style="@style/Widget.Grandma.ConfirmButton.No"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/primary_action_height"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="@string/setup_language_english"
+                    android:textSize="24sp" />
             </LinearLayout>
 
-            <!-- ═══════════════════════════════════════════
-                 STEP 2: EMERGENCY CONTACT & SOS
-                 ═══════════════════════════════════════════ -->
+            <!-- ═══════════ STEP: CARETAKER EMAIL ═══════════ -->
             <LinearLayout
-                android:id="@+id/layoutStep2"
+                android:id="@+id/layoutStepEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -190,71 +100,112 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/setup_step_2_title"
-                    android:textAppearance="@style/TextAppearance.Grandma.CardName"
-                    android:textColor="@color/color_text_primary" />
+                    android:text="@string/setup_email_title"
+                    android:textAppearance="@style/TextAppearance.Grandma.Heading" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_xs"
-                    android:text="@string/setup_step_2_desc"
+                    android:text="@string/setup_email_desc"
                     android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
                     android:textColor="@color/color_text_secondary" />
 
-                <!-- SOS Emergency Phone Number -->
-                <TextView
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilCaretakerEmail"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_lg"
-                    android:text="@string/setup_emergency_number_label"
-                    android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_xs"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etEmergencyNumber"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="112"
-                        android:textSize="18sp"
-                        android:inputType="phone" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Caretaker Email -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_lg"
-                    android:text="@string/setup_caretaker_email_label"
-                    android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_xs"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    android:hint="@string/setup_email_hint">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etCaretakerEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="caretaker@example.com"
-                        android:textSize="18sp"
-                        android:inputType="textEmailAddress" />
+                        android:imeOptions="actionDone"
+                        android:inputType="textEmailAddress"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:textSize="20sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <TextView
+                    android:id="@+id/tvEmailAlreadyLinked"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="@string/setup_email_already_linked"
+                    android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+                    android:textColor="@color/color_accent_green"
+                    android:visibility="gone" />
             </LinearLayout>
 
-            <!-- ═══════════════════════════════════════════
-                 STEP 3: CARETAKER PIN SETUP
-                 ═══════════════════════════════════════════ -->
+            <!-- ═══════════ STEP: PAIRING CODE ═══════════ -->
             <LinearLayout
-                android:id="@+id/layoutStep3"
+                android:id="@+id/layoutStepPairing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setup_pairing_title"
+                    android:textAppearance="@style/TextAppearance.Grandma.Heading" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:text="@string/setup_pairing_desc"
+                    android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+                    android:textColor="@color/color_text_secondary" />
+
+                <TextView
+                    android:id="@+id/tvPairingCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xl"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.1"
+                    android:textColor="@color/color_text_primary"
+                    android:textIsSelectable="true"
+                    android:textSize="64sp"
+                    android:textStyle="bold"
+                    tools:text="123 456" />
+
+                <ProgressBar
+                    android:id="@+id/progressPairing"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_lg"
+                    android:indeterminateTint="@color/color_accent_amber" />
+
+                <TextView
+                    android:id="@+id/tvPairingStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_lg"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.Grandma.Heading"
+                    tools:text="@string/setup_pairing_waiting" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPairingRetry"
+                    style="@style/Widget.Grandma.ConfirmButton.Amber"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/touch_target_min"
+                    android:layout_marginTop="@dimen/space_lg"
+                    android:text="@string/setup_btn_try_again"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- ═══════════ STEP: PIN ═══════════ -->
+            <LinearLayout
+                android:id="@+id/layoutStepPin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -263,73 +214,60 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/setup_step_3_title"
-                    android:textAppearance="@style/TextAppearance.Grandma.CardName"
-                    android:textColor="@color/color_text_primary" />
+                    android:text="@string/setup_pin_title"
+                    android:textAppearance="@style/TextAppearance.Grandma.Heading" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_xs"
-                    android:text="@string/setup_step_3_desc"
+                    android:text="@string/setup_pin_desc"
                     android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
                     android:textColor="@color/color_text_secondary" />
 
-                <!-- PIN Input -->
-                <TextView
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPin"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_lg"
-                    android:text="@string/setup_pin_label"
-                    android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_xs"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    android:hint="@string/setup_pin_hint">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="e.g. 1234"
-                        android:textSize="20sp"
+                        android:importantForAutofill="no"
                         android:inputType="numberPassword"
-                        android:maxLength="4" />
+                        android:maxLength="6"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:textSize="24sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- PIN Confirm -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_lg"
-                    android:text="@string/setup_pin_confirm_label"
-                    android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
-
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPinConfirm"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_xs"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    android:layout_marginTop="@dimen/space_md"
+                    android:hint="@string/setup_pin_confirm_hint">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPinConfirm"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Re-enter 4-digit PIN"
-                        android:textSize="20sp"
+                        android:imeOptions="actionDone"
+                        android:importantForAutofill="no"
                         android:inputType="numberPassword"
-                        android:maxLength="4" />
+                        android:maxLength="6"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:textSize="24sp" />
                 </com.google.android.material.textfield.TextInputLayout>
-
             </LinearLayout>
 
-            <!-- ═══════════════════════════════════════════
-                 STEP 4: PERMISSIONS & LAUNCHER SETUP
-                 ═══════════════════════════════════════════ -->
+            <!-- ═══════════ STEP: LAUNCHER + PERMISSIONS ═══════════ -->
             <LinearLayout
-                android:id="@+id/layoutStep4"
+                android:id="@+id/layoutStepPermissions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -338,65 +276,83 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/setup_step_4_title"
-                    android:textAppearance="@style/TextAppearance.Grandma.CardName"
-                    android:textColor="@color/color_text_primary" />
+                    android:text="@string/setup_permissions_title"
+                    android:textAppearance="@style/TextAppearance.Grandma.Heading" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_xs"
-                    android:text="@string/setup_step_4_desc"
+                    android:text="@string/setup_permissions_desc"
                     android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
                     android:textColor="@color/color_text_secondary" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSetDefaultLauncher"
-                    style="@style/Widget.Grandma.ConfirmButton.Blue"
+                    style="@style/Widget.Grandma.ConfirmButton.Amber"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/confirm_button_height"
+                    android:layout_height="@dimen/touch_target_min"
                     android:layout_marginTop="@dimen/space_lg"
                     android:text="@string/setup_set_default_launcher" />
 
+                <TextView
+                    android:id="@+id/tvLauncherStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
+
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnGrantPermissions"
+                    android:id="@+id/btnGrantCallPermission"
                     style="@style/Widget.Grandma.ConfirmButton.Amber"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/confirm_button_height"
-                    android:layout_marginTop="@dimen/space_md"
-                    android:text="@string/setup_grant_permissions" />
+                    android:layout_height="@dimen/touch_target_min"
+                    android:layout_marginTop="@dimen/space_lg"
+                    android:text="@string/setup_grant_call_permission" />
 
-            </LinearLayout>
-
-            <!-- ═══════════════════════════════════════════
-                 BOTTOM NAVIGATION BUTTONS
-                 ═══════════════════════════════════════════ -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/space_xl"
-                android:layout_marginBottom="@dimen/space_xl">
+                <TextView
+                    android:id="@+id/tvCallPermissionStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnBackStep"
+                    android:id="@+id/btnGrantOptionalPermissions"
                     style="@style/Widget.Grandma.ConfirmButton.No"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/confirm_button_height"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="@dimen/space_xs"
-                    android:text="@string/action_back"
-                    android:visibility="gone" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnNextStep"
-                    style="@style/Widget.Grandma.ConfirmButton.Yes"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/confirm_button_height"
-                    android:layout_weight="2"
-                    android:text="@string/setup_btn_next" />
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/touch_target_min"
+                    android:layout_marginTop="@dimen/space_lg"
+                    android:text="@string/setup_grant_optional_permissions" />
             </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- ═══════════ BOTTOM NAVIGATION ═══════════ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:layout_marginBottom="@dimen/space_md"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBackStep"
+            style="@style/Widget.Grandma.ConfirmButton.No"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/touch_target_min"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:layout_weight="1"
+            android:text="@string/action_back" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNextStep"
+            style="@style/Widget.Grandma.ConfirmButton.Yes"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/touch_target_min"
+            android:layout_weight="2"
+            android:text="@string/setup_btn_next" />
+    </LinearLayout>
+
+</LinearLayout>

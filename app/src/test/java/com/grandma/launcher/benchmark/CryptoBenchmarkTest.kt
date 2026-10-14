@@ -1,11 +1,9 @@
 package com.grandma.launcher.benchmark
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
-import com.grandma.launcher.data.AppPreferences
+import com.grandma.launcher.data.PinHasher
 import com.grandma.launcher.network.DeviceSecurityManager
+import com.grandma.launcher.testutil.SoftwareDeviceKey
 import org.junit.AfterClass
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -15,63 +13,60 @@ import org.robolectric.annotation.Config
 @Config(sdk = [34])
 class CryptoBenchmarkTest {
 
-    private lateinit var prefs: AppPreferences
-
-    @Before
-    fun setUp() {
-        val context: Context = ApplicationProvider.getApplicationContext()
-        prefs = AppPreferences(context)
-    }
-
     @Test
-    fun rsa2048KeygenSignVerify() {
-        BenchmarkRunner.reportTitle("DeviceSecurityManager — RSA-2048 challenge/response")
+    fun ecP256KeygenSignVerify() {
+        BenchmarkRunner.reportTitle("DeviceSecurityManager — EC P-256 challenge/response (software key)")
 
-        // Keygen is a heavyweight one-time op — measured separately, small n
+        // Keygen is a one-time op — measured separately, small n. On device the key is
+        // generated inside Android Keystore, so this is only indicative.
         val keygenTimes = LongArray(5)
         repeat(5) { i ->
+            val key = SoftwareDeviceKey()
             val start = System.nanoTime()
-            DeviceSecurityManager.ensureKeyPair(prefs)
+            key.publicKey()
             keygenTimes[i] = System.nanoTime() - start
-            // reset so each iteration regenerates the pair
-            prefs.devicePublicKeyPem = ""
-            prefs.devicePrivateKeyPem = ""
         }
-        val avgKeygenMs = keygenTimes.average() / 1_000_000.0
-        println("    [one-time] RSA-2048 key pair generation: avg %.1f ms (min %.1f ms / max %.1f ms)".format(
-            avgKeygenMs,
+        println("    [one-time] EC P-256 key pair generation: avg %.1f ms (min %.1f ms / max %.1f ms)".format(
+            keygenTimes.average() / 1_000_000.0,
             keygenTimes.min().toDouble() / 1_000_000.0,
             keygenTimes.max().toDouble() / 1_000_000.0
         ))
 
-        DeviceSecurityManager.ensureKeyPair(prefs)
-        val challenge = "device_${java.util.UUID.randomUUID()}_nonce_abcdef123456"
+        val security = DeviceSecurityManager(SoftwareDeviceKey())
+        val challenge = "a".repeat(64)
 
         BenchmarkRunner.addToReport(
             BenchmarkRunner.measure(
-                "signChallenge()  SHA256withRSA",
+                "signChallenge()  SHA256withECDSA",
                 iterations = 2_000,
                 warmupIterations = 1_000
-            ) { DeviceSecurityManager.signChallenge(challenge, prefs) }
+            ) { security.signChallenge(challenge) }
         )
 
-        val signature = DeviceSecurityManager.signChallenge(challenge, prefs)
+        val signature = security.signChallenge(challenge)
 
         BenchmarkRunner.addToReport(
             BenchmarkRunner.measure(
-                "verifySignature() SHA256withRSA",
+                "verifySignature() SHA256withECDSA",
                 iterations = 2_000,
                 warmupIterations = 1_000
-            ) { DeviceSecurityManager.verifySignature(challenge, signature, prefs) }
+            ) { security.verifySignature(challenge, signature) }
         )
 
-        check(DeviceSecurityManager.verifySignature(challenge, signature, prefs)) {
-            "round-trip signature verify failed"
-        }
-        check(!DeviceSecurityManager.verifySignature("tampered_challenge", signature, prefs)) {
-            "tampered challenge should not verify"
-        }
+        check(security.verifySignature(challenge, signature)) { "round-trip signature verify failed" }
+        check(!security.verifySignature("b".repeat(64), signature)) { "tampered challenge should not verify" }
         println("    [check] signature round-trip verified correctly (tamper rejected)")
+    }
+
+    @Test
+    fun pinHashing() {
+        BenchmarkRunner.reportTitle("PinHasher — PBKDF2-HMAC-SHA256 (${PinHasher.DEFAULT_ITERATIONS} iterations)")
+        val encoded = PinHasher.hash("1234")
+        BenchmarkRunner.addToReport(
+            BenchmarkRunner.measure("PinHasher.verify()", iterations = 20, warmupIterations = 5) {
+                PinHasher.verify("1234", encoded)
+            }
+        )
     }
 
     companion object {
