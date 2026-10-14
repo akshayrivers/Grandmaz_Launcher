@@ -2,78 +2,91 @@ package com.grandma.launcher.remote
 
 import android.content.Context
 import android.util.Log
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.network.ApiClient
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import java.util.concurrent.TimeUnit
 
 /**
- * Central manager that coordinates device registration, state snapshot posting,
- * and remote command polling with the Fastify backend.
+ * Coordinates backend sync: device token, profile (/me), push token, state snapshot and
+ * pending caretaker commands. Runs as WorkManager work so it survives process death:
+ * a unique 15-minute periodic job plus on-demand one-time syncs.
  */
-class DeviceSyncManager(private val context: Context) {
+class DeviceSyncManager private constructor(private val context: Context) {
 
     private val appPrefs = AppPreferences(context)
-    private val registrationRepo = DeviceRegistrationRepository(context)
-    private val stateSnapshotRepo = StateSnapshotRepository(context)
-    private val commandManager = CommandExecutionManager(context)
+    private val tokens = DeviceRegistrationRepository(context)
+    private val profileRepo = DeviceProfileRepository(context, tokens)
+    private val snapshotRepo = StateSnapshotRepository(context, tokens)
+    private val commandManager = CommandExecutionManager(context, tokens)
+    private val syncMutex = Mutex()
 
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private var isLoopRunning = false
+    fun schedulePeriodicSync() {
+        val request = PeriodicWorkRequestBuilder<DeviceSyncWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(networkConstraints())
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 1, TimeUnit.MINUTES)
+            .build()
+        WorkManager.getInstance(context)
+            .enqueueUniquePeriodicWork(PERIODIC_WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request)
+    }
 
     /**
-     * Initializes sync loop. Registers device if needed, posts snapshot, and begins command polling.
+     * Enqueues an immediate sync. Without [force], calls within [MIN_ON_DEMAND_INTERVAL_MS]
+     * of the last successful sync are dropped (Home's onResume fires often).
      */
-    fun startSyncLoop() {
-        if (isLoopRunning) return
-        isLoopRunning = true
+    fun requestSyncNow(force: Boolean = false) {
+        if (!appPrefs.isSetupComplete && !force) return
+        if (!force && System.currentTimeMillis() - appPrefs.lastSyncTimestamp < MIN_ON_DEMAND_INTERVAL_MS) return
+        val request = OneTimeWorkRequestBuilder<DeviceSyncWorker>()
+            .setConstraints(networkConstraints())
+            .build()
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(ONE_TIME_WORK_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, request)
+    }
 
-        scope.launch {
-            // Initial registration & challenge verification check
-            ensureRegisteredAndVerified()
+    /** One full sync pass. Returns false when it should be retried (network/server trouble). */
+    suspend fun runSync(): Boolean = syncMutex.withLock {
+        val auth = tokens.currentToken()
+        if (auth is ApiClient.Result.Error) {
+            Log.e(TAG, "Device authentication failed: ${auth.statusCode} ${auth.code}")
+            return@withLock false
+        }
 
-            while (isActive && isLoopRunning) {
-                try {
-                    // Post state snapshot
-                    stateSnapshotRepo.postSnapshot()
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error in DeviceSyncManager loop: ${e.localizedMessage}", e)
-                }
+        logIfError("profile", profileRepo.refreshProfile())
+        appPrefs.fcmToken.takeIf { it.isNotBlank() }?.let { logIfError("push-token", profileRepo.updatePushToken(it)) }
+        val snapshot = snapshotRepo.postSnapshot()
+        logIfError("snapshot", snapshot)
+        val commands = commandManager.pollAndExecuteCommands()
+        logIfError("commands", commands)
 
-                // Poll every 30 seconds while active
-                delay(30000L)
-            }
+        snapshot !is ApiClient.Result.Error && commands !is ApiClient.Result.Error
+    }
+
+    private fun logIfError(step: String, result: ApiClient.Result<*>) {
+        if (result is ApiClient.Result.Error) {
+            Log.e(TAG, "Sync step $step failed: ${result.statusCode} ${result.code}")
         }
     }
 
-    fun stopSyncLoop() {
-        isLoopRunning = false
-    }
-
-    suspend fun ensureRegisteredAndVerified(): Boolean {
-        return try {
-            val result = registrationRepo.registerAndVerifyDevice()
-            result is ApiClient.Result.Success && result.data
-        } catch (e: Exception) {
-            Log.e(TAG, "Device registration failed: ${e.localizedMessage}", e)
-            false
-        }
-    }
-
-    suspend fun triggerManualSync() {
-        scope.launch {
-            registrationRepo.registerAndVerifyDevice()
-            stateSnapshotRepo.postSnapshot()
-            commandManager.pollAndExecuteCommands()
-        }
-    }
+    private fun networkConstraints() =
+        Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
     companion object {
         private const val TAG = "DeviceSyncManager"
+        private const val PERIODIC_WORK_NAME = "grandma_device_sync_periodic"
+        private const val ONE_TIME_WORK_NAME = "grandma_device_sync_now"
+        private const val MIN_ON_DEMAND_INTERVAL_MS = 60_000L
 
         @Volatile
         private var INSTANCE: DeviceSyncManager? = null
@@ -83,5 +96,27 @@ class DeviceSyncManager(private val context: Context) {
                 INSTANCE ?: DeviceSyncManager(context.applicationContext).also { INSTANCE = it }
             }
         }
+    }
+}
+
+class DeviceSyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
+
+    override suspend fun doWork(): Result {
+        val ok = try {
+            DeviceSyncManager.getInstance(applicationContext).runSync()
+        } catch (e: Exception) {
+            Log.e(TAG, "Sync crashed", e)
+            false
+        }
+        return when {
+            ok -> Result.success()
+            runAttemptCount < MAX_RETRIES -> Result.retry()
+            else -> Result.failure()
+        }
+    }
+
+    private companion object {
+        const val TAG = "DeviceSyncWorker"
+        const val MAX_RETRIES = 3
     }
 }

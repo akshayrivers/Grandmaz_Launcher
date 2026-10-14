@@ -1,17 +1,16 @@
 package com.grandma.launcher.ui.contacts
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.GridLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.grandma.launcher.R
 import com.grandma.launcher.data.Contact
 import com.grandma.launcher.data.ContactRepository
 import com.grandma.launcher.databinding.ActivityContactsBinding
 import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
+import com.grandma.launcher.ui.common.CallLauncher
 
 /**
  * Full contacts screen — photo grid, 3 per row.
@@ -29,6 +28,7 @@ class ContactsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityContactsBinding
     private lateinit var contactRepo: ContactRepository
+    private val callLauncher = CallLauncher(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -124,7 +124,6 @@ class ContactsActivity : AppCompatActivity() {
     }
 
     private fun placeCall(phone: String) {
-        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$phone"))
-        startActivity(intent)
+        callLauncher.call(phone)
     }
 }

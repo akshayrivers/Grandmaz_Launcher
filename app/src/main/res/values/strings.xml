@@ -49,6 +49,12 @@
     <string name="caretaker_email_body">A help request has been sent.\n\nTime: %1$s\n\nNote: %2$s</string>
     <string name="caretaker_no_note">No note provided</string>
 
+    <!-- Caretaker Message Screen -->
+    <string name="message_from_caretaker">Message from your caretaker</string>
+    <string name="message_speak_again">Hear again</string>
+    <string name="message_ok">✓</string>
+    <string name="message_ok_description">OK, go back home</string>
+
     <!-- More Apps Screen -->
     <string name="screen_all_apps">ALL APPS</string>
 
@@ -56,31 +62,59 @@
     <string name="action_back">Back</string>
     <string name="whatsapp_not_installed">WhatsApp is not installed on this phone</string>
 
-    <!-- Setup Wizard -->
-    <string name="setup_title">Caretaker Setup Wizard</string>
-    <string name="setup_subtitle">Configure sys-launcher for senior citizen care</string>
-    <string name="setup_step_1_title">1. Caretaker Account</string>
-    <string name="setup_step_1_desc">Sign in with Google to register as the caretaker for remote support and emergency alerts.</string>
-    <string name="setup_google_signin">Sign in with Google</string>
-    <string name="setup_google_signed_in">Signed in as %s</string>
-    <string name="setup_step_2_title">2. Emergency Contact</string>
-    <string name="setup_step_2_desc">Specify emergency SOS call number and caretaker email for help requests.</string>
-    <string name="setup_emergency_number_label">Emergency SOS Call Number:</string>
-    <string name="setup_caretaker_email_label">Caretaker Email Address:</string>
-    <string name="setup_step_3_title">3. Caretaker Security PIN</string>
-    <string name="setup_step_3_desc">Set a 4-digit PIN to restrict launcher settings access to caretakers only.</string>
-    <string name="setup_pin_label">4-Digit Caretaker PIN:</string>
-    <string name="setup_pin_confirm_label">Confirm 4-Digit PIN:</string>
-    <string name="setup_step_4_title">4. Launcher and Permissions</string>
-    <string name="setup_step_4_desc">Set sys-launcher as the default home app and grant essential permissions.</string>
-    <string name="setup_set_default_launcher">Set as Default Launcher</string>
-    <string name="setup_grant_permissions">Grant Phone and Contacts Permissions</string>
-    <string name="setup_btn_next">Next Step</string>
-    <string name="setup_btn_complete">Complete Setup and Launch</string>
+    <!-- Setup Wizard (helper-facing) -->
+    <string name="setup_title">Phone Setup</string>
+    <string name="setup_subtitle">For the family helper setting up this phone</string>
+    <string name="setup_step_indicator">Step %1$d of %2$d</string>
+    <string name="setup_language_title">Voice language</string>
+    <string name="setup_language_desc">Which language should the phone speak in?</string>
+    <string name="setup_language_hindi">हिंदी (Hindi)</string>
+    <string name="setup_language_english">English</string>
+    <string name="setup_email_title">Main caretaker</string>
+    <string name="setup_email_desc">Enter the email of the main caretaker. They will get a link by email and sign in on their own phone. Nobody signs in on this phone.</string>
+    <string name="setup_email_hint">caretaker@example.com</string>
+    <string name="setup_email_invalid">Enter a valid email address</string>
+    <string name="setup_email_already_linked">This phone is already linked to a main caretaker. Leave the email empty to keep them.</string>
+    <string name="setup_btn_send_invitation">Send invitation</string>
+    <string name="setup_btn_keep_caretaker">Keep current caretaker</string>
+    <string name="setup_pairing_title">Pairing code</string>
+    <string name="setup_pairing_desc">Ask the caretaker to open the email link and type this code.</string>
+    <string name="setup_pairing_sending">Registering this phone and sending the invitation…</string>
+    <string name="setup_pairing_waiting">Waiting for the caretaker to enter the code…</string>
+    <string name="setup_pairing_connection_problem">Cannot reach the server right now. Still trying…</string>
+    <string name="setup_pairing_linked">✓ Caretaker linked</string>
+    <string name="setup_pairing_already_linked">✓ This phone already has a main caretaker</string>
+    <string name="setup_pairing_expired">The code has expired. Tap Try again for a new code.</string>
+    <string name="setup_pairing_locked">Too many wrong codes were entered. Tap Try again for a new code.</string>
+    <string name="setup_pairing_revoked">The invitation was cancelled. Tap Try again to send a new one.</string>
+    <string name="setup_pairing_network">Could not reach the server. Check the internet connection and tap Try again.</string>
+    <string name="setup_pairing_server">The server could not create the invitation. Tap Try again.</string>
+    <string name="setup_pairing_idle">No invitation is active. Tap Try again to send one.</string>
+    <string name="setup_btn_try_again">Try again</string>
+    <string name="setup_pin_title">Caretaker PIN</string>
+    <string name="setup_pin_desc">Choose a 4 to 6 digit PIN. It protects the caretaker settings on this phone. If it is forgotten, it can only be reset on this phone.</string>
+    <string name="setup_pin_hint">PIN (4–6 digits)</string>
+    <string name="setup_pin_confirm_hint">Enter the same PIN again</string>
+    <string name="setup_pin_invalid">The PIN must be 4 to 6 digits</string>
+    <string name="setup_pin_mismatch">The two PINs are not the same</string>
+    <string name="setup_btn_save_pin">Save PIN</string>
+    <string name="setup_permissions_title">Home screen and permissions</string>
+    <string name="setup_permissions_desc">Make this the home screen and allow phone calls. Phone calls are required so the SOS button can call for help.</string>
+    <string name="setup_set_default_launcher">Make this the home screen</string>
+    <string name="setup_launcher_is_default">✓ This is the home screen</string>
+    <string name="setup_launcher_not_default">Not the home screen yet (recommended)</string>
+    <string name="setup_grant_call_permission">Allow phone calls (required)</string>
+    <string name="setup_call_permission_granted">✓ Phone calls allowed</string>
+    <string name="setup_call_permission_needed">Phone calls are not allowed yet. Setup cannot finish without it.</string>
+    <string name="setup_call_permission_settings">Phone calls were denied. Tap the button to open settings and allow \"Phone\".</string>
+    <string name="setup_grant_optional_permissions">Allow contacts, camera and notifications</string>
+    <string name="setup_btn_next">Next</string>
+    <string name="setup_btn_complete">Finish setup</string>
 
     <!-- PIN Authentication Dialog -->
     <string name="pin_dialog_title">Caretaker Authentication</string>
-    <string name="pin_dialog_subtitle">Enter 4-digit Caretaker PIN to open settings</string>
+    <string name="pin_dialog_subtitle">Enter the caretaker PIN to open settings</string>
+    <string name="pin_dialog_hint">PIN</string>
     <string name="pin_dialog_error">Incorrect PIN. Please try again.</string>
     <string name="pin_dialog_confirm">Unlock</string>
     <string name="pin_dialog_cancel">Cancel</string>

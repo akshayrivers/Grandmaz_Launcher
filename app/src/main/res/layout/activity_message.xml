@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/messageRootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_bg_primary"
+    android:orientation="vertical">
+
+    <!-- Amber caretaker badge: "this is from your family helper" -->
+    <ImageView
+        android:id="@+id/ivCaretaker"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_lg"
+        android:background="@drawable/bg_circle_photo"
+        android:backgroundTint="@color/color_accent_amber_light"
+        android:contentDescription="@string/message_from_caretaker"
+        android:padding="@dimen/space_md"
+        android:src="@drawable/ic_caretaker_info"
+        app:tint="@color/color_accent_amber" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/space_lg"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Grandma.Display"
+            android:textColor="@color/color_text_primary" />
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSpeakAgain"
+        style="@style/Widget.Grandma.ConfirmButton.Amber"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/primary_action_height"
+        android:layout_marginTop="@dimen/space_md"
+        android:contentDescription="@string/message_speak_again"
+        android:text="@string/message_speak_again"
+        app:icon="@android:drawable/ic_lock_silent_mode_off"
+        app:iconGravity="textStart"
+        app:iconSize="40dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnOk"
+        style="@style/Widget.Grandma.ConfirmButton.Yes"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/primary_action_height"
+        android:layout_marginTop="@dimen/space_md"
+        android:contentDescription="@string/message_ok_description"
+        android:text="@string/message_ok"
+        android:textSize="32sp" />
+
+</LinearLayout>

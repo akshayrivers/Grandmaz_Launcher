@@ -8,8 +8,10 @@ import android.net.wifi.WifiManager
 import android.os.BatteryManager
 import android.os.Environment
 import android.os.StatFs
+import com.grandma.launcher.BuildConfig
 import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.network.ApiClient
+import com.grandma.launcher.network.DeviceTokenProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -18,38 +20,33 @@ import org.json.JSONObject
 /**
  * Collects hardware & app state metrics and posts snapshots to the backend.
  */
-class StateSnapshotRepository(private val context: Context) {
+class StateSnapshotRepository(
+    private val context: Context,
+    private val tokens: DeviceTokenProvider = DeviceRegistrationRepository(context)
+) {
 
     private val appPrefs = AppPreferences(context)
 
-    suspend fun postSnapshot(): ApiClient.Result<JSONObject> = withContext(Dispatchers.IO) {
-        val baseUrl = appPrefs.backendBaseUrl
-        val deviceId = appPrefs.deviceId
-
+    suspend fun postSnapshot(): ApiClient.Result<Any?> = withContext(Dispatchers.IO) {
         val batteryInfo = getBatteryInfo()
         val wifiSsid = getWifiSsid()
-        val storageFreeMb = getFreeStorageMb()
-        val installedApps = getInstalledAppsJson()
-        val settings = getSettingsJson()
 
         val body = JSONObject().apply {
-            put("deviceId", deviceId)
             put("batteryLevel", batteryInfo.first)
             put("batteryStatus", batteryInfo.second)
             if (wifiSsid != null) {
                 put("wifiSsid", wifiSsid)
             }
-            put("storageFreeMb", storageFreeMb)
-            put("installedApps", installedApps)
-            put("settings", settings)
+            put("storageFreeMb", getFreeStorageMb())
+            put("installedApps", getInstalledAppsJson())
+            put("settings", getSettingsJson())
             put("snapshotData", JSONObject().apply {
                 put("timestamp", System.currentTimeMillis())
-                put("caretakerEmail", appPrefs.caretakerEmail)
-                put("emergencyNumber", appPrefs.emergencyNumber)
+                put("appVersion", BuildConfig.VERSION_NAME)
             })
         }
 
-        val result = ApiClient.postJson(baseUrl, "api/shared-state/snapshot", body)
+        val result = ApiClient.deviceRequest("POST", "api/device/snapshot", body, tokens)
         if (result is ApiClient.Result.Success) {
             appPrefs.lastSyncTimestamp = System.currentTimeMillis()
         }
@@ -65,11 +62,12 @@ class StateSnapshotRepository(private val context: Context) {
             val batteryPct = if (level >= 0 && scale > 0) (level * 100 / scale.toFloat()).toInt() else 0
 
             val status = batteryStatusIntent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+            // Contract enum: charging | discharging | full | unknown
             val statusStr = when (status) {
                 BatteryManager.BATTERY_STATUS_CHARGING -> "charging"
-                BatteryManager.BATTERY_STATUS_DISCHARGING -> "discharging"
+                BatteryManager.BATTERY_STATUS_DISCHARGING,
+                BatteryManager.BATTERY_STATUS_NOT_CHARGING -> "discharging"
                 BatteryManager.BATTERY_STATUS_FULL -> "full"
-                BatteryManager.BATTERY_STATUS_NOT_CHARGING -> "not_charging"
                 else -> "unknown"
             }
             Pair(batteryPct, statusStr)
@@ -81,6 +79,7 @@ class StateSnapshotRepository(private val context: Context) {
     private fun getWifiSsid(): String? {
         return try {
             val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
+            @Suppress("DEPRECATION")
             val wifiInfo: WifiInfo? = wifiManager?.connectionInfo
             val ssid = wifiInfo?.ssid?.replace("\"", "")
             if (ssid != null && ssid != "<unknown ssid>" && ssid.isNotEmpty()) ssid else null
@@ -125,10 +124,9 @@ class StateSnapshotRepository(private val context: Context) {
     private fun getSettingsJson(): JSONObject {
         return JSONObject().apply {
             put("emergencyNumber", appPrefs.emergencyNumber)
-            put("caretakerEmail", appPrefs.caretakerEmail)
+            put("language", appPrefs.language)
             put("fabIdleDelayMs", appPrefs.fabIdleDelayMs)
             put("isSetupComplete", appPrefs.isSetupComplete)
-            put("isDeviceVerified", appPrefs.isDeviceVerified)
         }
     }
 }

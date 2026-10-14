@@ -15,6 +15,19 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Declared for the caretaker "report_location" command only; the launcher never
+         prompts grandma for location. A helper can grant it from system settings. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Tablets / Chromebooks without these still install the launcher;
+         calls fall back to the dialer and photos to the gallery. -->
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.location" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
 
     <!-- Required on Android 11+ — without this block, packageManager.queryIntentActivities()
          returns empty and grantUriPermission has no targets to grant to. -->
@@ -29,19 +42,23 @@
             <action android:name="android.intent.action.PICK" />
             <data android:mimeType="image/*" />
         </intent>
+        <!-- TextToSpeech binds to the engine via this action; invisible on API 30+ without it -->
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
         <package android:name="com.miui.camera" />
         <package android:name="com.android.camera2" />
         <package android:name="com.android.camera" />
     </queries>
 
     <application
+        android:name=".GrandmaApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:forceDarkAllowed="false"
-        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.GrandmasLauncher">
 
         <!-- ═══════════════════════════════════════════
@@ -112,6 +129,14 @@
         <activity
             android:name=".ui.alarm.AlarmActivity"
             android:exported="false"
+            android:parentActivityName=".ui.home.HomeActivity" />
+
+        <!-- Full-screen caretaker message (show_message remote command) -->
+        <activity
+            android:name=".ui.message.MessageActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.home.HomeActivity" />
 
         <!-- Alarm broadcast receiver -->
