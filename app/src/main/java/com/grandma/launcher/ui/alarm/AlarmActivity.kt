@@ -272,49 +272,17 @@ class AlarmActivity : AppCompatActivity() {
     // ── System Alarm scheduling ──────────────────────────────────────────────
 
     private fun scheduleAlarmInSystem(alarm: Alarm) {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmReceiver::class.java).apply {
-            putExtra("alarm_id", alarm.id)
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
+        AlarmScheduler.ensurePermission(this)
+        AlarmScheduler.schedule(
             this,
             alarm.id.toInt(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            AlarmScheduler.nextTrigger(alarm.hour, alarm.minute, null),
+            "",
+            "Alarm"
         )
-
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, alarm.hour)
-            set(Calendar.MINUTE, alarm.minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-            if (timeInMillis <= System.currentTimeMillis()) {
-                add(Calendar.DAY_OF_YEAR, 1)
-            }
-        }
-
-        try {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis,
-                pendingIntent
-            )
-        } catch (_: Exception) {}
     }
 
     private fun cancelAlarmInSystem(alarm: Alarm) {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            alarm.id.toInt(),
-            intent,
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
-        if (pendingIntent != null) {
-            alarmManager.cancel(pendingIntent)
-            pendingIntent.cancel()
-        }
+        AlarmScheduler.cancel(this, alarm.id.toInt())
     }
 }

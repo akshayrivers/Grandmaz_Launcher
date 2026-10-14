@@ -8,8 +8,6 @@
     <string name="action_see_all">See All →</string>
     <string name="action_more_people">More people</string>
     <string name="action_home">Home</string>
-    <string name="action_more_people">More people</string>
-    <string name="action_home">Home</string>
     <string name="action_add_contact">Add</string>
     <string name="action_camera">Camera</string>
     <string name="action_whatsapp">WhatsApp</string>
@@ -17,6 +15,10 @@
     <string name="action_sos">SOS</string>
     <string name="sos_hold_hint">Hold to activate</string>
     <string name="sos_stop_alerts">Stop alerts</string>
+    <string name="reminder_title">Medicine</string>
+    <string name="reminder_taken">Taken</string>
+    <string name="reminder_snooze">Snooze</string>
+    <string name="reminder_missed">Not now</string>
 
     <!-- Call Confirmation -->
     <string name="confirm_call_title">Calling %s?</string>
