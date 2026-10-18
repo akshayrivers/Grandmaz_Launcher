@@ -176,12 +176,13 @@
 
     <ImageButton
         android:id="@+id/btnHouse"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
         android:layout_marginBottom="@dimen/space_sm"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="@drawable/bg_control"
         android:contentDescription="@string/action_home"
-        android:padding="16dp"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_house"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -194,18 +195,17 @@
         Bottom margin is larger than SOS button height to ensure
         the FAB doesn't visually overlap the SOS button.
     -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/fabCaretaker"
-        android:layout_width="@dimen/fab_caretaker_size"
-        android:layout_height="@dimen/fab_caretaker_size"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
         android:layout_marginStart="@dimen/fab_caretaker_margin_horizontal"
         android:layout_marginBottom="@dimen/fab_caretaker_margin_bottom"
-        android:contentDescription="Ask for help"
-        android:elevation="8dp"
-        app:backgroundTint="@color/color_accent_amber"
-        app:tint="@color/color_text_on_dark"
-        app:srcCompat="@drawable/ic_caretaker_info"
-        app:fabSize="normal"
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/screen_ask_for_help"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_caretaker_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 

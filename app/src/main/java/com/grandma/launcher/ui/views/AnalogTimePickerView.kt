@@ -2,7 +2,6 @@ package com.grandma.launcher.ui.views
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
@@ -77,7 +76,7 @@ class AnalogTimePickerView @JvmOverloads constructor(
     }
 
     private val selectBgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.color_accent_green_light)
+        color = ContextCompat.getColor(context, R.color.color_text_primary)
         style = Paint.Style.FILL
     }
 
@@ -88,7 +87,7 @@ class AnalogTimePickerView @JvmOverloads constructor(
     }
 
     private val handMinutePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.color_accent_blue) // Blue minute hand
+        color = ContextCompat.getColor(context, R.color.color_text_primary)
         strokeWidth = 8f
         strokeCap = Paint.Cap.ROUND
     }
@@ -178,17 +177,22 @@ class AnalogTimePickerView @JvmOverloads constructor(
             canvas.drawCircle(sunCx, sunCy, buttonRadius, bgPaint)
             canvas.drawCircle(sunCx, sunCy, buttonRadius, borderPaint)
         }
-        // Sun drawing (Yellow circle + rays)
-        val sunColor = Color.parseColor("#F5B041")
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = sunColor; style = Paint.Style.FILL }
-        canvas.drawCircle(sunCx, sunCy, 16f, paint)
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 4f
+        // Sun drawing
+        val sunPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = ContextCompat.getColor(
+                context,
+                if (isAm) R.color.color_text_on_dark else R.color.color_text_primary
+            )
+            style = Paint.Style.FILL
+        }
+        canvas.drawCircle(sunCx, sunCy, 16f, sunPaint)
+        sunPaint.style = Paint.Style.STROKE
+        sunPaint.strokeWidth = 4f
         for (i in 0 until 8) {
             val angle = Math.toRadians(i * 45.0)
             canvas.drawLine(
                 (sunCx + cos(angle) * 22f).toFloat(), (sunCy + sin(angle) * 22f).toFloat(),
-                (sunCx + cos(angle) * 32f).toFloat(), (sunCy + sin(angle) * 32f).toFloat(), paint
+                (sunCx + cos(angle) * 32f).toFloat(), (sunCy + sin(angle) * 32f).toFloat(), sunPaint
             )
         }
 
@@ -202,7 +206,10 @@ class AnalogTimePickerView @JvmOverloads constructor(
         }
         // Moon drawing (Crescent)
         val moonPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.parseColor("#7F8C8D")
+            color = ContextCompat.getColor(
+                context,
+                if (!isAm) R.color.color_text_on_dark else R.color.color_text_primary
+            )
             style = Paint.Style.FILL
         }
         val moonPath = Path().apply {
@@ -258,7 +265,7 @@ class AnalogTimePickerView @JvmOverloads constructor(
         if (selectionMode == Mode.HOUR) {
             canvas.drawRoundRect(tabHourRect, 20f, 20f, selectBgPaint)
             canvas.drawRoundRect(tabHourRect, 20f, 20f, selectRingPaint)
-            tabTextPaint.color = ContextCompat.getColor(context, R.color.color_accent_green)
+            tabTextPaint.color = ContextCompat.getColor(context, R.color.color_text_on_dark)
         } else {
             canvas.drawRoundRect(tabHourRect, 20f, 20f, bgPaint)
             canvas.drawRoundRect(tabHourRect, 20f, 20f, borderPaint)
@@ -270,7 +277,7 @@ class AnalogTimePickerView @JvmOverloads constructor(
         if (selectionMode == Mode.MINUTE) {
             canvas.drawRoundRect(tabMinuteRect, 20f, 20f, selectBgPaint)
             canvas.drawRoundRect(tabMinuteRect, 20f, 20f, selectRingPaint)
-            tabTextPaint.color = ContextCompat.getColor(context, R.color.color_accent_green)
+            tabTextPaint.color = ContextCompat.getColor(context, R.color.color_text_on_dark)
         } else {
             canvas.drawRoundRect(tabMinuteRect, 20f, 20f, bgPaint)
             canvas.drawRoundRect(tabMinuteRect, 20f, 20f, borderPaint)

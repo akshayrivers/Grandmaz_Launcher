@@ -58,6 +58,7 @@
         <package android:name="com.android.camera" />
     </queries>
 
+    <!-- forceDarkAllowed stays false so the OS does not recolor the black-and-white palette. -->
     <application
         android:name=".GrandmaApplication"
         android:allowBackup="false"

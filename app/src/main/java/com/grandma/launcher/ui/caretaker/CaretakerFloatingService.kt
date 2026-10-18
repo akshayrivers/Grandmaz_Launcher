@@ -5,150 +5,87 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import android.provider.Settings
 import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import com.grandma.launcher.R
-import com.grandma.launcher.data.AppPreferences
-import kotlin.math.abs
+import com.grandma.launcher.ui.home.HomeActivity
 
+/**
+ * Draws the caretaker and house buttons over other apps.
+ * Bottom-left is help. Bottom-right is home. Neither fades or moves.
+ */
 class CaretakerFloatingService : Service() {
 
     private lateinit var windowManager: WindowManager
-    private var floatingView: View? = null
-    private var params: WindowManager.LayoutParams? = null
-    private val handler = Handler(Looper.getMainLooper())
-    private lateinit var prefs: AppPreferences
-
-    private val fadeRunnable = Runnable {
-        floatingView?.animate()
-            ?.alpha(0.25f)
-            ?.setDuration(400L)
-            ?.start()
-    }
+    private val overlays = mutableListOf<View>()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
-        prefs = AppPreferences(this)
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-
         if (!Settings.canDrawOverlays(this)) {
             stopSelf()
             return
         }
+        val side = resources.getDimensionPixelSize(R.dimen.fab_caretaker_margin_horizontal)
+        val bottom = resources.getDimensionPixelSize(R.dimen.fab_caretaker_margin_bottom)
+        addOverlay(R.layout.layout_floating_caretaker, Gravity.BOTTOM or Gravity.START, side, bottom) {
+            startActivity(Intent(this, CaretakerHelpActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            })
+        }
+        addOverlay(R.layout.layout_floating_house, Gravity.BOTTOM or Gravity.END, side, bottom) {
+            startActivity(Intent(this, HomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP
+            })
+        }
+    }
 
+    private fun addOverlay(layout: Int, gravity: Int, x: Int, y: Int, onClick: () -> Unit) {
         try {
-            val contextThemeWrapper = ContextThemeWrapper(this, R.style.Theme_GrandmasLauncher)
-            floatingView = LayoutInflater.from(contextThemeWrapper).inflate(R.layout.layout_floating_caretaker, null)
-
-            val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val themed = ContextThemeWrapper(this, R.style.Theme_GrandmasLauncher)
+            val view = LayoutInflater.from(themed).inflate(layout, null)
+            val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             } else {
                 @Suppress("DEPRECATION")
                 WindowManager.LayoutParams.TYPE_PHONE
             }
-
-            params = WindowManager.LayoutParams(
+            val params = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                layoutType,
+                type,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             ).apply {
-                gravity = Gravity.TOP or Gravity.START
-                // Place initially in bottom left
-                val displayMetrics = resources.displayMetrics
-                x = 30
-                y = displayMetrics.heightPixels - 500
+                this.gravity = gravity
+                this.x = x
+                this.y = y
             }
-
-            windowManager.addView(floatingView, params)
-
-            setupTouchListener()
-            resetIdleTimer()
-        } catch (e: Exception) {
-            e.printStackTrace()
+            view.setOnClickListener { onClick() }
+            windowManager.addView(view, params)
+            overlays.add(view)
+        } catch (_: Exception) {
             stopSelf()
         }
     }
 
-    private fun setupTouchListener() {
-        val view = floatingView ?: return
-
-        view.setOnTouchListener(object : View.OnTouchListener {
-            private var initialX = 0
-            private var initialY = 0
-            private var initialTouchX = 0f
-            private var initialTouchY = 0f
-            private var startClickTime = 0L
-
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        initialX = params?.x ?: 0
-                        initialY = params?.y ?: 0
-                        initialTouchX = event.rawX
-                        initialTouchY = event.rawY
-                        startClickTime = System.currentTimeMillis()
-
-                        // Make active immediately
-                        view.animate().cancel()
-                        view.alpha = 1.0f
-                        handler.removeCallbacks(fadeRunnable)
-                        return true
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-                        val dx = (event.rawX - initialTouchX).toInt()
-                        val dy = (event.rawY - initialTouchY).toInt()
-                        params?.let {
-                            it.x = initialX + dx
-                            it.y = initialY + dy
-                            windowManager.updateViewLayout(view, it)
-                        }
-                        return true
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        val duration = System.currentTimeMillis() - startClickTime
-                        val dx = abs(event.rawX - initialTouchX)
-                        val dy = abs(event.rawY - initialTouchY)
-
-                        if (duration < 250 && dx < 10 && dy < 10) {
-                            // Tap! Launch the CaretakerHelpActivity
-                            val intent = Intent(this@CaretakerFloatingService, CaretakerHelpActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            }
-                            startActivity(intent)
-                        }
-                        resetIdleTimer()
-                        return true
-                    }
-                }
-                return false
-            }
-        })
-    }
-
-    private fun resetIdleTimer() {
-        handler.removeCallbacks(fadeRunnable)
-        floatingView?.animate()?.alpha(1.0f)?.setDuration(200L)?.start()
-        handler.postDelayed(fadeRunnable, prefs.fabIdleDelayMs)
-    }
-
     override fun onDestroy() {
-        super.onDestroy()
-        floatingView?.let {
+        overlays.forEach { view ->
             try {
-                windowManager.removeView(it)
-            } catch (_: Exception) {}
+                windowManager.removeView(view)
+            } catch (_: Exception) {
+            }
         }
+        overlays.clear()
+        super.onDestroy()
     }
 }

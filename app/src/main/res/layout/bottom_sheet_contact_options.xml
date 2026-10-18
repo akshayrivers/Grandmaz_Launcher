@@ -51,13 +51,13 @@
         android:paddingEnd="@dimen/space_lg"
         android:text="@string/contact_options_remove"
         android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
-        android:textColor="@color/color_sos_red"
+        android:textColor="@color/color_text_primary"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:drawableStart="@android:drawable/ic_menu_delete"
         android:drawablePadding="@dimen/space_md"
-        android:drawableTint="@color/color_sos_red" />
+        android:drawableTint="@color/color_text_primary" />
 
     <View
         android:layout_width="match_parent"

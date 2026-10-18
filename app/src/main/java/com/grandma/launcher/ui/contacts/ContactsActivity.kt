@@ -4,8 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.GridLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.google.android.material.card.MaterialCardView
 import com.grandma.launcher.R
 import com.grandma.launcher.data.Contact
 import com.grandma.launcher.data.ContactRepository
@@ -128,6 +131,20 @@ class ContactsActivity : AppCompatActivity() {
     private fun addCardToGrid(view: View) {
         val size = resources.getDimensionPixelSize(R.dimen.contact_card_size_contacts)
         val margin = resources.getDimensionPixelSize(R.dimen.space_sm)
+        val card = MaterialCardView(this).apply {
+            radius = resources.getDimension(R.dimen.contact_card_corner_radius)
+            cardElevation = 0f
+            strokeWidth = resources.getDimensionPixelSize(R.dimen.control_border_width)
+            strokeColor = ContextCompat.getColor(this@ContactsActivity, R.color.color_control_border)
+            setCardBackgroundColor(ContextCompat.getColor(this@ContactsActivity, R.color.color_bg_card))
+            addView(
+                view,
+                FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                )
+            )
+        }
         val params = GridLayout.LayoutParams().apply {
             width = 0
             height = size
@@ -135,7 +152,7 @@ class ContactsActivity : AppCompatActivity() {
             rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
             setMargins(margin, margin, margin, margin)
         }
-        binding.gridAllContacts.addView(view, params)
+        binding.gridAllContacts.addView(card, params)
     }
 
     private fun placeCall(phone: String) {

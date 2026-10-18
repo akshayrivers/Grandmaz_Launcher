@@ -26,10 +26,12 @@ class WeatherCardView @JvmOverloads constructor(
     private val locationText: TextView
 
     init {
-        radius = resources.getDimension(R.dimen.contact_card_corner_radius)
-        cardElevation = resources.getDimension(R.dimen.space_xs)
+        radius = resources.getDimension(R.dimen.control_corner_radius)
+        cardElevation = 0f
         useCompatPadding = false
         setCardBackgroundColor(ContextCompat.getColor(context, R.color.color_bg_card))
+        strokeWidth = resources.getDimensionPixelSize(R.dimen.control_border_width)
+        strokeColor = ContextCompat.getColor(context, R.color.color_control_border)
 
         val rootLayout = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL

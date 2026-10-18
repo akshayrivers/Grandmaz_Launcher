@@ -2,11 +2,12 @@ package com.grandma.launcher.ui.views
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.grandma.launcher.R
 import com.grandma.launcher.data.WeatherCondition
 
 /**
@@ -21,32 +22,34 @@ class WeatherIconView @JvmOverloads constructor(
 
     private var condition: WeatherCondition = WeatherCondition.SUNNY
 
+    private val inkColor = ContextCompat.getColor(context, R.color.color_text_primary)
+
     private val sunPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#F5B041") // Soft orange/yellow sun
+        color = inkColor
         style = Paint.Style.FILL
     }
 
     private val sunRayPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#F5B041")
+        color = inkColor
         style = Paint.Style.STROKE
         strokeWidth = 6f
         strokeCap = Paint.Cap.ROUND
     }
 
     private val cloudPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#D5D8DC") // Soft cloud grey
+        color = inkColor
         style = Paint.Style.FILL
     }
 
     private val rainPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#5DADE2") // Rain blue
+        color = inkColor
         style = Paint.Style.STROKE
         strokeWidth = 6f
         strokeCap = Paint.Cap.ROUND
     }
 
     private val lightningPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#F4D03F") // Lightning yellow
+        color = inkColor
         style = Paint.Style.FILL_AND_STROKE
         strokeWidth = 4f
         strokeJoin = Paint.Join.ROUND
@@ -134,10 +137,7 @@ class WeatherIconView @JvmOverloads constructor(
     }
 
     private fun drawThunderstorm(canvas: Canvas, w: Float, h: Float) {
-        val originalColor = cloudPaint.color
-        cloudPaint.color = Color.parseColor("#7F8C8D") // Dark thunderstorm cloud
         drawCloudShape(canvas, w * 0.5f, h * 0.4f, w * 0.6f)
-        cloudPaint.color = originalColor
 
         val cx = w * 0.5f
         val cy = h * 0.7f
@@ -158,7 +158,7 @@ class WeatherIconView @JvmOverloads constructor(
 
         val startY = h * 0.68f
         val snowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.parseColor("#BDC3C7")
+            color = inkColor
             style = Paint.Style.FILL
         }
 

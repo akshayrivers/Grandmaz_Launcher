@@ -29,7 +29,11 @@
          Safe tap area for tremor users. -->
     <dimen name="contact_card_size_home">120dp</dimen>
     <dimen name="contact_card_photo_size_home">72dp</dimen>
-    <dimen name="contact_card_corner_radius">24dp</dimen>
+    <dimen name="contact_card_corner_radius">20dp</dimen>
+
+    <!-- Every tappable control uses this border and corner. -->
+    <dimen name="control_border_width">3dp</dimen>
+    <dimen name="control_corner_radius">20dp</dimen>
 
     <!-- Contact card on contacts screen: 140dp
          2-per-row grid — tremor-safe and high visibility. -->
@@ -46,8 +50,8 @@
     <dimen name="sos_button_corner_radius">20dp</dimen>
     <dimen name="sos_progress_ring_stroke">4dp</dimen>
 
-    <!-- Caretaker FAB: 64dp — slightly larger than standard 56dp -->
-    <dimen name="fab_caretaker_size">64dp</dimen>
+    <!-- House and caretaker. Minimum touch size, same square on every screen. -->
+    <dimen name="fab_caretaker_size">80dp</dimen>
     <dimen name="fab_caretaker_icon_size">28dp</dimen>
     <dimen name="fab_caretaker_margin_horizontal">16dp</dimen>
     <dimen name="fab_caretaker_margin_bottom">24dp</dimen>

@@ -2,7 +2,6 @@ package com.grandma.launcher.ui.views
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
@@ -14,8 +13,7 @@ import kotlin.math.sin
 
 /**
  * A custom view displaying a static analog clock face representing an alarm's set time.
- * Border lights up in active green if enabled, or dull gray if disabled,
- * giving instant wordless feedback.
+ * Border is thicker while the alarm is on.
  */
 class AlarmClockView @JvmOverloads constructor(
     context: Context,
@@ -81,11 +79,10 @@ class AlarmClockView @JvmOverloads constructor(
         val stroke = if (isAlarmEnabled) 10f else 6f
         val radius = (min(w, h) / 2f) - stroke / 2f
 
-        borderPaint.color = if (isAlarmEnabled) {
-            ContextCompat.getColor(context, R.color.color_accent_green)
-        } else {
-            Color.parseColor("#BDC3C7")
-        }
+        borderPaint.color = ContextCompat.getColor(
+            context,
+            if (isAlarmEnabled) R.color.color_text_primary else R.color.color_divider
+        )
         borderPaint.strokeWidth = stroke
 
         canvas.drawCircle(cx, cy, radius, facePaint)

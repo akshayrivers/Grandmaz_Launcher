@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
+import com.grandma.launcher.R
 import com.grandma.launcher.data.Contact
 import com.grandma.launcher.databinding.ViewContactCardBinding
 import java.io.File
@@ -29,13 +31,17 @@ class ContactGridItemView(
     init {
         // Photo — full bleed, same as home card
         val photoFile = contact.photoPath?.let { File(it) }
+        val ink = ContextCompat.getColor(context, R.color.color_text_primary)
         if (photoFile != null && photoFile.exists()) {
             val bmp = BitmapFactory.decodeFile(photoFile.absolutePath)
             if (bmp != null) binding.ivContactPhoto.setImageBitmap(bmp)
-            else binding.ivContactPhoto.setBackgroundColor(0xFF2B6CB0.toInt())
+            else binding.ivContactPhoto.setBackgroundColor(ink)
         } else {
-            binding.ivContactPhoto.setBackgroundColor(0xFF2B6CB0.toInt())
+            binding.ivContactPhoto.setBackgroundColor(ink)
             binding.nameScrim.alpha = 0f
+            binding.tvContactName.setTextColor(
+                ContextCompat.getColor(context, R.color.color_text_on_dark)
+            )
         }
         binding.tvContactName.text = contact.name
 

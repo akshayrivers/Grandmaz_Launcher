@@ -49,7 +49,8 @@ class SosButtonView @JvmOverloads constructor(
 
     private val holdDurationMs = AppPreferences.SOS_HOLD_DURATION_MS
     private val ringStrokeWidth = resources.getDimension(R.dimen.sos_progress_ring_stroke)
-    private val cornerRadius = resources.getDimension(R.dimen.sos_button_corner_radius)
+    private val borderWidth = resources.getDimension(R.dimen.control_border_width)
+    private val cornerRadius = resources.getDimension(R.dimen.control_corner_radius)
 
     // ── Paints ───────────────────────────────────────────────────────────────
 
@@ -63,15 +64,21 @@ class SosButtonView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
+    private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.color_control_border)
+        style = Paint.Style.STROKE
+        strokeWidth = borderWidth
+    }
+
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.color_text_on_dark)
+        color = ContextCompat.getColor(context, R.color.color_sos_label)
         style = Paint.Style.STROKE
         strokeWidth = ringStrokeWidth
         strokeCap = Paint.Cap.ROUND
     }
 
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.color_text_on_dark)
+        color = ContextCompat.getColor(context, R.color.color_sos_label)
         textSize = resources.getDimension(R.dimen.space_xl).coerceAtLeast(
             context.resources.displayMetrics.scaledDensity * 24
         )
@@ -199,7 +206,7 @@ class SosButtonView @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        val inset = ringStrokeWidth / 2f
+        val inset = borderWidth + ringStrokeWidth / 2f
         ringRect.set(inset, inset, w - inset, h - inset)
 
         // Compute the path tracing the exact rounded rectangle boundary
@@ -258,9 +265,10 @@ class SosButtonView @JvmOverloads constructor(
         val w = width.toFloat()
         val h = height.toFloat()
 
-        // Background
         val bgPaint = if (isPressed) backgroundPressedPaint else backgroundPaint
-        canvas.drawRoundRect(0f, 0f, w, h, cornerRadius, cornerRadius, bgPaint)
+        val inset = borderWidth / 2f
+        canvas.drawRoundRect(inset, inset, w - inset, h - inset, cornerRadius, cornerRadius, bgPaint)
+        canvas.drawRoundRect(inset, inset, w - inset, h - inset, cornerRadius, cornerRadius, borderPaint)
 
         // Progress boundary outline — draws clockwise from top center
         if (holdProgress > 0f) {

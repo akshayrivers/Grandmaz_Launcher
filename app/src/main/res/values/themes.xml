@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Always light: dark mode (incl. MIUI's forced dark) made the clock unreadable.
-         See phase1-discussion.md, lesson 1. -->
+    <!-- Light parent plus MODE_NIGHT_NO. The colours in values/ are the dark palette.
+         forceDarkAllowed stays false so the OS does not recolor it a second time. -->
     <style name="Theme.GrandmasLauncher" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/color_accent_blue</item>
-        <item name="colorPrimaryVariant">@color/color_accent_blue</item>
+        <item name="colorPrimary">@color/color_text_primary</item>
+        <item name="colorPrimaryVariant">@color/color_text_primary</item>
         <item name="colorOnPrimary">@color/color_text_on_dark</item>
 
-        <item name="colorSecondary">@color/color_accent_amber</item>
+        <item name="colorSecondary">@color/color_text_primary</item>
         <item name="colorOnSecondary">@color/color_text_on_dark</item>
+
+        <item name="colorSurface">@color/color_bg_card</item>
+        <item name="colorOnSurface">@color/color_text_primary</item>
+        <item name="colorOnBackground">@color/color_text_primary</item>
 
         <item name="android:colorBackground">@color/color_bg_primary</item>
         <item name="android:windowBackground">@color/color_bg_primary</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">@bool/window_light_system_bars</item>
+        <item name="android:windowLightNavigationBar">@bool/window_light_system_bars</item>
 
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:windowAnimationStyle">@null</item>

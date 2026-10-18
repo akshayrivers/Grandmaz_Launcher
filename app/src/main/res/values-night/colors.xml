@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Same as values/colors.xml. The launcher does not follow the system theme. -->
+
+    <color name="color_bg_primary">#000000</color>
+    <color name="color_bg_secondary">#000000</color>
+    <color name="color_bg_card">#000000</color>
+    <color name="color_control_fill">#000000</color>
+
+    <color name="color_text_primary">#FFFFFF</color>
+    <color name="color_text_secondary">#9A9A9A</color>
+    <color name="color_text_on_dark">#FFFFFF</color>
+    <color name="color_control_border">#FFFFFF</color>
+    <color name="color_divider">#FFFFFF</color>
+
+    <color name="color_sos_label">#FFFFFF</color>
+
+    <color name="color_accent_blue">#FFFFFF</color>
+    <color name="color_accent_blue_light">#000000</color>
+    <color name="color_accent_green">#FFFFFF</color>
+    <color name="color_accent_green_light">#000000</color>
+    <color name="color_accent_amber">#FFFFFF</color>
+    <color name="color_accent_amber_light">#000000</color>
+
+    <color name="color_sos_red">#E10600</color>
+    <color name="color_sos_red_dark">#B00000</color>
+    <color name="color_sos_red_overlay">#80E10600</color>
+
+    <color name="color_shadow">#00000000</color>
+    <color name="color_overlay">#99000000</color>
+
+    <color name="color_clock_face">#000000</color>
+    <color name="color_clock_border">#FFFFFF</color>
+    <color name="color_clock_hand_hour">#FFFFFF</color>
+    <color name="color_clock_hand_minute">#FFFFFF</color>
+    <color name="color_clock_tick_major">#FFFFFF</color>
+    <color name="color_clock_tick_minor">#FFFFFF</color>
+    <color name="color_clock_center">#FFFFFF</color>
+
+</resources>

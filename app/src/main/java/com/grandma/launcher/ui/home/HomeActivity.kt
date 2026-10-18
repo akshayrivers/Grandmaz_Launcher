@@ -6,12 +6,12 @@ import androidx.core.view.updateLayoutParams
 import android.view.ViewGroup
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.widget.GridLayout
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -45,14 +45,8 @@ class HomeActivity : AppCompatActivity() {
     private val callLauncher = CallLauncher(this)
     private val sosCoordinator by lazy { SosCoordinator(this, appScope) }
 
-    // Runnable that fades the FAB after idle period
-    private val fabFadeRunnable = Runnable { fadeFabToIdle() }
-
     companion object {
         private const val TAG = "HomeActivity"
-        private const val FAB_ACTIVE_ALPHA = 1.0f
-        private const val FAB_IDLE_ALPHA = 0.25f
-        private const val FAB_FADE_DURATION_MS = 400L
         // Max contacts shown on home screen — 4 keeps touch targets large
         const val MAX_HOME_CONTACTS = 4
     }
@@ -144,12 +138,13 @@ class HomeActivity : AppCompatActivity() {
         loadContacts()
         if (android.provider.Settings.canDrawOverlays(this)) {
             binding.fabCaretaker.visibility = View.GONE
+            binding.btnHouse.visibility = View.GONE
             try {
                 startService(Intent(this, com.grandma.launcher.ui.caretaker.CaretakerFloatingService::class.java))
             } catch (_: Exception) {}
         } else {
             binding.fabCaretaker.visibility = View.VISIBLE
-            restartFabIdleTimer()
+            binding.btnHouse.visibility = View.VISIBLE
         }
         binding.homeHeader.updateDate()
         binding.homeHeader.updateWeather()
@@ -159,11 +154,6 @@ class HomeActivity : AppCompatActivity() {
         if (appPrefs.pendingCaretakerMessage.isNotBlank()) {
             startActivity(Intent(this, MessageActivity::class.java))
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        binding.root.removeCallbacks(fabFadeRunnable)
     }
 
     // ── Date ─────────────────────────────────────────────────────────────────
@@ -218,7 +208,10 @@ class HomeActivity : AppCompatActivity() {
         // Without this wrapper the photo bleeds outside the rounded bg drawable.
         val card = MaterialCardView(this).apply {
             radius = cornerRadius
-            cardElevation = resources.getDimension(R.dimen.space_sm)
+            cardElevation = 0f
+            strokeWidth = resources.getDimensionPixelSize(R.dimen.control_border_width)
+            strokeColor = ContextCompat.getColor(this@HomeActivity, R.color.color_control_border)
+            setCardBackgroundColor(ContextCompat.getColor(this@HomeActivity, R.color.color_bg_card))
             useCompatPadding = false
             clipChildren = true
             clipToPadding = true
@@ -347,40 +340,8 @@ class HomeActivity : AppCompatActivity() {
                     .show()
             } else {
                 startActivity(Intent(this, CaretakerHelpActivity::class.java))
-                restartFabIdleTimer()
             }
         }
-        // FAB starts active
-        binding.fabCaretaker.alpha = FAB_ACTIVE_ALPHA
-    }
-
-    private fun restartFabIdleTimer() {
-        // Cancel any pending fade
-        binding.root.removeCallbacks(fabFadeRunnable)
-        if (binding.fabCaretaker.visibility != View.VISIBLE) return
-        // Ensure FAB is fully visible
-        binding.fabCaretaker.animate()
-            .alpha(FAB_ACTIVE_ALPHA)
-            .setDuration(FAB_FADE_DURATION_MS / 2)
-            .start()
-        // Schedule fade after idle delay
-        binding.root.postDelayed(fabFadeRunnable, appPrefs.fabIdleDelayMs)
-    }
-
-    private fun fadeFabToIdle() {
-        if (binding.fabCaretaker.visibility != View.VISIBLE) return
-        binding.fabCaretaker.animate()
-            .alpha(FAB_IDLE_ALPHA)
-            .setDuration(FAB_FADE_DURATION_MS)
-            .start()
-    }
-
-    // Any touch on the screen reactivates the FAB
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (ev?.action == MotionEvent.ACTION_DOWN) {
-            restartFabIdleTimer()
-        }
-        return super.dispatchTouchEvent(ev)
     }
 
     // ── Navigation ───────────────────────────────────────────────────────────

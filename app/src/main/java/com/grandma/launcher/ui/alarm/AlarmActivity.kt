@@ -172,7 +172,7 @@ class AlarmActivity : AppCompatActivity() {
 
         val ivPhoto = view.findViewById<android.widget.ImageView>(R.id.ivConfirmPhoto)
         ivPhoto.setImageResource(android.R.drawable.ic_lock_idle_alarm)
-        ivPhoto.setColorFilter(getColor(R.color.color_sos_red))
+        ivPhoto.setColorFilter(getColor(R.color.color_text_primary))
 
         val tvTitle = view.findViewById<TextView>(R.id.tvConfirmTitle)
         val displayHour = if (alarm.hour % 12 == 0) 12 else alarm.hour % 12
@@ -182,7 +182,6 @@ class AlarmActivity : AppCompatActivity() {
 
         val btnYes = view.findViewById<Button>(R.id.btnConfirmYes)
         btnYes.text = "YES, DELETE"
-        btnYes.setBackgroundColor(getColor(R.color.color_sos_red))
         btnYes.setOnClickListener {
             cancelAlarmInSystem(alarm)
             alarmList.remove(alarm)

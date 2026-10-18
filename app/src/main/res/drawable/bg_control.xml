@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Black control. The white border is the shape she sees. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/color_control_fill" />
+    <stroke
+        android:width="@dimen/control_border_width"
+        android:color="@color/color_control_border" />
+    <corners android:radius="@dimen/control_corner_radius" />
+</shape>
