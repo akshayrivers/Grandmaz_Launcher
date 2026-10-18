@@ -1,144 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/caretakerHelpRootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_bg_primary">
+    android:background="@color/color_bg_primary"
+    android:orientation="vertical"
+    android:padding="@dimen/screen_margin_horizontal">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/screen_margin_horizontal">
-
-            <!-- Header -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingTop="@dimen/screen_margin_top"
-                android:paddingBottom="@dimen/space_md">
-
-                <ImageButton
-                    android:id="@+id/btnBack"
-                    android:layout_width="@dimen/touch_target_min"
-                    android:layout_height="@dimen/touch_target_min"
-                    android:background="@drawable/bg_control"
-                    android:contentDescription="@string/action_home"
-                    android:padding="18dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_house" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="@dimen/space_sm"
-                    android:text="@string/screen_ask_for_help"
-                    android:textAppearance="@style/TextAppearance.Grandma.Display" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/color_divider"
-                android:layout_marginBottom="@dimen/space_xl" />
-
-            <!-- Icon + subtitle -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="🙋"
-                android:textSize="64sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:text="@string/caretaker_help_subtitle"
-                android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
-                android:gravity="center" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/color_divider"
-                android:layout_marginTop="@dimen/space_xl"
-                android:layout_marginBottom="@dimen/space_lg" />
-
-            <!-- Optional note -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/caretaker_note_label"
-                android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
-                android:layout_marginBottom="@dimen/space_sm" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etNote"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/text_input_multiline_height"
-                    android:hint="@string/caretaker_note_hint"
-                    android:textSize="18sp"
-                    android:inputType="textMultiLine"
-                    android:gravity="top|start"
-                    android:imeOptions="actionDone" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Send / Cancel -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSendHelp"
-                style="@style/Widget.Grandma.ConfirmButton.Amber"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/confirm_button_height"
-                android:layout_marginTop="@dimen/space_xl"
-                android:text="@string/caretaker_send" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEditHome"
-                style="@style/Widget.Grandma.ConfirmButton.Amber"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/confirm_button_height"
-                android:layout_marginTop="@dimen/space_md"
-                android:text="@string/caretaker_edit_home" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCancelHelp"
-                style="@style/Widget.Grandma.ConfirmButton.No"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/confirm_button_height"
-                android:layout_marginTop="@dimen/space_md"
-                android:layout_marginBottom="@dimen/space_xl"
-                android:text="@string/caretaker_cancel" />
-
-        </LinearLayout>
-    </ScrollView>
-
-    <!-- Caretaker FAB -->
     <ImageButton
-        android:id="@+id/fabCaretaker"
+        android:id="@+id/btnBack"
         android:layout_width="@dimen/touch_target_min"
         android:layout_height="@dimen/touch_target_min"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="@dimen/fab_caretaker_margin_horizontal"
+        android:layout_marginTop="@dimen/screen_margin_top"
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/action_home"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_house" />
+
+    <ImageButton
+        android:id="@+id/btnSendHelp"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_xl"
         android:background="@drawable/bg_control"
         android:contentDescription="@string/screen_ask_for_help"
-        android:padding="18dp"
+        android:padding="48dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_caretaker_info" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/btnEditHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="@dimen/space_md"
+        android:text="@string/caretaker_edit_home"
+        android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
+        android:textColor="@color/color_text_secondary" />
+
+</LinearLayout>

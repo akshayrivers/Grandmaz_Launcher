@@ -4,16 +4,24 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.view.MotionEvent
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +33,7 @@ import com.grandma.launcher.databinding.ActivityAddContactBinding
 import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceRegistrationRepository
 import com.grandma.launcher.voice.ClipRecorder
+import com.grandma.launcher.voice.VoiceManager
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -39,7 +48,9 @@ class AddContactActivity : AppCompatActivity() {
     private var editingContactId: Long? = null
     private var importedPhones: List<ContactPhone> = emptyList()
     private var nameClipId: String? = null
-    private var recorder: com.grandma.launcher.voice.ClipRecorder? = null
+    private var recorder: ClipRecorder? = null
+    private val voice by lazy { VoiceManager(this) }
+    private var saidNamePrompt = false
 
     companion object {
         const val EXTRA_CONTACT_ID = "contact_id"
@@ -82,14 +93,28 @@ class AddContactActivity : AppCompatActivity() {
         contactRepo = ContactRepository(this)
 
         editingContactId = intent.getLongExtra(EXTRA_CONTACT_ID, -1L).takeIf { it != -1L }
-        editingContactId?.let { loadExistingContact(it) }
+        editingContactId?.let { loadExistingContact(it) } ?: showPhotoStep()
 
-        binding.btnBack.setOnClickListener { finish() }
+        binding.btnBack.setOnClickListener { onBackPressedStep() }
         binding.btnTakePhoto.setOnClickListener { launchCamera() }
         binding.btnChooseGallery.setOnClickListener { launchGallery() }
         binding.btnImportContact.setOnClickListener { launchImport() }
-        binding.btnRecordName.setOnClickListener { toggleRecording() }
+        binding.btnRecordName.setOnTouchListener { view, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> beginRecording()
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    endRecording()
+                    view.performClick()
+                }
+            }
+            true
+        }
         binding.btnSaveContact.setOnClickListener { saveContact() }
+        binding.etContactName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun afterTextChanged(s: Editable?) = refreshSave()
+        })
 
         val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
         val topMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_top)
@@ -120,8 +145,48 @@ class AddContactActivity : AppCompatActivity() {
         capturedPhotoPath = contact.photoPath
         contact.photoPath?.let {
             val bmp = BitmapFactory.decodeFile(it)
-            if (bmp != null) binding.ivPhotoPreview.setImageBitmap(bmp)
+            if (bmp != null) showPhoto(bmp)
         }
+        showVoiceStep(speakPrompt = false)
+    }
+
+    private fun showPhotoStep() {
+        binding.groupVoice.visibility = View.GONE
+        binding.btnTakePhoto.visibility = View.VISIBLE
+        binding.btnChooseGallery.visibility = View.VISIBLE
+    }
+
+    private fun showVoiceStep(speakPrompt: Boolean) {
+        binding.btnTakePhoto.visibility = View.GONE
+        binding.btnChooseGallery.visibility = View.GONE
+        binding.groupVoice.visibility = View.VISIBLE
+        refreshSave()
+        if (speakPrompt && !saidNamePrompt) {
+            saidNamePrompt = true
+            voice.speak(getString(R.string.spoken_say_name), null)
+        }
+    }
+
+    private fun onBackPressedStep() {
+        if (editingContactId == null && binding.groupVoice.visibility == View.VISIBLE) {
+            showPhotoStep()
+        } else {
+            finish()
+        }
+    }
+
+    private fun refreshSave() {
+        val ready = editingContactId != null ||
+            !nameClipId.isNullOrBlank() ||
+            !binding.etContactName.text.isNullOrBlank()
+        binding.btnSaveContact.visibility = if (ready) View.VISIBLE else View.GONE
+    }
+
+    override fun onDestroy() {
+        recorder?.cancel()
+        recorder = null
+        voice.shutdown()
+        super.onDestroy()
     }
 
     private val importLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -286,7 +351,8 @@ class AddContactActivity : AppCompatActivity() {
             }
 
             capturedPhotoPath = destFile.absolutePath
-            binding.ivPhotoPreview.setImageBitmap(scaled)
+            showPhoto(scaled)
+            showVoiceStep(speakPrompt = editingContactId == null)
 
         } catch (e: Exception) {
             Toast.makeText(this, "Could not save photo: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -295,59 +361,85 @@ class AddContactActivity : AppCompatActivity() {
 
     // ── Save ──────────────────────────────────────────────────────────────────
 
-    private fun toggleRecording() {
-        if (recorder != null) {
-            val active = recorder ?: return
-            recorder = null
-            binding.btnRecordName.isEnabled = false
-            lifecycleScope.launch {
-                when (val result = active.stopAndUpload()) {
-                    is ApiClient.Result.Success -> {
-                        nameClipId = result.data
-                        Toast.makeText(this@AddContactActivity, getString(R.string.add_contact_clip_saved), Toast.LENGTH_SHORT).show()
-                    }
-                    is ApiClient.Result.Error ->
-                        Toast.makeText(this@AddContactActivity, result.message, Toast.LENGTH_LONG).show()
-                }
-                binding.btnRecordName.isEnabled = true
-                binding.btnRecordName.setText(R.string.add_contact_record_name)
-            }
-            return
-        }
+    private fun showPhoto(bitmap: Bitmap) {
+        binding.ivPhotoPreview.setImageBitmap(bitmap)
+        binding.ivPhotoPreview.setPadding(0, 0, 0, 0)
+        binding.ivPhotoPreview.scaleType = ImageView.ScaleType.CENTER_CROP
+    }
+
+    private fun beginRecording() {
+        if (recorder != null) return
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             audioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
             return
         }
         val file = File(filesDir, "voice/recording.m4a")
         val next = ClipRecorder(file, DeviceRegistrationRepository(this))
-        next.start()
+        try {
+            next.start()
+        } catch (_: Exception) {
+            return
+        }
         recorder = next
-        binding.btnRecordName.setText(R.string.add_contact_stop_recording)
+        binding.btnRecordName.setBackgroundColor(Color.WHITE)
+        binding.btnRecordName.imageTintList = ColorStateList.valueOf(Color.BLACK)
+        pulse()
+    }
+
+    private fun endRecording() {
+        binding.btnRecordName.setBackgroundResource(R.drawable.bg_control)
+        binding.btnRecordName.imageTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(this, R.color.color_text_primary)
+        )
+        val active = recorder ?: return
+        recorder = null
+        binding.btnRecordName.isEnabled = false
+        lifecycleScope.launch {
+            when (val result = active.stopAndUpload()) {
+                is ApiClient.Result.Success -> keepClip(result.data)
+                is ApiClient.Result.Error -> if (!keepLocalClip()) pulse()
+            }
+            binding.btnRecordName.isEnabled = true
+        }
+    }
+
+    private fun keepClip(id: String) {
+        nameClipId = id
+        refreshSave()
+        voice.speak(binding.etContactName.text?.toString().orEmpty().ifBlank { " " }, id)
+    }
+
+    private fun keepLocalClip(): Boolean {
+        val source = File(filesDir, "voice/recording.m4a")
+        if (!source.exists()) return false
+        val id = "local-${System.currentTimeMillis()}"
+        val stored = File(filesDir, "voice/$id.m4a")
+        return source.renameTo(stored).also { moved -> if (moved) keepClip(id) }
+    }
+
+    private fun pulse() {
+        getSystemService(Vibrator::class.java)?.vibrate(
+            VibrationEffect.createOneShot(80, VibrationEffect.DEFAULT_AMPLITUDE)
+        )
     }
 
     private val audioPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (granted) toggleRecording()
-    }
+    ) { _ -> }
 
     private fun saveContact() {
-        val name = binding.etContactName.text?.toString()?.trim() ?: ""
-        val phone = binding.etContactPhone.text?.toString()?.trim() ?: ""
+        val name = binding.etContactName.text?.toString()?.trim().orEmpty()
+        val phone = binding.etContactPhone.text?.toString()?.trim().orEmpty()
 
-        if (name.isEmpty()) {
-            binding.etContactName.error = "Please enter a name"
-            return
-        }
-        if (phone.isEmpty()) {
-            binding.etContactPhone.error = "Please enter a phone number"
-            return
-        }
+        if (name.isEmpty() && nameClipId.isNullOrBlank()) return
+        if (capturedPhotoPath == null && editingContactId == null) return
 
         val id = editingContactId ?: System.currentTimeMillis()
-        val phones = importedPhones.ifEmpty {
-            listOf(ContactPhone(id = "p$id", label = "", e164 = phone, whatsapp = binding.cbWhatsapp.isChecked, isDefault = true))
-        }.map { it.copy(whatsapp = it.whatsapp || binding.cbWhatsapp.isChecked) }
+        val phones = when {
+            phone.isEmpty() && importedPhones.isEmpty() -> emptyList()
+            importedPhones.isNotEmpty() -> importedPhones.map { it.copy(whatsapp = it.whatsapp || binding.cbWhatsapp.isChecked) }
+            else -> listOf(ContactPhone(id = "p$id", label = "", e164 = phone, whatsapp = binding.cbWhatsapp.isChecked, isDefault = true))
+        }
         contactRepo.save(Contact(
             id = id,
             name = name,

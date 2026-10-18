@@ -1,38 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/talkRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_bg_primary"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="@color/color_bg_primary">
 
-    <ImageButton
-        android:id="@+id/btnTalk"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-            android:background="@color/color_bg_primary"
-        android:contentDescription="@string/talk_button"
-        android:padding="24dp"
-        android:scaleType="fitCenter"
-        android:src="@android:drawable/ic_btn_speak_now" />
-
-    <TextView
-        android:id="@+id/tvTalkStatus"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/talk_hold"
-        android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
+        android:orientation="vertical"
+        android:padding="@dimen/screen_margin_horizontal">
+
+        <ImageButton
+            android:id="@+id/btnTalk"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:background="@drawable/bg_control"
+            android:contentDescription="@string/talk_button"
+            android:padding="56dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_nav_mic" />
+
+        <TextView
+            android:id="@+id/tvTalkStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="@string/talk_hold"
+            android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+            android:textColor="@color/color_text_secondary" />
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/btnHome"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="24dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/screen_margin_horizontal"
+        android:background="@drawable/bg_control"
         android:contentDescription="@string/action_home"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_house" />
-</LinearLayout>
+
+</FrameLayout>

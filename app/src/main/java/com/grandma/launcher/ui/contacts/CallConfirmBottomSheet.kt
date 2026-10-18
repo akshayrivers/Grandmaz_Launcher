@@ -7,34 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.grandma.launcher.R
 import com.grandma.launcher.data.Contact
 import com.grandma.launcher.databinding.BottomSheetCallConfirmBinding
+import com.grandma.launcher.voice.Speaker
+import com.grandma.launcher.voice.VoiceSlots
 import java.io.File
 
 /**
- * Full-screen-ish confirmation before placing a call.
- *
- * Why a confirmation step?
- * Elderly users with tremor or reduced dexterity frequently
- * trigger things accidentally. A confirmation screen means
- * an accidental tap on a contact photo never directly places a call.
- * The user sees the face + name again and has one clear decision.
- *
- * Why BottomSheetDialogFragment?
- * - Slides up from bottom — natural, thumb-reachable
- * - Dismissable by tapping outside (emergency escape)
- * - Shows over the home screen, no navigation needed
- *
- * Why equal-size YES and NO buttons?
- * - Manipulative UI (tiny NO, big YES) is not appropriate for users
- *   who may be confused. Both choices are shown with equal prominence.
- * - Colour differentiates: green = YES, neutral = NO.
+ * Confirmation before a call. The sheet says her name. The phone button
+ * says "call" only after she presses it. Both buttons are the same size.
  */
 class CallConfirmBottomSheet : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetCallConfirmBinding? = null
     private val binding get() = _binding!!
-
     private var onConfirm: (() -> Unit)? = null
 
     override fun onCreateView(
@@ -50,10 +37,10 @@ class CallConfirmBottomSheet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val name = arguments?.getString(ARG_NAME) ?: return
-        val phone = arguments?.getString(ARG_PHONE) ?: return
         val photoPath = arguments?.getString(ARG_PHOTO)
+        val clipId = arguments?.getString(ARG_CLIP)
+        val whatsapp = arguments?.getBoolean(ARG_WHATSAPP) == true
 
-        // Show contact photo or placeholder
         photoPath?.let {
             val file = File(it)
             if (file.exists()) {
@@ -61,23 +48,30 @@ class CallConfirmBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-        binding.tvConfirmTitle.text = getString(
-            com.grandma.launcher.R.string.confirm_call_title, name
-        )
+        binding.tvConfirmTitle.text = name
+        if (whatsapp) binding.btnConfirmYes.setImageResource(R.drawable.ic_nav_chat)
+
+        say(name, clipId)
 
         binding.btnConfirmYes.setOnClickListener {
+            (activity as? Speaker)?.speakSlot(VoiceSlots.CALL, getString(R.string.spoken_call))
             onConfirm?.invoke()
             dismiss()
         }
 
         binding.btnConfirmNo.setOnClickListener {
+            (activity as? Speaker)?.speakSlot(VoiceSlots.NO, getString(R.string.spoken_no))
             dismiss()
         }
     }
 
+    private fun say(text: String, clipId: String? = null) {
+        (activity as? Speaker)?.speak(text, clipId)
+    }
+
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 
     companion object {
@@ -85,6 +79,8 @@ class CallConfirmBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_NAME = "name"
         private const val ARG_PHONE = "phone"
         private const val ARG_PHOTO = "photo"
+        private const val ARG_CLIP = "clip"
+        private const val ARG_WHATSAPP = "whatsapp"
 
         fun show(
             fragmentManager: FragmentManager,
@@ -95,6 +91,8 @@ class CallConfirmBottomSheet : BottomSheetDialogFragment() {
                 arguments = Bundle().apply {
                     putString(ARG_NAME, contact.name)
                     putString(ARG_PHONE, contact.phone)
+                    putString(ARG_CLIP, contact.nameClipId)
+                    putBoolean(ARG_WHATSAPP, contact.whatsapp)
                     contact.photoPath?.let { putString(ARG_PHOTO, it) }
                 }
                 this.onConfirm = onConfirm

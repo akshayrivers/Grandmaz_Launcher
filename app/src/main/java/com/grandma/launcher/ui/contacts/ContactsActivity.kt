@@ -16,6 +16,9 @@ import com.grandma.launcher.databinding.ActivityContactsBinding
 import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import com.grandma.launcher.ui.common.CallLauncher
 import com.grandma.launcher.ui.common.InactivityReturn
+import com.grandma.launcher.voice.Speaker
+import com.grandma.launcher.voice.VoiceManager
+import com.grandma.launcher.voice.VoiceSlots
 
 /**
  * Full contacts screen — photo grid, 3 per row.
@@ -29,11 +32,15 @@ import com.grandma.launcher.ui.common.InactivityReturn
  * Long press → bottom sheet (Call / Edit / Remove)
  * Add slot always visible at end of grid
  */
-class ContactsActivity : AppCompatActivity() {
+class ContactsActivity : AppCompatActivity(), Speaker {
 
     private lateinit var binding: ActivityContactsBinding
     private lateinit var contactRepo: ContactRepository
     private val callLauncher = CallLauncher(this)
+    private val voice by lazy { VoiceManager(this) }
+
+    override fun speak(text: String, clipId: String?) = voice.speak(text, clipId)
+    override fun speakSlot(slot: String, text: String) = voice.speakSlot(slot, text)
     private lateinit var inactivity: InactivityReturn
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +51,10 @@ class ContactsActivity : AppCompatActivity() {
 
         contactRepo = ContactRepository(this)
 
-        binding.btnBack.setOnClickListener { finish() }
+        binding.btnBack.setOnClickListener {
+            voice.speakSlot(VoiceSlots.HOME, getString(R.string.spoken_home))
+            finish()
+        }
         inactivity = InactivityReturn(this, binding.contactsRootLayout)
 
         CaretakerFabHelper.attach(this, binding.fabCaretaker)
@@ -77,6 +87,11 @@ class ContactsActivity : AppCompatActivity() {
     override fun onPause() {
         inactivity.stop()
         super.onPause()
+    }
+
+    override fun onDestroy() {
+        voice.shutdown()
+        super.onDestroy()
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -123,6 +138,7 @@ class ContactsActivity : AppCompatActivity() {
     private fun addAddSlotToGrid() {
         val addView = AddContactGridItemView(this)
         addView.setOnClickListener {
+            voice.speakSlot(VoiceSlots.ADD_PERSON, getString(R.string.spoken_add_person))
             startActivity(Intent(this, AddContactActivity::class.java))
         }
         addCardToGrid(addView)

@@ -9,7 +9,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/space_sm"
     android:layout_marginVertical="@dimen/space_xs"
-    app:cardElevation="2dp"
+    app:cardElevation="0dp"
     app:cardPreventCornerOverlap="true">
 
     <LinearLayout

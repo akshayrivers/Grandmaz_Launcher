@@ -55,6 +55,66 @@ class DeviceConfigRepository(
         home.put("weather", weather)
         home.put("inactivityReturnSec", prefs.inactivityReturnSec.coerceIn(15, 600))
         config.put("home", home)
+        if (config.optJSONObject("apps") == null) {
+            config.put("apps", JSONObject().apply { put("visible", JSONArray()) })
+        }
+        writeConfig(config)
+        prefs.configDirty = true
+    }
+
+    /** Package names the caretaker chose for her apps screen. */
+    fun visibleApps(): List<String> {
+        val array = readConfig().optJSONObject("apps")?.optJSONArray("visible") ?: return emptyList()
+        return (0 until array.length()).mapNotNull { index ->
+            array.optString(index).takeIf { it.isNotBlank() }
+        }.distinct()
+    }
+
+    fun setVisibleApps(packages: List<String>) {
+        val config = readConfig()
+        val visible = JSONArray()
+        packages.map { it.trim() }.filter { it.isNotEmpty() }.distinct().take(40).forEach { visible.put(it) }
+        val apps = config.optJSONObject("apps") ?: JSONObject()
+        apps.put("visible", visible)
+        config.put("apps", apps)
+        writeConfig(config)
+        prefs.configDirty = true
+    }
+
+    fun clipForSlot(slot: String): String? {
+        val clips = readConfig().optJSONObject("voice")?.optJSONArray("clips") ?: return null
+        for (index in 0 until clips.length()) {
+            val clip = clips.optJSONObject(index) ?: continue
+            if (clip.optString("slot") == slot) return nullableString(clip, "assetId")
+        }
+        return null
+    }
+
+    fun saveClip(slot: String, assetId: String) {
+        val config = readConfig()
+        val voice = config.optJSONObject("voice") ?: JSONObject().apply { put("ttsRate", 0.9) }
+        val clips = voice.optJSONArray("clips") ?: JSONArray()
+        val next = JSONArray()
+        var replaced = false
+        for (index in 0 until clips.length()) {
+            val clip = clips.optJSONObject(index) ?: continue
+            if (clip.optString("slot") == slot) {
+                clip.put("id", slot)
+                clip.put("assetId", assetId)
+                replaced = true
+            }
+            next.put(clip)
+        }
+        if (!replaced) {
+            next.put(JSONObject().apply {
+                put("id", slot)
+                put("slot", slot)
+                put("assetId", assetId)
+            })
+        }
+        if (!voice.has("ttsRate")) voice.put("ttsRate", 0.9)
+        voice.put("clips", next)
+        config.put("voice", voice)
         writeConfig(config)
         prefs.configDirty = true
     }

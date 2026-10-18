@@ -80,6 +80,7 @@ class CallLauncher(private val activity: ComponentActivity) {
      * help — go straight to the dialer instead.
      */
     fun call(number: String, askPermission: Boolean = true) {
+        if (number.isBlank()) return
         if (PhoneCaller.hasCallPermission(activity) || !askPermission) {
             PhoneCaller.placeCall(activity, number)
             return

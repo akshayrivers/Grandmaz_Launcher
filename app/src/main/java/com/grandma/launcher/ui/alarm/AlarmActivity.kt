@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -180,8 +180,8 @@ class AlarmActivity : AppCompatActivity() {
         val timeString = String.format(Locale.ENGLISH, "%02d:%02d %s", displayHour, alarm.minute, amPm)
         tvTitle.text = "Delete alarm for\n$timeString?"
 
-        val btnYes = view.findViewById<Button>(R.id.btnConfirmYes)
-        btnYes.text = "YES, DELETE"
+        val btnYes = view.findViewById<ImageButton>(R.id.btnConfirmYes)
+        btnYes.setImageResource(R.drawable.ic_nav_check)
         btnYes.setOnClickListener {
             cancelAlarmInSystem(alarm)
             alarmList.remove(alarm)
@@ -189,8 +189,7 @@ class AlarmActivity : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        val btnNo = view.findViewById<Button>(R.id.btnConfirmNo)
-        btnNo.text = "NO, GO BACK"
+        val btnNo = view.findViewById<ImageButton>(R.id.btnConfirmNo)
         btnNo.setOnClickListener {
             dialog.dismiss()
         }

@@ -34,7 +34,7 @@ class CaretakerFloatingService : Service() {
             return
         }
         val side = resources.getDimensionPixelSize(R.dimen.fab_caretaker_margin_horizontal)
-        val bottom = resources.getDimensionPixelSize(R.dimen.fab_caretaker_margin_bottom)
+        val bottom = resources.getDimensionPixelSize(R.dimen.fab_caretaker_margin_bottom) + navigationBarHeight()
         addOverlay(R.layout.layout_floating_caretaker, Gravity.BOTTOM or Gravity.START, side, bottom) {
             startActivity(Intent(this, CaretakerHelpActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -47,6 +47,13 @@ class CaretakerFloatingService : Service() {
                     Intent.FLAG_ACTIVITY_SINGLE_TOP
             })
         }
+    }
+
+    private fun navigationBarHeight(): Int {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return 0
+        return windowManager.currentWindowMetrics.windowInsets
+            .getInsets(android.view.WindowInsets.Type.navigationBars())
+            .bottom
     }
 
     private fun addOverlay(layout: Int, gravity: Int, x: Int, y: Int, onClick: () -> Unit) {

@@ -4,7 +4,9 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.grandma.launcher.R
 import com.grandma.launcher.appScope
@@ -12,6 +14,7 @@ import com.grandma.launcher.databinding.ActivityReminderBinding
 import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceRegistrationRepository
 import com.grandma.launcher.voice.VoiceManager
+import com.grandma.launcher.voice.VoiceSlots
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -36,18 +39,31 @@ class ReminderActivity : AppCompatActivity() {
         }
         binding = ActivityReminderBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val margin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.reminderRoot) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            view.setPadding(margin, margin + bars.top, margin, margin + bars.bottom)
+            insets
+        }
         reminderId = intent.getStringExtra(EXTRA_REMINDER_ID).orEmpty()
         label = intent.getStringExtra(EXTRA_LABEL).orEmpty().ifBlank { getString(R.string.reminder_title) }
         binding.tvReminderLabel.text = label
         voice.speak(label, null)
         AlarmScheduler.rescheduleAll(this)
 
-        binding.btnTaken.setOnClickListener { report("taken") }
+        binding.btnTaken.setOnClickListener {
+            voice.speakSlot(VoiceSlots.TAKEN, getString(R.string.spoken_taken))
+            report("taken")
+        }
         binding.btnSnooze.setOnClickListener {
+            voice.speakSlot(VoiceSlots.LATER, getString(R.string.spoken_later))
             AlarmScheduler.snooze(this, reminderId.ifBlank { "alarm" }, label)
             report("snoozed")
         }
-        binding.btnMissed.setOnClickListener { report("missed") }
+        binding.btnMissed.setOnClickListener {
+            voice.speakSlot(VoiceSlots.MISSED, getString(R.string.spoken_missed))
+            report("missed")
+        }
     }
 
     override fun onDestroy() {

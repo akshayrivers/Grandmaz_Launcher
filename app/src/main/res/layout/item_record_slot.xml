@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/tvSlotLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/color_text_primary"
+        android:textSize="20sp" />
+
+    <ImageButton
+        android:id="@+id/btnSlotMic"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/record_clips_title"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_nav_mic" />
+
+</LinearLayout>

@@ -1,212 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Home Screen Layout
-    ═══════════════════════════════════════════════════════
-    Zone order (top to bottom):
-      1. Clock zone       — analog clock + date
-      2. Contacts zone    — favourite contacts (max 4) + add slot
-      3. Tools zone       — Camera, WhatsApp
-      4. SOS zone         — hold-to-activate emergency button
-      5. More Apps        — subtle entry point (text link)
-
-    The Caretaker FAB is positioned absolutely at bottom-left
-    and floats above all content.
-
-    Scroll: NONE. Everything must fit on one screen.
-    If clock doesn't fit on a very small screen, the clock
-    size shrinks via its minHeight/maxHeight constraints.
-    ═══════════════════════════════════════════════════════
+    The page scrolls on a short phone. House and caretaker stay in the corners.
 -->
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_bg_primary">
 
-    <!-- ── ZONE 1: HEADER (CLOCK + WEATHER) ─────────────────────────── -->
-
-    <com.grandma.launcher.ui.home.HomeHeaderView
-        android:id="@+id/homeHeader"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/homeScroll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true">
 
-    <!-- ── ZONE 2: CONTACTS ──────────────────────────────────────────── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="120dp">
 
-    <TextView
-        android:id="@+id/tvYourPeople"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_md"
-        android:text="@string/section_your_people"
-        android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
-        app:layout_constraintTop_toBottomOf="@id/homeHeader"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <com.grandma.launcher.ui.home.HomeHeaderView
+                android:id="@+id/homeHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/tvSeeAll"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/homeHeader"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <TextView
+                android:id="@+id/tvYourPeople"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
-    <!-- Contact cards grid (2×2) — managed by HomeActivity -->
-    <GridLayout
-        android:id="@+id/gridContacts"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_sm"
-        android:columnCount="2"
-        android:rowCount="2"
-        app:layout_constraintTop_toBottomOf="@id/tvYourPeople"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <TextView
+                android:id="@+id/tvSeeAll"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnMorePeople"
-        style="@style/Widget.Grandma.ConfirmButton.No"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="@dimen/space_sm"
-        android:text="@string/action_more_people"
-        app:icon="@android:drawable/ic_menu_myplaces"
-        app:iconGravity="textStart"
-        app:layout_constraintTop_toBottomOf="@id/gridContacts"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <GridLayout
+                android:id="@+id/gridContacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:columnCount="2"
+                android:rowCount="2" />
 
-    <!-- ── ZONE 3: TOOLS ─────────────────────────────────────────────── -->
+            <ImageButton
+                android:id="@+id/btnMorePeople"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/touch_target_min"
+                android:layout_marginTop="@dimen/space_sm"
+                android:background="@drawable/bg_control"
+                android:contentDescription="@string/nav_people"
+                android:padding="18dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_nav_people" />
 
-    <View
-        android:id="@+id/dividerTools"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/space_md"
-        android:background="@color/color_divider"
-        app:layout_constraintTop_toBottomOf="@id/btnMorePeople"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:orientation="horizontal">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnCamera"
-        style="@style/Widget.Grandma.ToolButton.Camera"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/tool_button_height"
-        android:layout_marginTop="@dimen/space_sm"
-        android:layout_marginEnd="@dimen/space_sm"
-        android:text="@string/action_camera"
-        app:icon="@android:drawable/ic_menu_camera"
-        app:iconSize="@dimen/tool_button_icon_size"
-        app:iconGravity="textStart"
-        app:layout_constraintTop_toBottomOf="@id/dividerTools"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnWhatsapp" />
+                <ImageButton
+                    android:id="@+id/btnCamera"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/touch_target_min"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_control"
+                    android:contentDescription="@string/action_camera"
+                    android:padding="18dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_nav_camera" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnWhatsapp"
-        style="@style/Widget.Grandma.ToolButton.WhatsApp"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/tool_button_height"
-        android:layout_marginTop="@dimen/space_sm"
-        android:layout_marginStart="@dimen/space_sm"
-        android:text="@string/action_whatsapp"
-        app:icon="@android:drawable/sym_action_chat"
-        app:iconSize="@dimen/tool_button_icon_size"
-        app:iconGravity="textStart"
-        app:layout_constraintTop_toBottomOf="@id/dividerTools"
-        app:layout_constraintStart_toEndOf="@id/btnCamera"
-        app:layout_constraintEnd_toEndOf="parent" />
+                <ImageButton
+                    android:id="@+id/btnWhatsapp"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/touch_target_min"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_control"
+                    android:contentDescription="@string/action_whatsapp"
+                    android:padding="18dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_nav_chat" />
+            </LinearLayout>
 
-    <!-- ── ZONE 4: SOS ───────────────────────────────────────────────── -->
+            <com.grandma.launcher.ui.views.SosButtonView
+                android:id="@+id/sosButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sos_button_height"
+                android:layout_marginTop="@dimen/space_sm" />
 
-    <com.grandma.launcher.ui.views.SosButtonView
-        android:id="@+id/sosButton"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/sos_button_height"
-        android:layout_marginTop="@dimen/space_sm"
-        app:layout_constraintTop_toBottomOf="@id/btnCamera"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStopAlerts"
+                style="@style/Widget.Grandma.ConfirmButton.No"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/confirm_button_height"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="@string/sos_stop_alerts"
+                android:visibility="gone" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnStopAlerts"
-        style="@style/Widget.Grandma.ConfirmButton.No"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/confirm_button_height"
-        android:layout_marginTop="@dimen/space_sm"
-        android:text="@string/sos_stop_alerts"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/sosButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:orientation="horizontal">
 
-    <!-- ── ZONE 5: MORE APPS ─────────────────────────────────────────── -->
+                <ImageButton
+                    android:id="@+id/btnWeather"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/touch_target_min"
+                    android:layout_marginEnd="@dimen/space_xs"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_control"
+                    android:contentDescription="@string/nav_weather"
+                    android:padding="16dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_nav_sun" />
 
-    <TextView
-        android:id="@+id/tvMoreApps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_sm"
-        android:layout_marginBottom="@dimen/space_sm"
-        android:text="@string/action_more_apps"
-        android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
-        android:textColor="@color/color_accent_blue"
-        android:drawableStart="@android:drawable/ic_menu_more"
-        android:drawableTint="@color/color_accent_blue"
-        android:drawablePadding="@dimen/space_sm"
-        android:clickable="true"
-        android:focusable="true"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:background="?attr/selectableItemBackground"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/btnStopAlerts"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+                <ImageButton
+                    android:id="@+id/btnAddPerson"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/touch_target_min"
+                    android:layout_marginStart="@dimen/space_xs"
+                    android:layout_marginEnd="@dimen/space_xs"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_control"
+                    android:contentDescription="@string/nav_add_person"
+                    android:padding="16dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_nav_add" />
+
+                <ImageButton
+                    android:id="@+id/btnAsk"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/touch_target_min"
+                    android:layout_marginStart="@dimen/space_xs"
+                    android:layout_marginEnd="@dimen/space_xs"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_control"
+                    android:contentDescription="@string/nav_ask"
+                    android:padding="16dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_nav_mic" />
+
+                <ImageButton
+                    android:id="@+id/btnApps"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/touch_target_min"
+                    android:layout_marginStart="@dimen/space_xs"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_control"
+                    android:contentDescription="@string/nav_apps"
+                    android:padding="16dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_nav_apps" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <ImageButton
         android:id="@+id/btnHouse"
         android:layout_width="@dimen/touch_target_min"
         android:layout_height="@dimen/touch_target_min"
+        android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/space_sm"
         android:background="@drawable/bg_control"
         android:contentDescription="@string/action_home"
         android:padding="18dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_house"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:src="@drawable/ic_house" />
 
-    <!-- ── CARETAKER FAB ─────────────────────────────────────────────── -->
-    <!--
-        Positioned bottom-left.
-        Floats above all content via elevation.
-        Alpha controlled programmatically (fade on idle).
-        Bottom margin is larger than SOS button height to ensure
-        the FAB doesn't visually overlap the SOS button.
-    -->
     <ImageButton
         android:id="@+id/fabCaretaker"
         android:layout_width="@dimen/touch_target_min"
         android:layout_height="@dimen/touch_target_min"
+        android:layout_gravity="bottom|start"
         android:layout_marginStart="@dimen/fab_caretaker_margin_horizontal"
         android:layout_marginBottom="@dimen/fab_caretaker_margin_bottom"
         android:background="@drawable/bg_control"
         android:contentDescription="@string/screen_ask_for_help"
         android:padding="18dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_caretaker_info"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:src="@drawable/ic_caretaker_info" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

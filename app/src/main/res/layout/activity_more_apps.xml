@@ -13,12 +13,11 @@
         android:orientation="vertical"
         android:padding="@dimen/screen_margin_horizontal">
 
-        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingTop="@dimen/screen_margin_top"
             android:paddingBottom="@dimen/space_md">
 
@@ -32,48 +31,41 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_house" />
 
-            <TextView
+            <View
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="@dimen/space_sm"
-                android:text="@string/screen_all_apps"
-                android:textAppearance="@style/TextAppearance.Grandma.Display" />
+                android:layout_height="1dp"
+                android:layout_weight="1" />
 
             <ImageButton
                 android:id="@+id/btnCaretakerSettings"
                 android:layout_width="@dimen/back_button_size"
                 android:layout_height="@dimen/back_button_size"
-                android:src="@android:drawable/ic_menu_preferences"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Caretaker Settings"
-                app:tint="@color/color_accent_amber" />
+                android:contentDescription="@string/pin_apps_title"
+                android:src="@android:drawable/ic_menu_preferences"
+                app:tint="@color/color_text_secondary" />
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btnTalk"
+        <TextView
+            android:id="@+id/tvEmpty"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginBottom="@dimen/space_md"
-            android:background="@color/color_bg_primary"
-            android:contentDescription="@string/talk_button"
-            android:src="@android:drawable/ic_btn_speak_now" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/color_divider"
-            android:layout_marginBottom="@dimen/space_md" />
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/apps_empty_helper"
+            android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
+            android:textColor="@color/color_text_secondary"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvApps"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="112dp" />
 
     </LinearLayout>
 
-    <!-- Caretaker FAB -->
     <ImageButton
         android:id="@+id/fabCaretaker"
         android:layout_width="@dimen/touch_target_min"

@@ -27,6 +27,7 @@ import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceSyncManager
 import com.grandma.launcher.remote.SosCoordinator
 import com.grandma.launcher.ui.apps.MoreAppsActivity
+import com.grandma.launcher.ui.assistant.TalkActivity
 import com.grandma.launcher.ui.caretaker.CaretakerHelpActivity
 import com.grandma.launcher.ui.caretaker.CaretakerPinDialog
 import com.grandma.launcher.ui.common.CallLauncher
@@ -34,16 +35,24 @@ import com.grandma.launcher.ui.contacts.AddContactActivity
 import com.grandma.launcher.ui.contacts.ContactsActivity
 import com.grandma.launcher.ui.contacts.CallConfirmBottomSheet
 import com.grandma.launcher.ui.message.MessageActivity
+import com.grandma.launcher.ui.caretaker.RecordClipsActivity
+import com.grandma.launcher.voice.Speaker
+import com.grandma.launcher.voice.VoiceManager
+import com.grandma.launcher.voice.VoiceSlots
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), Speaker {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var contactRepo: ContactRepository
     private lateinit var appPrefs: AppPreferences
     private val callLauncher = CallLauncher(this)
     private val sosCoordinator by lazy { SosCoordinator(this, appScope) }
+    private val voice by lazy { VoiceManager(this) }
+
+    override fun speak(text: String, clipId: String?) = voice.speak(text, clipId)
+    override fun speakSlot(slot: String, text: String) = voice.speakSlot(slot, text)
 
     companion object {
         private const val TAG = "HomeActivity"
@@ -108,9 +117,8 @@ class HomeActivity : AppCompatActivity() {
             binding.fabCaretaker.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 this.bottomMargin = fabBottomMargin + systemBars.bottom
             }
-
-            binding.tvMoreApps.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                this.bottomMargin = systemBars.bottom
+            binding.btnHouse.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                this.bottomMargin = fabBottomMargin + systemBars.bottom
             }
 
             insets
@@ -127,8 +135,12 @@ class HomeActivity : AppCompatActivity() {
         setupFab()
         setupToolButtons()
         setupSosButton()
-        setupMoreApps()
-        setupSeeAll()
+        setupDestinations()
+    }
+
+    override fun onDestroy() {
+        voice.shutdown()
+        super.onDestroy()
     }
 
     override fun onResume() {
@@ -170,7 +182,7 @@ class HomeActivity : AppCompatActivity() {
     private fun setupClockHold() {
         binding.homeHeader.onClockLongPress = {
             CaretakerPinDialog.show(this) {
-                startActivity(Intent(this, CaretakerHelpActivity::class.java))
+                startActivity(Intent(this, RecordClipsActivity::class.java))
             }
         }
     }
@@ -233,7 +245,6 @@ class HomeActivity : AppCompatActivity() {
 
     private fun showCallConfirmation(contact: Contact) {
         CallConfirmBottomSheet.show(supportFragmentManager, contact) {
-            com.grandma.launcher.voice.VoiceManager(this).speak(contact.name, contact.nameClipId)
             if (contact.whatsapp) {
                 com.grandma.launcher.ui.common.WhatsAppCaller.call(this, contact) {
                     callLauncher.call(contact.phone)
@@ -251,8 +262,14 @@ class HomeActivity : AppCompatActivity() {
     // ── Tool buttons ─────────────────────────────────────────────────────────
 
     private fun setupToolButtons() {
-        binding.btnCamera.setOnClickListener { openCamera() }
-        binding.btnWhatsapp.setOnClickListener { openWhatsApp() }
+        binding.btnCamera.setOnClickListener {
+            voice.speakSlot(VoiceSlots.CAMERA, getString(R.string.spoken_camera))
+            openCamera()
+        }
+        binding.btnWhatsapp.setOnClickListener {
+            voice.speakSlot(VoiceSlots.WHATSAPP, getString(R.string.spoken_whatsapp))
+            openWhatsApp()
+        }
     }
 
     private fun openCamera() {
@@ -310,6 +327,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun triggerSos() {
         // The call goes first and is never cancelled by "Stop alerts".
+        voice.speakSlot(VoiceSlots.SOS, getString(R.string.spoken_sos))
         callLauncher.call(appPrefs.sosNumber, askPermission = false)
         sosCoordinator.start()
         binding.btnStopAlerts.visibility = View.VISIBLE
@@ -346,19 +364,33 @@ class HomeActivity : AppCompatActivity() {
 
     // ── Navigation ───────────────────────────────────────────────────────────
 
-    private fun setupMoreApps() {
-        binding.tvMoreApps.setOnClickListener {
+    private fun setupDestinations() {
+        binding.homeHeader.onWeatherClick = { openWeather() }
+        binding.btnWeather.setOnClickListener { openWeather() }
+        binding.btnAddPerson.setOnClickListener {
+            voice.speakSlot(VoiceSlots.ADD_PERSON, getString(R.string.spoken_add_person))
+            openAddContact()
+        }
+        binding.btnAsk.setOnClickListener {
+            voice.speakSlot(VoiceSlots.ASK, getString(R.string.spoken_ask))
+            startActivity(Intent(this, TalkActivity::class.java))
+        }
+        binding.btnApps.setOnClickListener {
+            voice.speakSlot(VoiceSlots.APPS, getString(R.string.spoken_apps))
             startActivity(Intent(this, MoreAppsActivity::class.java))
         }
+        binding.tvSeeAll.setOnClickListener { openPeople() }
+        binding.btnMorePeople.setOnClickListener { openPeople() }
     }
 
-    private fun setupSeeAll() {
-        binding.tvSeeAll.setOnClickListener {
-            startActivity(Intent(this, ContactsActivity::class.java))
-        }
-        binding.btnMorePeople.setOnClickListener {
-            startActivity(Intent(this, ContactsActivity::class.java))
-        }
+    private fun openPeople() {
+        voice.speakSlot(VoiceSlots.PEOPLE, getString(R.string.spoken_people))
+        startActivity(Intent(this, ContactsActivity::class.java))
+    }
+
+    private fun openWeather() {
+        voice.speakSlot(VoiceSlots.WEATHER, getString(R.string.spoken_weather))
+        startActivity(Intent(this, WeatherActivity::class.java))
     }
 
 }

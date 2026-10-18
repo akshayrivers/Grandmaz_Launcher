@@ -12,22 +12,24 @@
 
     <ImageButton
         android:id="@+id/btnAlarmBack"
-        android:layout_width="@dimen/back_button_size"
-        android:layout_height="@dimen/back_button_size"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
         android:layout_marginStart="@dimen/space_sm"
         android:layout_marginTop="@dimen/space_sm"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/action_back"
-        android:src="@android:drawable/ic_menu_revert"
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/action_home"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_house"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/color_text_primary" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvAlarmTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ALARMS"
+        android:text="@string/alarms_title"
+        android:textColor="@color/color_text_secondary"
         android:textAppearance="@style/TextAppearance.Grandma.Heading"
         app:layout_constraintBottom_toBottomOf="@id/btnAlarmBack"
         app:layout_constraintStart_toEndOf="@id/btnAlarmBack"
@@ -53,7 +55,7 @@
         android:id="@+id/tvNoAlarms"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No Alarms Set"
+        android:text="@string/alarms_empty"
         android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
         android:textColor="@color/color_text_secondary"
         android:visibility="gone"
@@ -70,7 +72,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/confirm_button_height"
         android:layout_margin="@dimen/space_md"
-        android:text="+ ADD NEW ALARM"
+        android:text="@string/alarms_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

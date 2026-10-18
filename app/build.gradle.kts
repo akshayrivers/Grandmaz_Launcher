@@ -5,10 +5,12 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
-// Debug backend URL. Override per machine: ./gradlew installDebug -Pgrandma.devBackendUrl=http://192.168.1.20:3000/
+// Deployed API. Debug can still point at a machine on the LAN:
+// ./gradlew installDebug -Pgrandma.devBackendUrl=http://192.168.1.20:3000/
+val deployedBackendUrl = "https://grandmaz-backend.onrender.com/"
 val devBackendUrl: String =
     (project.findProperty("grandma.devBackendUrl") as String?)?.trim()?.takeIf { it.isNotEmpty() }
-        ?: "http://10.0.2.2:3000/"
+        ?: deployedBackendUrl
 
 // Cleartext is only permitted for hosts listed in the debug network security config,
 // so a dev URL pointing anywhere else would fail at runtime with an opaque error.
@@ -43,7 +45,7 @@ android {
             buildConfigField("String", "BACKEND_BASE_URL", "\"$devBackendUrl\"")
         }
         release {
-            buildConfigField("String", "BACKEND_BASE_URL", "\"https://api.example.invalid/\"")
+            buildConfigField("String", "BACKEND_BASE_URL", "\"$deployedBackendUrl\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

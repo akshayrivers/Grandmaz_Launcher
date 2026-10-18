@@ -1,35 +1,39 @@
 package com.grandma.launcher.ui.message
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.os.VibratorManager
-import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.MotionEvent
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.grandma.launcher.R
 import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.databinding.ActivityMessageBinding
-import java.util.Locale
+import com.grandma.launcher.remote.MediaRepository
+import com.grandma.launcher.ui.home.HomeActivity
+import com.grandma.launcher.voice.VoiceManager
+import kotlinx.coroutines.launch
+import com.grandma.launcher.voice.VoiceSlots
 
 /**
  * Full-screen message from a caretaker (show_message command). Grandma cannot read, so
- * the text is spoken aloud (Hindi, English fallback); the text is for anyone nearby.
- * One action: the big green button goes back home. Inactivity also returns home.
+ * a recorded clip plays first and the words are spoken otherwise. The text is for anyone nearby.
+ * The house goes home. Inactivity also closes the screen.
  */
-class MessageActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+class MessageActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMessageBinding
     private lateinit var appPrefs: AppPreferences
-    private var tts: TextToSpeech? = null
-    private var ttsReady = false
+    private val voice by lazy { VoiceManager(this) }
     private var message = ""
+    private var clipId: String? = null
 
     private val autoCloseRunnable = Runnable { finish() }
 
@@ -56,62 +60,70 @@ class MessageActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
 
         binding.btnOk.setOnClickListener {
-            vibrateTap()
+            voice.speakSlot(VoiceSlots.HOME, getString(R.string.spoken_home))
+            startActivity(
+                Intent(this, HomeActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            )
             finish()
         }
         binding.btnSpeakAgain.setOnClickListener {
-            vibrateTap()
+            pulse()
             speak()
         }
 
         message = savedInstanceState?.getString(STATE_MESSAGE).orEmpty()
+        clipId = savedInstanceState?.getString(STATE_CLIP)
         loadMessage()
-        tts = TextToSpeech(this, this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(STATE_MESSAGE, message)
+        outState.putString(STATE_CLIP, clipId)
     }
 
-    override fun onNewIntent(intent: android.content.Intent) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
         loadMessage()
-        speak()
     }
 
     private fun loadMessage() {
         val pending = appPrefs.pendingCaretakerMessage
         if (pending.isNotBlank()) {
             message = pending
-            appPrefs.pendingCaretakerMessage = ""
+            clipId = appPrefs.pendingCaretakerMessageClip.takeIf { it.isNotBlank() }
+            appPrefs.clearPendingCaretakerMessage()
         }
         if (message.isBlank()) {
             finish()
             return
         }
         binding.tvMessage.text = message
-        vibrateTap()
-        restartAutoClose()
-    }
-
-    override fun onInit(status: Int) {
-        val engine = tts ?: return
-        if (status != TextToSpeech.SUCCESS) {
-            Log.e(TAG, "TextToSpeech init failed: $status")
-            return
-        }
-        val preferred = if (appPrefs.language == AppPreferences.LANGUAGE_ENGLISH) Locale.ENGLISH else HINDI
-        val fallback = if (preferred == HINDI) Locale.ENGLISH else HINDI
-        ttsReady = engine.setLanguage(preferred) >= TextToSpeech.LANG_AVAILABLE ||
-            engine.setLanguage(fallback) >= TextToSpeech.LANG_AVAILABLE
+        pulse()
         speak()
+        restartAutoClose()
     }
 
     private fun speak() {
-        if (!ttsReady || message.isBlank()) return
-        tts?.speak(message, TextToSpeech.QUEUE_FLUSH, null, UTTERANCE_ID)
+        if (message.isBlank()) return
         restartAutoClose()
+        val id = clipId
+        if (id.isNullOrBlank()) {
+            voice.speak(message, null)
+            return
+        }
+        val local = java.io.File(filesDir, "voice/$id.m4a")
+        if (local.exists()) {
+            voice.speak(message, id)
+            return
+        }
+        lifecycleScope.launch {
+            MediaRepository(this@MessageActivity).ensureClip(id)
+            voice.speak(message, id)
+            restartAutoClose()
+        }
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -124,15 +136,11 @@ class MessageActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         binding.root.postDelayed(autoCloseRunnable, AUTO_CLOSE_MS)
     }
 
-    private fun vibrateTap() {
+    private fun pulse() {
         try {
-            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                getSystemService(VibratorManager::class.java).defaultVibrator
-            } else {
-                @Suppress("DEPRECATION")
-                getSystemService(VIBRATOR_SERVICE) as Vibrator
-            }
-            vibrator.vibrate(VibrationEffect.createOneShot(80, VibrationEffect.DEFAULT_AMPLITUDE))
+            getSystemService(Vibrator::class.java)?.vibrate(
+                VibrationEffect.createOneShot(80, VibrationEffect.DEFAULT_AMPLITUDE)
+            )
         } catch (e: Exception) {
             Log.e(TAG, "Vibration failed", e)
         }
@@ -140,17 +148,14 @@ class MessageActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     override fun onDestroy() {
         binding.root.removeCallbacks(autoCloseRunnable)
-        tts?.stop()
-        tts?.shutdown()
-        tts = null
+        voice.shutdown()
         super.onDestroy()
     }
 
     private companion object {
         const val TAG = "MessageActivity"
-        const val UTTERANCE_ID = "caretaker_message"
         const val STATE_MESSAGE = "message"
+        const val STATE_CLIP = "clip"
         const val AUTO_CLOSE_MS = 2 * 60 * 1000L
-        val HINDI: Locale = Locale("hi", "IN")
     }
 }

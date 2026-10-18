@@ -226,6 +226,25 @@ class AppPreferences(context: Context) {
         get() = prefs.getString(KEY_PENDING_MESSAGE, "") ?: ""
         set(value) = prefs.edit().putString(KEY_PENDING_MESSAGE, value).apply()
 
+    /** Recorded clip that belongs with [pendingCaretakerMessage], if the caretaker sent one. */
+    var pendingCaretakerMessageClip: String
+        get() = prefs.getString(KEY_PENDING_MESSAGE_CLIP, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_PENDING_MESSAGE_CLIP, value).apply()
+
+    fun stageCaretakerMessage(text: String, clipId: String?) {
+        prefs.edit()
+            .putString(KEY_PENDING_MESSAGE, text)
+            .putString(KEY_PENDING_MESSAGE_CLIP, clipId.orEmpty())
+            .apply()
+    }
+
+    fun clearPendingCaretakerMessage() {
+        prefs.edit()
+            .remove(KEY_PENDING_MESSAGE)
+            .remove(KEY_PENDING_MESSAGE_CLIP)
+            .apply()
+    }
+
     /**
      * Last background state sync timestamp in millis.
      */
@@ -328,6 +347,7 @@ class AppPreferences(context: Context) {
         private const val KEY_PENDING_PAIRING_EXPIRES_AT = "pending_pairing_expires_at"
         private const val KEY_FCM_TOKEN = "fcm_token"
         private const val KEY_PENDING_MESSAGE = "pending_caretaker_message"
+        private const val KEY_PENDING_MESSAGE_CLIP = "pending_caretaker_message_clip"
         private const val KEY_LAST_SYNC_TIMESTAMP = "last_sync_timestamp"
         private const val KEY_CONFIG_VERSION = "config_version"
         private const val KEY_CONFIG_DIRTY = "config_dirty"

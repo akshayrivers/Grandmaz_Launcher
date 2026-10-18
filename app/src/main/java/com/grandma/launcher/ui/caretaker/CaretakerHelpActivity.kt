@@ -2,56 +2,55 @@ package com.grandma.launcher.ui.caretaker
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.grandma.launcher.R
 import com.grandma.launcher.appScope
-import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.databinding.ActivityCaretakerHelpBinding
+import com.grandma.launcher.remote.HelpRequestRepository
+import com.grandma.launcher.ui.common.InactivityReturn
+import com.grandma.launcher.ui.home.HomeActivity
+import com.grandma.launcher.voice.VoiceManager
+import com.grandma.launcher.voice.VoiceSlots
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 /**
- * Caretaker help request screen.
- *
- * The user taps the amber FAB → arrives here.
- * They (or a helper nearby) can add an optional note.
- * Tapping "Send" fires a mailto: Intent which opens the
- * device's email app pre-filled with the caretaker's address,
- * and posts the Help Request to the Fastify Backend API.
+ * One picture. Tapping it tells every caretaker she needs help, then returns home.
+ * The small words at the bottom open the helper's weather editor.
  */
 class CaretakerHelpActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCaretakerHelpBinding
-    private lateinit var appPrefs: AppPreferences
+    private lateinit var inactivity: InactivityReturn
+    private val voice by lazy { VoiceManager(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityCaretakerHelpBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        inactivity = InactivityReturn(this, binding.caretakerHelpRootLayout)
 
-        appPrefs = AppPreferences(this)
-
-        binding.btnBack.setOnClickListener { finish() }
+        binding.btnBack.setOnClickListener {
+            voice.speakSlot(VoiceSlots.HOME, getString(R.string.spoken_home))
+            goHome()
+        }
         binding.btnSendHelp.setOnClickListener { sendHelpRequest() }
-        binding.btnCancelHelp.setOnClickListener { finish() }
         binding.btnEditHome.setOnClickListener {
             startActivity(Intent(this, CaretakerConfigActivity::class.java))
         }
 
-        CaretakerFabHelper.attach(this, binding.fabCaretaker)
-
         val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
         val topMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_top)
         val bottomMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_bottom)
-
-        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.caretakerHelpRootLayout) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.caretakerHelpRootLayout) { view, insets ->
             val systemBars = insets.getInsets(
-                androidx.core.view.WindowInsetsCompat.Type.systemBars() or
-                androidx.core.view.WindowInsetsCompat.Type.displayCutout()
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
             )
             view.setPadding(
                 horizontalMargin,
@@ -61,52 +60,50 @@ class CaretakerHelpActivity : AppCompatActivity() {
             )
             insets
         }
+
+        voice.speakSlot(VoiceSlots.HELP, getString(R.string.spoken_help))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        inactivity.arm()
+    }
+
+    override fun onPause() {
+        inactivity.stop()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        voice.shutdown()
+        super.onDestroy()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev?.action == MotionEvent.ACTION_DOWN) inactivity.arm()
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun sendHelpRequest() {
-        val caretakerEmail = appPrefs.caretakerEmail
-
-        if (caretakerEmail.isBlank()) {
-            Toast.makeText(
-                this,
-                "No caretaker email configured. Please ask your helper to set one up.",
-                Toast.LENGTH_LONG
-            ).show()
-            return
-        }
-
-        val note = binding.etNote.text?.toString()?.trim()
-            .takeIf { !it.isNullOrBlank() }
-            ?: getString(R.string.caretaker_no_note)
-
-        val timestamp = SimpleDateFormat(
-            "dd MMM yyyy, hh:mm a", Locale.ENGLISH
-        ).format(Date())
-
-        val subject = getString(R.string.caretaker_email_subject)
-        val body = getString(R.string.caretaker_email_body, timestamp, note)
-
-        // App scope: the mail app opens immediately and this activity stops.
-        val helpRepo = com.grandma.launcher.remote.HelpRequestRepository(applicationContext)
+        getSystemService(Vibrator::class.java)?.vibrate(
+            VibrationEffect.createOneShot(80, VibrationEffect.DEFAULT_AMPLITUDE)
+        )
+        voice.speakSlot(VoiceSlots.HELP, getString(R.string.spoken_help))
+        val helpRepo = HelpRequestRepository(applicationContext)
         appScope.launch {
             helpRepo.createHelpRequest(
                 title = "Help requested from launcher",
-                description = note,
-                type = com.grandma.launcher.remote.HelpRequestRepository.HelpType.GENERAL
+                type = HelpRequestRepository.HelpType.GENERAL
             )
         }
+        goHome()
+    }
 
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = android.net.Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(caretakerEmail))
-            putExtra(Intent.EXTRA_SUBJECT, subject)
-            putExtra(Intent.EXTRA_TEXT, body)
-        }
-
-        try {
-            startActivity(intent)
-        } catch (e: Exception) {
-            finish()
-        }
+    private fun goHome() {
+        startActivity(
+            Intent(this, HomeActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        )
+        finish()
     }
 }

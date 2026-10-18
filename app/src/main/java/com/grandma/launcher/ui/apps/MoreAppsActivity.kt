@@ -2,45 +2,34 @@ package com.grandma.launcher.ui.apps
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.grandma.launcher.R
 import com.grandma.launcher.databinding.ActivityMoreAppsBinding
+import com.grandma.launcher.remote.DeviceConfigRepository
 import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
+import com.grandma.launcher.ui.caretaker.CaretakerPinDialog
 import com.grandma.launcher.ui.common.InactivityReturn
+import com.grandma.launcher.voice.VoiceManager
+import com.grandma.launcher.voice.VoiceSlots
 
 /**
- * Displays all installed apps in a grid.
- *
- * Why is this a separate screen and not the home screen?
- * The home screen must have absolute zero cognitive load.
- * Showing 30+ app icons would overwhelm the user and
- * make the important things (contacts, SOS) harder to find.
- *
- * This screen exists as an "advanced" area — for when the user
- * gains confidence and wants to explore. It's not hidden
- * (there's a visible "More Apps" link on home) but it's
- * also not prominent.
- *
- * The grid uses 3 columns — matching the contacts screen for consistency.
- * Large icons (64dp) with labels below.
- *
- * We exclude the launcher itself from this list.
+ * The apps she was given. Each one is its own icon. A helper pins them from the
+ * small settings control after the caretaker PIN.
  */
 class MoreAppsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMoreAppsBinding
     private lateinit var inactivity: InactivityReturn
+    private val voice by lazy { VoiceManager(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -48,23 +37,17 @@ class MoreAppsActivity : AppCompatActivity() {
         binding = ActivityMoreAppsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnBack.setOnClickListener { finish() }
-        binding.btnTalk.setOnClickListener {
-            startActivity(Intent(this, com.grandma.launcher.ui.assistant.TalkActivity::class.java))
+        binding.btnBack.setOnClickListener {
+            voice.speakSlot(VoiceSlots.HOME, getString(R.string.spoken_home))
+            finish()
         }
-        inactivity = InactivityReturn(this, binding.moreAppsRootLayout)
         binding.btnCaretakerSettings.setOnClickListener {
-            com.grandma.launcher.ui.caretaker.CaretakerPinDialog.show(this) {
-                startActivity(Intent(this, com.grandma.launcher.ui.setup.SetupActivity::class.java))
+            CaretakerPinDialog.show(this) {
+                startActivity(Intent(this, PinAppsActivity::class.java))
             }
         }
-
-        val apps = queryInstalledApps()
-        binding.rvApps.layoutManager = GridLayoutManager(this, 3)
-        binding.rvApps.adapter = AppsAdapter(apps) { resolveInfo ->
-            launchApp(resolveInfo)
-        }
-
+        inactivity = InactivityReturn(this, binding.moreAppsRootLayout)
+        binding.rvApps.layoutManager = GridLayoutManager(this, 2)
         CaretakerFabHelper.attach(this, binding.fabCaretaker)
 
         val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
@@ -74,7 +57,7 @@ class MoreAppsActivity : AppCompatActivity() {
         androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.moreAppsRootLayout) { view, insets ->
             val systemBars = insets.getInsets(
                 androidx.core.view.WindowInsetsCompat.Type.systemBars() or
-                androidx.core.view.WindowInsetsCompat.Type.displayCutout()
+                    androidx.core.view.WindowInsetsCompat.Type.displayCutout()
             )
             view.setPadding(
                 horizontalMargin,
@@ -88,6 +71,7 @@ class MoreAppsActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        showPinned()
         inactivity.arm()
     }
 
@@ -96,49 +80,60 @@ class MoreAppsActivity : AppCompatActivity() {
         super.onPause()
     }
 
+    override fun onDestroy() {
+        voice.shutdown()
+        super.onDestroy()
+    }
+
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (ev?.action == MotionEvent.ACTION_DOWN) inactivity.arm()
         return super.dispatchTouchEvent(ev)
     }
 
-    private fun queryInstalledApps(): List<ResolveInfo> {
-        val intent = Intent(Intent.ACTION_MAIN).apply {
-            addCategory(Intent.CATEGORY_LAUNCHER)
+    private fun showPinned() {
+        val apps = DeviceConfigRepository(this).visibleApps().mapNotNull { packageName ->
+            if (packageManager.getLaunchIntentForPackage(packageName) == null) return@mapNotNull null
+            val label = try {
+                packageManager.getApplicationLabel(
+                    packageManager.getApplicationInfo(packageName, 0)
+                ).toString()
+            } catch (_: PackageManager.NameNotFoundException) {
+                return@mapNotNull null
+            }
+            val icon = try {
+                packageManager.getApplicationIcon(packageName)
+            } catch (_: PackageManager.NameNotFoundException) {
+                return@mapNotNull null
+            }
+            PinnedApp(packageName, label, icon)
         }
-        return packageManager.queryIntentActivities(intent, PackageManager.MATCH_ALL)
-            .filter { it.activityInfo.packageName != packageName } // Exclude self
-            .sortedBy { it.loadLabel(packageManager).toString().lowercase() }
+        binding.tvEmpty.visibility = if (apps.isEmpty()) View.VISIBLE else View.GONE
+        binding.rvApps.adapter = AppsAdapter(apps) { app ->
+            voice.speak(app.label, null)
+            packageManager.getLaunchIntentForPackage(app.packageName)?.let { startActivity(it) }
+        }
     }
 
-    private fun launchApp(resolveInfo: ResolveInfo) {
-        val launchIntent = packageManager.getLaunchIntentForPackage(
-            resolveInfo.activityInfo.packageName
-        ) ?: return
-        startActivity(launchIntent)
-    }
+    private class PinnedApp(val packageName: String, val label: String, val icon: Drawable)
 
-    // ── Adapter ──────────────────────────────────────────────────────────────
-
-    private inner class AppsAdapter(
-        private val apps: List<ResolveInfo>,
-        private val onAppClick: (ResolveInfo) -> Unit
+    private class AppsAdapter(
+        private val apps: List<PinnedApp>,
+        private val onAppClick: (PinnedApp) -> Unit
     ) : RecyclerView.Adapter<AppsAdapter.AppViewHolder>() {
 
-        inner class AppViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        class AppViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val icon: ImageView = view.findViewById(R.id.ivAppIcon)
-            val label: TextView = view.findViewById(R.id.tvAppLabel)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_app_grid, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_app_grid, parent, false)
             return AppViewHolder(view)
         }
 
         override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
             val app = apps[position]
-            holder.icon.setImageDrawable(app.loadIcon(packageManager))
-            holder.label.text = app.loadLabel(packageManager)
+            holder.icon.setImageDrawable(app.icon)
+            holder.icon.contentDescription = app.label
             holder.itemView.setOnClickListener { onAppClick(app) }
         }
 

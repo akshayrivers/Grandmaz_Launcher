@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/reminderRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_bg_primary"
-    android:gravity="center"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="24dp">
 
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:contentDescription="@string/reminder_title"
-        android:src="@android:drawable/ic_menu_my_calendar" />
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="@dimen/space_lg"
+        app:cardBackgroundColor="@color/color_control_fill"
+        app:cardCornerRadius="@dimen/control_corner_radius"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/color_control_border"
+        app:strokeWidth="@dimen/control_border_width">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/reminder_title"
+            android:padding="36dp"
+            android:src="@drawable/ic_nav_clock" />
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:id="@+id/tvReminderLabel"
@@ -20,29 +33,36 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.Grandma.Display" />
+        android:textAppearance="@style/TextAppearance.Grandma.Display"
+        android:textColor="@color/color_text_secondary" />
 
-    <com.google.android.material.button.MaterialButton
+    <ImageButton
         android:id="@+id/btnTaken"
-        style="@style/Widget.Grandma.ConfirmButton.Yes"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="@dimen/primary_action_height"
         android:layout_marginTop="24dp"
-        android:text="@string/reminder_taken" />
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/reminder_taken"
+        android:padding="28dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_nav_check" />
 
-    <com.google.android.material.button.MaterialButton
+    <ImageButton
         android:id="@+id/btnSnooze"
-        style="@style/Widget.Grandma.ConfirmButton.No"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="@dimen/touch_target_min"
         android:layout_marginTop="12dp"
-        android:text="@string/reminder_snooze" />
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/reminder_snooze"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_nav_clock" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnMissed"
         style="@style/Widget.Grandma.ConfirmButton.No"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="@dimen/confirm_button_height"
         android:layout_marginTop="12dp"
         android:text="@string/reminder_missed" />
 </LinearLayout>

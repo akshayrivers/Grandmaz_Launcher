@@ -74,7 +74,7 @@ class CommandExecutionManager(
             CommandResult.ok("Sync scheduled")
         }
         is DeviceCommand.ReportLocation -> reportLocation()
-        is DeviceCommand.ShowMessage -> showMessage(command.text)
+        is DeviceCommand.ShowMessage -> showMessage(command.text, command.voiceClipId)
         is DeviceCommand.SetVolume -> setVolume(command.level)
         is DeviceCommand.UpdateEmergencyNumber -> {
             appPrefs.emergencyNumber = command.e164
@@ -205,10 +205,10 @@ class CommandExecutionManager(
 
     // ── show_message ─────────────────────────────────────────────────────────
 
-    private fun showMessage(text: String): CommandResult {
+    private fun showMessage(text: String, clipId: String?): CommandResult {
         // Kept until MessageActivity displays it, so Home can show it if the
         // background activity start below is blocked by the OS.
-        appPrefs.pendingCaretakerMessage = text
+        appPrefs.stageCaretakerMessage(text, clipId)
         return try {
             context.startActivity(
                 Intent(context, MessageActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

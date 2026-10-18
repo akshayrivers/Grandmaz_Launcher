@@ -9,7 +9,32 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eab8ac18-4cd5-43af-9ef7-ca593fc07356" name="Changes" comment="" />
+    <list default="true" id="eab8ac18-4cd5-43af-9ef7-ca593fc07356" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/GrandmaApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/GrandmaApplication.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/alarm/AlarmActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/alarm/AlarmActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/contacts/ContactGridItemView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/contacts/ContactGridItemView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/contacts/ContactsActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/contacts/ContactsActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/home/ContactCardView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/home/ContactCardView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/home/HomeActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/home/HomeActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/home/WeatherCardView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/home/WeatherCardView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/views/AlarmClockView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/views/AlarmClockView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/views/AnalogTimePickerView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/views/AnalogTimePickerView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/views/SosButtonView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/views/SosButtonView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/views/WeatherIconView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/grandma/launcher/ui/views/WeatherIconView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/bg_contact_card.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_contact_card.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/bg_contact_placeholder.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_contact_placeholder.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/bg_tool_button_camera.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_tool_button_camera.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/bg_tool_button_whatsapp.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_tool_button_whatsapp.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/ic_caretaker_info.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_caretaker_info.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_foreground.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_foreground.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/themes.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/themes.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,7 +43,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=sww4ib5t6tl7qcg6)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -64,7 +89,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "backend/api__integration",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "settings.editor.selected.configurable": "AndroidSdkUpdater"
   }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pinAppsRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_bg_primary"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/screen_margin_horizontal">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="@dimen/touch_target_min"
+            android:layout_height="@dimen/touch_target_min"
+            android:background="@drawable/bg_control"
+            android:contentDescription="@string/action_home"
+            android:padding="18dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_house" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_sm"
+            android:layout_weight="1"
+            android:text="@string/pin_apps_title"
+            android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+            android:textColor="@color/color_text_secondary" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPinApps"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingStart="@dimen/screen_margin_horizontal"
+        android:paddingEnd="@dimen/screen_margin_horizontal" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSavePins"
+        style="@style/Widget.Grandma.ConfirmButton.Yes"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/confirm_button_height"
+        android:layout_margin="@dimen/screen_margin_horizontal"
+        android:text="@string/pin_apps_save" />
+
+</LinearLayout>

@@ -122,11 +122,21 @@
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ui.caretaker.CaretakerHelpActivity" />
 
+        <activity
+            android:name=".ui.caretaker.RecordClipsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.home.HomeActivity" />
+
         <!-- More Apps Screen -->
         <activity
             android:name=".ui.apps.MoreAppsActivity"
             android:exported="false"
             android:parentActivityName=".ui.home.HomeActivity" />
+
+        <activity
+            android:name=".ui.apps.PinAppsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.apps.MoreAppsActivity" />
 
         <!-- File provider for camera photo capture -->
         <provider
@@ -173,6 +183,11 @@
             android:launchMode="singleTop"
             android:showWhenLocked="true"
             android:turnScreenOn="true" />
+
+        <activity
+            android:name=".ui.home.WeatherActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.home.HomeActivity" />
 
         <activity
             android:name=".ui.assistant.TalkActivity"

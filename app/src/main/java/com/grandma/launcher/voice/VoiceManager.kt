@@ -1,6 +1,8 @@
 package com.grandma.launcher.voice
 
 import android.content.Context
+import android.media.AudioAttributes
+import com.grandma.launcher.remote.DeviceConfigRepository
 import android.media.MediaPlayer
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -11,28 +13,45 @@ import java.io.File
 import java.util.Locale
 
 /**
- * Speaks a name or button label: a recorded clip first, then Hindi TTS, then English,
- * then a vibration if no engine is available. Dogri is only a recorded clip.
+ * Speaks a name or button label. A recorded clip plays first. Otherwise Hindi,
+ * then English. A vibration is the last fallback. A new request replaces whatever
+ * is still playing. Dogri only exists as a recorded clip.
  */
+interface Speaker {
+    fun speak(text: String, clipId: String? = null)
+    fun speakSlot(slot: String, text: String)
+}
+
 class VoiceManager(context: Context) : TextToSpeech.OnInitListener {
 
     private val appContext = context.applicationContext
     private val tts = TextToSpeech(appContext, this)
+    private var player: MediaPlayer? = null
     private var ready = false
     private var pending: String? = null
 
     override fun onInit(status: Int) {
         ready = status == TextToSpeech.SUCCESS
+        if (ready) {
+            tts.setAudioAttributes(speechAttributes())
+        }
         pending?.let { speakNow(it) }
         pending = null
     }
 
-    fun speak(text: String, clipId: String? = null) {
-        val clip = clipId?.let { clipFile(it) }
-        if (clip != null && clip.exists()) {
-            play(clip)
-            return
+    fun speakSlot(slot: String, text: String) {
+        val clip = try {
+            DeviceConfigRepository(appContext).clipForSlot(slot)
+        } catch (_: Exception) {
+            null
         }
+        speak(text, clip)
+    }
+
+    fun speak(text: String, clipId: String? = null) {
+        stopSpeaking()
+        val clip = clipId?.let { clipFile(it) }?.takeIf { it.exists() }
+        if (clip != null && play(clip)) return
         if (!ready) {
             pending = text
             return
@@ -43,8 +62,9 @@ class VoiceManager(context: Context) : TextToSpeech.OnInitListener {
     fun clipFile(assetId: String): File = File(appContext.filesDir, "voice/$assetId.m4a")
 
     fun shutdown() {
-        tts.stop()
+        stopSpeaking()
         tts.shutdown()
+        ready = false
     }
 
     private fun speakNow(text: String) {
@@ -59,19 +79,45 @@ class VoiceManager(context: Context) : TextToSpeech.OnInitListener {
         if (spoken == TextToSpeech.ERROR) vibrate()
     }
 
-    private fun play(file: File) {
-        try {
-            MediaPlayer().apply {
-                setDataSource(file.absolutePath)
-                setOnCompletionListener { it.release() }
-                prepare()
-                start()
+    private fun play(file: File): Boolean {
+        val next = MediaPlayer()
+        return try {
+            next.setAudioAttributes(speechAttributes())
+            next.setDataSource(file.absolutePath)
+            next.setOnCompletionListener { finished ->
+                if (player === finished) player = null
+                finished.release()
             }
+            next.prepare()
+            next.start()
+            player = next
+            true
         } catch (e: Exception) {
             Log.e(TAG, "Clip playback failed", e)
-            vibrate()
+            next.release()
+            false
         }
     }
+
+    private fun stopSpeaking() {
+        pending = null
+        if (ready) tts.stop()
+        player?.let { current ->
+            player = null
+            try {
+                current.setOnCompletionListener(null)
+                if (current.isPlaying) current.stop()
+            } catch (_: Exception) {
+            }
+            current.release()
+        }
+    }
+
+    private fun speechAttributes(): AudioAttributes =
+        AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+            .build()
 
     private fun vibrate() {
         appContext.getSystemService<Vibrator>()?.vibrate(

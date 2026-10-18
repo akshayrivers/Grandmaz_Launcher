@@ -1,14 +1,22 @@
 package com.grandma.launcher.ui.assistant
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.grandma.launcher.R
 import com.grandma.launcher.databinding.ActivityTalkBinding
 import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceRegistrationRepository
+import com.grandma.launcher.ui.common.InactivityReturn
 import com.grandma.launcher.voice.VoiceManager
+import com.grandma.launcher.voice.VoiceSlots
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -19,23 +27,69 @@ import org.json.JSONObject
 class TalkActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTalkBinding
+    private lateinit var inactivity: InactivityReturn
     private val voice by lazy { VoiceManager(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityTalkBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.btnHome.setOnClickListener { finish() }
-        binding.btnTalk.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP) ask()
+        inactivity = InactivityReturn(this, binding.talkRoot)
+        val margin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.talkRoot) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            view.setPadding(margin, margin + bars.top, margin, margin + bars.bottom)
+            insets
+        }
+        binding.btnHome.setOnClickListener {
+            voice.speakSlot(VoiceSlots.HOME, getString(R.string.spoken_home))
+            finish()
+        }
+        binding.btnTalk.setOnTouchListener { view, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> showHolding(true)
+                MotionEvent.ACTION_UP -> {
+                    showHolding(false)
+                    view.performClick()
+                    ask()
+                }
+                MotionEvent.ACTION_CANCEL -> showHolding(false)
+            }
             true
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        inactivity.arm()
+    }
+
+    override fun onPause() {
+        inactivity.stop()
+        super.onPause()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev?.action == MotionEvent.ACTION_DOWN) inactivity.arm()
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun onDestroy() {
         voice.shutdown()
         super.onDestroy()
+    }
+
+    private fun showHolding(holding: Boolean) {
+        if (holding) {
+            binding.btnTalk.setBackgroundColor(Color.WHITE)
+            binding.btnTalk.imageTintList = ColorStateList.valueOf(Color.BLACK)
+        } else {
+            binding.btnTalk.setBackgroundResource(R.drawable.bg_control)
+            binding.btnTalk.imageTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.color_text_primary)
+            )
+        }
     }
 
     private fun ask() {

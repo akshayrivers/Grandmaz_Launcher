@@ -1,8 +1,6 @@
 package com.grandma.launcher.ui.home
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -11,7 +9,6 @@ import android.widget.TextView
 import com.grandma.launcher.R
 import com.grandma.launcher.data.WeatherData
 import com.grandma.launcher.data.WeatherRepository
-import com.grandma.launcher.ui.alarm.AlarmActivity
 import com.grandma.launcher.ui.views.AnalogClockView
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -20,7 +17,7 @@ import java.util.Locale
 /**
  * Custom header compound view that combines the Analog Clock (left)
  * and the Date + Weather Card (right) into a unified senior-friendly zone.
- * Tapping the clock opens the Alarm management screen.
+ * Tapping the clock stays on Home. A long press is for the helper.
  */
 class HomeHeaderView @JvmOverloads constructor(
     context: Context,
@@ -33,6 +30,7 @@ class HomeHeaderView @JvmOverloads constructor(
     private val weatherCard: WeatherCardView
     private val weatherRepo = WeatherRepository(context)
     var onClockLongPress: (() -> Unit)? = null
+    var onWeatherClick: (() -> Unit)? = null
 
     init {
         orientation = HORIZONTAL
@@ -43,10 +41,6 @@ class HomeHeaderView @JvmOverloads constructor(
         clockView = AnalogClockView(context).apply {
             layoutParams = LayoutParams(clockSize, clockSize).apply {
                 gravity = Gravity.CENTER
-            }
-            // Intuitive gesture: tapping the clock face launches the Alarms
-            setOnClickListener {
-                context.startActivity(Intent(context, AlarmActivity::class.java))
             }
             setOnLongClickListener {
                 onClockLongPress?.invoke()
@@ -80,33 +74,7 @@ class HomeHeaderView @JvmOverloads constructor(
 
         weatherCard = WeatherCardView(context).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-            setOnClickListener {
-                val weatherPackages = listOf(
-                    "com.miui.weather2", // Xiaomi
-                    "com.sec.android.app.weather", // Samsung
-                    "com.samsung.android.weather", // Samsung
-                    "com.coloros.weather", // Oppo
-                    "com.huawei.android.totemweather", // Huawei
-                    "com.htc.Weather" // HTC
-                )
-                var launched = false
-                for (pkg in weatherPackages) {
-                    try {
-                        val launchIntent = context.packageManager.getLaunchIntentForPackage(pkg)
-                        if (launchIntent != null) {
-                            context.startActivity(launchIntent)
-                            launched = true
-                            break
-                        }
-                    } catch (_: Exception) {}
-                }
-                if (!launched) {
-                    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=weather"))
-                    try {
-                        context.startActivity(webIntent)
-                    } catch (_: Exception) {}
-                }
-            }
+            setOnClickListener { onWeatherClick?.invoke() }
         }
         rightLayout.addView(weatherCard)
 

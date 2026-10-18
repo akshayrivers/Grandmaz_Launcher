@@ -14,162 +14,156 @@
         android:orientation="vertical"
         android:padding="@dimen/screen_margin_horizontal">
 
-        <!-- Header -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingTop="@dimen/screen_margin_top"
-            android:paddingBottom="@dimen/space_md">
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="@dimen/touch_target_min"
+            android:layout_height="@dimen/touch_target_min"
+            android:layout_marginTop="@dimen/screen_margin_top"
+            android:background="@drawable/bg_control"
+            android:contentDescription="@string/action_home"
+            android:padding="18dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_house" />
 
-            <ImageButton
-                android:id="@+id/btnBack"
-                android:layout_width="@dimen/back_button_size"
-                android:layout_height="@dimen/back_button_size"
-                android:src="@android:drawable/ic_media_previous"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/action_back" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="@dimen/space_sm"
-                android:text="@string/screen_add_person"
-                android:textAppearance="@style/TextAppearance.Grandma.Display" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/color_divider"
-            android:layout_marginBottom="@dimen/space_xl" />
-
-        <!-- Photo preview -->
-        <ImageView
-            android:id="@+id/ivPhotoPreview"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
-            android:scaleType="centerCrop"
-            android:clipToOutline="true"
-            android:background="@drawable/bg_circle_photo"
-            android:src="@android:drawable/ic_menu_gallery"
-            android:contentDescription="Contact photo preview" />
-
-        <!-- Camera / gallery buttons -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnTakePhoto"
-            style="@style/Widget.Grandma.ToolButton.Camera"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/tool_button_height"
             android:layout_marginTop="@dimen/space_lg"
-            android:text="@string/add_contact_take_photo"
-            app:icon="@android:drawable/ic_menu_camera"
-            app:iconGravity="start" />
+            app:cardBackgroundColor="@color/color_control_fill"
+            app:cardCornerRadius="@dimen/control_corner_radius"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/color_control_border"
+            app:strokeWidth="@dimen/control_border_width">
+
+            <ImageView
+                android:id="@+id/ivPhotoPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/nav_add_person"
+                android:padding="48dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_nav_camera" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <ImageButton
+            android:id="@+id/btnTakePhoto"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/primary_action_height"
+            android:layout_marginTop="@dimen/space_lg"
+            android:background="@drawable/bg_control"
+            android:contentDescription="@string/add_contact_take_photo"
+            android:padding="28dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_nav_camera" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnChooseGallery"
-            style="@style/Widget.Grandma.ToolButton"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/tool_button_height"
-            android:layout_marginTop="@dimen/space_sm"
-            android:backgroundTint="@color/color_bg_secondary"
-            android:textColor="@color/color_text_primary"
-            android:text="@string/add_contact_choose_gallery"
-            app:icon="@android:drawable/ic_menu_gallery"
-            app:iconTint="@color/color_text_secondary"
-            app:iconGravity="start" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/color_divider"
-            android:layout_marginTop="@dimen/space_xl"
-            android:layout_marginBottom="@dimen/space_lg" />
-
-        <!-- Name input -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/add_contact_name_prompt"
-            android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
-            android:layout_marginBottom="@dimen/space_sm" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etContactName"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/text_input_height"
-                android:hint="@string/add_contact_name_hint"
-                android:textSize="20sp"
-                android:inputType="textPersonName|textCapWords"
-                android:imeOptions="actionNext" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Phone input -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Phone Number"
-            android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
-            android:layout_marginTop="@dimen/space_lg"
-            android:layout_marginBottom="@dimen/space_sm" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etContactPhone"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/text_input_height"
-                android:hint="+91 XXXXX XXXXX"
-                android:textSize="20sp"
-                android:inputType="phone"
-                android:imeOptions="actionDone" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnImportContact"
             style="@style/Widget.Grandma.ConfirmButton.No"
             android:layout_width="match_parent"
             android:layout_height="@dimen/confirm_button_height"
-            android:layout_marginTop="@dimen/space_md"
-            android:text="@string/add_contact_import" />
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="@string/add_contact_choose_gallery" />
 
-        <CheckBox
-            android:id="@+id/cbWhatsapp"
+        <LinearLayout
+            android:id="@+id/groupVoice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_md"
-            android:minHeight="80dp"
-            android:text="@string/add_contact_whatsapp"
-            android:textSize="20sp" />
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRecordName"
-            style="@style/Widget.Grandma.ConfirmButton.Amber"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/confirm_button_height"
-            android:layout_marginTop="@dimen/space_md"
-            android:text="@string/add_contact_record_name" />
+            <ImageButton
+                android:id="@+id/btnRecordName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/primary_action_height"
+                android:layout_marginTop="@dimen/space_lg"
+                android:background="@drawable/bg_control"
+                android:contentDescription="@string/add_contact_record_name"
+                android:padding="28dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_nav_mic" />
 
-        <!-- Save button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSaveContact"
-            style="@style/Widget.Grandma.ConfirmButton.Yes"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/confirm_button_height"
-            android:layout_marginTop="@dimen/space_xl"
-            android:layout_marginBottom="@dimen/space_xl"
-            android:text="@string/add_contact_save" />
+            <ImageButton
+                android:id="@+id/btnSaveContact"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/primary_action_height"
+                android:layout_marginTop="@dimen/space_md"
+                android:background="@drawable/bg_control"
+                android:contentDescription="@string/add_contact_save"
+                android:padding="28dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_nav_check"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:text="@string/add_contact_name_prompt"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
+                android:textColor="@color/color_text_secondary" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etContactName"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/text_input_height"
+                    android:hint="@string/add_contact_name_hint"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPersonName|textCapWords"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="20sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:text="@string/add_contact_phone_prompt"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
+                android:textColor="@color/color_text_secondary" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etContactPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/text_input_height"
+                    android:hint="+91 XXXXX XXXXX"
+                    android:imeOptions="actionDone"
+                    android:inputType="phone"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="20sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnImportContact"
+                style="@style/Widget.Grandma.ConfirmButton.No"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/confirm_button_height"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="@string/add_contact_import" />
+
+            <CheckBox
+                android:id="@+id/cbWhatsapp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_xl"
+                android:minHeight="80dp"
+                android:text="@string/add_contact_whatsapp"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="20sp" />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>
