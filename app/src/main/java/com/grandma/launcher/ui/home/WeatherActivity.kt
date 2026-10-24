@@ -12,6 +12,7 @@ import com.grandma.launcher.data.WeatherCondition
 import com.grandma.launcher.data.WeatherData
 import com.grandma.launcher.data.WeatherRepository
 import com.grandma.launcher.databinding.ActivityWeatherBinding
+import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import com.grandma.launcher.ui.common.InactivityReturn
 import com.grandma.launcher.voice.VoiceManager
 import kotlinx.coroutines.launch
@@ -31,14 +32,21 @@ class WeatherActivity : AppCompatActivity() {
         setContentView(binding.root)
         inactivity = InactivityReturn(this, binding.weatherRoot)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.weatherRoot) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.weatherRoot) { _, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
             val margin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
-            view.setPadding(margin, margin + bars.top, margin, margin + bars.bottom)
+            val fabBottom = resources.getDimensionPixelSize(R.dimen.fab_caretaker_margin_bottom)
+            binding.weatherContent.setPadding(margin, margin + bars.top, margin, margin + bars.bottom)
+            listOf(binding.fabCaretaker, binding.btnHouse).forEach { button ->
+                val params = button.layoutParams as android.view.ViewGroup.MarginLayoutParams
+                params.bottomMargin = fabBottom + bars.bottom
+                button.layoutParams = params
+            }
             insets
         }
 
         binding.btnHouse.setOnClickListener { finish() }
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnHouse)
         show(repository.getCurrentWeather())
         lifecycleScope.launch { show(repository.refresh()) }
     }

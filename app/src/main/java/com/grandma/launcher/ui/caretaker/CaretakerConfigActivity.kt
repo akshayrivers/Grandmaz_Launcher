@@ -34,6 +34,7 @@ class CaretakerConfigActivity : AppCompatActivity() {
         binding.etWeatherCity.setText(prefs.weatherCity)
         binding.tvConfigStatus.text = getString(R.string.caretaker_config_version, prefs.configVersion)
         binding.btnBack.setOnClickListener { finish() }
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnBack)
         binding.btnSaveConfig.setOnClickListener { save() }
 
         val horizontal = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)

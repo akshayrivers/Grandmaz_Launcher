@@ -17,7 +17,7 @@ import com.grandma.launcher.R
 import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.databinding.ActivityMessageBinding
 import com.grandma.launcher.remote.MediaRepository
-import com.grandma.launcher.ui.home.HomeActivity
+import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import com.grandma.launcher.voice.VoiceManager
 import kotlinx.coroutines.launch
 import com.grandma.launcher.voice.VoiceSlots
@@ -61,12 +61,10 @@ class MessageActivity : AppCompatActivity() {
 
         binding.btnOk.setOnClickListener {
             voice.speakSlot(VoiceSlots.HOME, getString(R.string.spoken_home))
-            startActivity(
-                Intent(this, HomeActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            )
+            CaretakerFabHelper.goHome(this)
             finish()
         }
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnOk)
         binding.btnSpeakAgain.setOnClickListener {
             pulse()
             speak()

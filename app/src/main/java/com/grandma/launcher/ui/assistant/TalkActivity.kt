@@ -14,6 +14,7 @@ import com.grandma.launcher.R
 import com.grandma.launcher.databinding.ActivityTalkBinding
 import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceRegistrationRepository
+import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import com.grandma.launcher.ui.common.InactivityReturn
 import com.grandma.launcher.voice.VoiceManager
 import com.grandma.launcher.voice.VoiceSlots
@@ -46,6 +47,7 @@ class TalkActivity : AppCompatActivity() {
             voice.speakSlot(VoiceSlots.HOME, getString(R.string.spoken_home))
             finish()
         }
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnHome)
         binding.btnTalk.setOnTouchListener { view, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> showHolding(true)
