@@ -30,6 +30,7 @@ import com.grandma.launcher.data.Contact
 import com.grandma.launcher.data.ContactPhone
 import com.grandma.launcher.data.ContactRepository
 import com.grandma.launcher.databinding.ActivityAddContactBinding
+import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceRegistrationRepository
 import com.grandma.launcher.voice.ClipRecorder
@@ -96,6 +97,7 @@ class AddContactActivity : AppCompatActivity() {
         editingContactId?.let { loadExistingContact(it) } ?: showPhotoStep()
 
         binding.btnBack.setOnClickListener { onBackPressedStep() }
+        CaretakerFabHelper.attach(this, binding.fabCaretaker)
         binding.btnTakePhoto.setOnClickListener { launchCamera() }
         binding.btnChooseGallery.setOnClickListener { launchGallery() }
         binding.btnImportContact.setOnClickListener { launchImport() }

@@ -21,35 +21,14 @@
             android:paddingEnd="@dimen/screen_margin_horizontal"
             android:paddingBottom="112dp">
 
-            <!-- Header -->
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
                 android:paddingTop="@dimen/screen_margin_top"
-                android:paddingBottom="@dimen/space_md">
-
-                <ImageButton
-                    android:id="@+id/btnBack"
-                    android:layout_width="@dimen/touch_target_min"
-                    android:layout_height="@dimen/touch_target_min"
-                    android:background="@drawable/bg_control"
-                    android:contentDescription="@string/action_home"
-                    android:padding="18dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_house" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/space_sm"
-                    android:layout_weight="1"
-                    android:text="@string/screen_your_people"
-                    android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
-                    android:textColor="@color/color_text_secondary" />
-
-            </LinearLayout>
+                android:paddingBottom="@dimen/space_md"
+                android:text="@string/screen_your_people"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
+                android:textColor="@color/color_text_secondary" />
 
             <!-- Contact grid — 2 columns, populated by activity -->
             <GridLayout
@@ -62,17 +41,32 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Caretaker FAB — present on this screen too -->
     <ImageButton
         android:id="@+id/fabCaretaker"
         android:layout_width="@dimen/touch_target_min"
         android:layout_height="@dimen/touch_target_min"
         android:layout_gravity="bottom|start"
-        android:layout_margin="@dimen/fab_caretaker_margin_horizontal"
+        android:layout_marginStart="@dimen/fab_caretaker_margin_horizontal"
+        android:layout_marginBottom="@dimen/fab_caretaker_margin_bottom"
         android:background="@drawable/bg_control"
         android:contentDescription="@string/screen_ask_for_help"
+        android:elevation="12dp"
         android:padding="18dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_caretaker_info" />
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/fab_caretaker_margin_horizontal"
+        android:layout_marginBottom="@dimen/fab_caretaker_margin_bottom"
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/action_home"
+        android:elevation="12dp"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_house" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
