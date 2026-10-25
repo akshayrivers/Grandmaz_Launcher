@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,12 +13,15 @@ import androidx.core.view.WindowInsetsCompat
 import com.grandma.launcher.R
 import com.grandma.launcher.appScope
 import com.grandma.launcher.databinding.ActivityCaretakerHelpBinding
+import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.HelpRequestRepository
 import com.grandma.launcher.ui.common.InactivityReturn
 import com.grandma.launcher.ui.home.HomeActivity
 import com.grandma.launcher.voice.VoiceManager
 import com.grandma.launcher.voice.VoiceSlots
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * One picture. Tapping it tells every caretaker she needs help, then returns home.
@@ -28,6 +32,7 @@ class CaretakerHelpActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCaretakerHelpBinding
     private lateinit var inactivity: InactivityReturn
     private val voice by lazy { VoiceManager(this) }
+    private var sending = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -85,25 +90,54 @@ class CaretakerHelpActivity : AppCompatActivity() {
     }
 
     private fun sendHelpRequest() {
-        getSystemService(Vibrator::class.java)?.vibrate(
-            VibrationEffect.createOneShot(80, VibrationEffect.DEFAULT_AMPLITUDE)
-        )
+        if (sending) return
+        sending = true
+        binding.btnSendHelp.isEnabled = false
+        pulse()
         voice.speakSlot(VoiceSlots.HELP, getString(R.string.spoken_help))
         val helpRepo = HelpRequestRepository(applicationContext)
         appScope.launch {
-            helpRepo.createHelpRequest(
+            val result = helpRepo.createHelpRequest(
                 title = "Help requested from launcher",
                 type = HelpRequestRepository.HelpType.GENERAL
             )
+            withContext(Dispatchers.Main) {
+                sending = false
+                if (!isDestroyed) binding.btnSendHelp.isEnabled = true
+                when (result) {
+                    is ApiClient.Result.Success -> goHome()
+                    is ApiClient.Result.Error -> {
+                        Log.e(TAG, "Help request failed: ${result.statusCode} ${result.code}")
+                        if (!isDestroyed) {
+                            pulse()
+                            voice.speak(getString(R.string.spoken_help_again), null)
+                        }
+                    }
+                }
+            }
         }
-        goHome()
+    }
+
+    private fun pulse() {
+        getSystemService(Vibrator::class.java)?.vibrate(
+            VibrationEffect.createOneShot(80, VibrationEffect.DEFAULT_AMPLITUDE)
+        )
     }
 
     private fun goHome() {
-        startActivity(
-            Intent(this, HomeActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        )
+        inactivity.stop()
+        val home = Intent(this, HomeActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        if (isDestroyed) {
+            home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            applicationContext.startActivity(home)
+            return
+        }
+        startActivity(home)
         finish()
+    }
+
+    companion object {
+        private const val TAG = "CaretakerHelp"
     }
 }
