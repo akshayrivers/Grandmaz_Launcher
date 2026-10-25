@@ -38,6 +38,7 @@ class CaretakerConfigActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
         CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnBack)
         binding.btnSaveConfig.setOnClickListener { save() }
+        binding.btnOverlayPermission.setOnClickListener { CaretakerFabHelper.openOverlaySettings(this) }
         binding.btnAddCaretaker.setOnClickListener { inviteCaretaker() }
         loadCaretakers()
 

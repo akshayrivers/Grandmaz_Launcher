@@ -28,6 +28,8 @@ object WhatsAppCaller {
         when {
             tryStart(context, video) -> Unit
             tryStart(context, voice) -> Unit
+            context.packageManager.getLaunchIntentForPackage(WHATSAPP) == null ->
+                InstalledApp.openStore(context, WHATSAPP)
             else -> fallback()
         }
     }

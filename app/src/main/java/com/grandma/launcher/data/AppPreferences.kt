@@ -2,6 +2,7 @@ package com.grandma.launcher.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.grandma.launcher.BuildConfig
 
 /**
  * App-wide settings stored in SharedPreferences.
@@ -276,6 +277,11 @@ class AppPreferences(context: Context) {
         get() = prefs.getString(KEY_WEATHER_MODE, "city") ?: "city"
         set(value) = prefs.edit().putString(KEY_WEATHER_MODE, value).apply()
 
+    /** True after home has opened the display-over-other-apps page once. */
+    var overlayPermissionAsked: Boolean
+        get() = prefs.getBoolean(KEY_OVERLAY_ASKED, false)
+        set(value) = prefs.edit().putBoolean(KEY_OVERLAY_ASKED, value).apply()
+
     var inactivityReturnSec: Int
         get() = prefs.getInt(KEY_INACTIVITY_RETURN_SEC, 60)
         set(value) = prefs.edit().putInt(KEY_INACTIVITY_RETURN_SEC, value).apply()
@@ -334,6 +340,24 @@ class AppPreferences(context: Context) {
         editor.commit()
     }
 
+    /**
+     * Debug-only. A helper turns this on from Record her words (long-press the
+     * home clock, enter the caretaker PIN). Release builds ignore the stored
+     * value so production help requests still go to the backend.
+     */
+    var localFlowEnabled: Boolean
+        get() = BuildConfig.DEBUG && prefs.getBoolean(KEY_LOCAL_FLOW, false)
+        set(value) {
+            if (BuildConfig.DEBUG) prefs.edit().putBoolean(KEY_LOCAL_FLOW, value).apply()
+        }
+
+    /** When local flow is on, the next help tap is reported as a failure. */
+    var localFlowFailNextHelp: Boolean
+        get() = BuildConfig.DEBUG && prefs.getBoolean(KEY_LOCAL_FLOW_FAIL, false)
+        set(value) {
+            if (BuildConfig.DEBUG) prefs.edit().putBoolean(KEY_LOCAL_FLOW_FAIL, value).apply()
+        }
+
     companion object {
         private const val PREFS_NAME = "grandma_app_prefs"
         private const val KEY_IS_SETUP_COMPLETE = "is_setup_complete"
@@ -361,12 +385,15 @@ class AppPreferences(context: Context) {
         private const val KEY_CONFIG_DIRTY = "config_dirty"
         private const val KEY_WEATHER_CITY = "weather_city"
         private const val KEY_WEATHER_MODE = "weather_mode"
+        private const val KEY_OVERLAY_ASKED = "overlay_permission_asked"
         private const val KEY_INACTIVITY_RETURN_SEC = "inactivity_return_sec"
         private const val KEY_SMS_FALLBACK = "sms_fallback"
         private const val KEY_PRIMARY_CARETAKER_USER_ID = "primary_caretaker_user_id"
         private const val KEY_CARETAKER_PHONES = "caretaker_phones"
         private const val KEY_ACTIVE_SOS_EVENT = "active_sos_event_id"
         private const val KEY_SECURITY_SCHEMA = "security_schema_version"
+        private const val KEY_LOCAL_FLOW = "local_flow_enabled"
+        private const val KEY_LOCAL_FLOW_FAIL = "local_flow_fail_next_help"
 
         // Pre-Phase-0 keys: only read/removed by migrations.
         private const val KEY_LEGACY_CARETAKER_PIN = "caretaker_pin"
