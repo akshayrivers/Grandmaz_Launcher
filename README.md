@@ -51,9 +51,26 @@ After that, the phone pulls a versioned config document (people, weather city, r
 - The server is the intermediary. This app does not open a live view of the screen and does not remote-control the phone.
 - No API key in the APK. The assistant asks the backend for a session. The phone does not upload her audio.
 
+## Features
+
+Screens from a local-debug run on a Redmi Note 8 Pro (Android 11). The debug app used the laptop backend on the same Wi-Fi. The release build still uses `https://grandmaz-backend.onrender.com/`.
+
+- [Home](docs/features/home.png) — analog clock, weather card, people, Gallery, YouTube, and the floating Home and Ask for help controls.
+- [Alarm setter](docs/features/alarm-setter.png) — hour and minute hands, with the sun and moon.
+- [Alarms](docs/features/alarms.png) — the alarm list. None were set on this run.
+- [Ask for help](docs/features/ask-for-help.png) — the help picture, with Edit home and weather underneath.
+- [Weather](docs/features/weather.png) — the Mausam screen. This run showed a live Open-Meteo temperature.
+- [People](docs/features/contacts.png) — the people grid.
+- [More apps](docs/features/more-apps.png) — empty until a helper pins apps.
+- [Ask](docs/features/ask.png) — hold the microphone, then let go.
+- [Record her words](docs/features/record-clips.png) — helper screen after a long-press on the home clock.
+- [Add a caretaker](docs/features/add-caretaker.png) — weather city, the Gemini model id, and the invitation form. No invitation was sent.
+
+The caretaker PIN dialog did not appear on this phone, because no PIN is set. Camera, WhatsApp, and SOS were left closed.
+
 ## Not done
 
 - Live screen viewing and remote control are not in this app.
-- The assistant stays unavailable until the backend has `GEMINI_API_KEY`. The phone has no Gemini key.
+- Ask uses Gemini through a short-lived token from the backend. The phone has no Gemini key. Without `GEMINI_API_KEY` on the server, Ask says the helper is not available.
 - Firebase Cloud Messaging is not wired. The phone syncs on its own schedule rather than waking from a push.
 - Web push for caretakers is not configured.
