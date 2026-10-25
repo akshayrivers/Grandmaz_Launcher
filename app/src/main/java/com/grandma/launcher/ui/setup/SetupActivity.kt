@@ -316,7 +316,12 @@ class SetupActivity : AppCompatActivity() {
         b.tvPairingCode.text = code.orEmpty()
         b.progressPairing.visibility = visibleIf(busy)
         b.btnPairingRetry.visibility = visibleIf(retry)
-        b.tvPairingStatus.setText(statusRes)
+        val waiting = state as? PairingCoordinator.State.Waiting
+        if (waiting != null && waiting.acceptPath.isNotBlank() && !waiting.connectionProblem) {
+            b.tvPairingStatus.text = getString(R.string.setup_pairing_accept_path, waiting.acceptPath)
+        } else {
+            b.tvPairingStatus.setText(statusRes)
+        }
         b.tvPairingStatus.setTextColor(ContextCompat.getColor(this, statusColor))
         if (step == Step.PAIRING) setNextEnabled(pairingDone)
     }

@@ -63,6 +63,9 @@ class RecordClipsActivity : AppCompatActivity() {
         binding.btnEditHome.setOnClickListener {
             startActivity(Intent(this, CaretakerConfigActivity::class.java))
         }
+        binding.btnAddCaretaker.setOnClickListener {
+            startActivity(Intent(this, CaretakerConfigActivity::class.java))
+        }
         val horizontal = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
         ViewCompat.setOnApplyWindowInsetsListener(binding.recordClipsRoot) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
