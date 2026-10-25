@@ -19,7 +19,6 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">@bool/window_light_system_bars</item>
-        <item name="android:windowLightNavigationBar">@bool/window_light_system_bars</item>
 
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:windowAnimationStyle">@null</item>

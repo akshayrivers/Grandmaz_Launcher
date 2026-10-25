@@ -76,6 +76,12 @@
     <string name="spoken_later">Baad mein</string>
     <string name="spoken_missed">Chhoot gaya</string>
     <string name="spoken_help">Madad</string>
+    <string name="spoken_help_again">Phir se</string>
+    <string name="local_flow_how">Local test, for a helper. Long-press the home clock, enter the PIN, then turn this on. Help taps stay on this phone. A release build ignores this.</string>
+    <string name="local_flow_switch">Keep help requests on this phone</string>
+    <string name="local_flow_fail">Next help tap fails, so she can try again</string>
+    <string name="local_flow_status_empty">No help request saved on this phone yet.</string>
+    <string name="local_flow_status_count">%1$d help request(s) saved on this phone. Last type: %2$s.</string>
     <string name="spoken_sos">Bachao</string>
     <string name="slot_home">Home</string>
     <string name="slot_people">People</string>

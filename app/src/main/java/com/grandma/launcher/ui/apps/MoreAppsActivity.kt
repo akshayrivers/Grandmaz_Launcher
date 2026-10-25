@@ -48,7 +48,7 @@ class MoreAppsActivity : AppCompatActivity() {
         }
         inactivity = InactivityReturn(this, binding.moreAppsRootLayout)
         binding.rvApps.layoutManager = GridLayoutManager(this, 2)
-        CaretakerFabHelper.attach(this, binding.fabCaretaker)
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnBack)
 
         val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
         val topMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_top)
@@ -72,6 +72,7 @@ class MoreAppsActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         showPinned()
+        CaretakerFabHelper.syncOverlay(this, binding.fabCaretaker, binding.btnBack)
         inactivity.arm()
     }
 

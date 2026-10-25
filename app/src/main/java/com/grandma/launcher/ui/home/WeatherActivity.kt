@@ -53,7 +53,7 @@ class WeatherActivity : AppCompatActivity() {
         }
 
         binding.btnHouse.setOnClickListener { finish() }
-        CaretakerFabHelper.attach(this, binding.fabCaretaker)
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnHouse)
         show(repository.getCurrentWeather(), offerDeviceApp = false)
         loadWeather()
     }

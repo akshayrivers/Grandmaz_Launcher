@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.grandma.launcher.R
 import com.grandma.launcher.databinding.ActivityAlarmBinding
+import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import java.util.Calendar
 import java.util.Locale
 
@@ -50,6 +51,7 @@ class AlarmActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnAlarmBack.setOnClickListener { finish() }
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnAlarmBack)
 
         alarmList.addAll(loadAlarms())
         updateEmptyState()
@@ -67,9 +69,18 @@ class AlarmActivity : AppCompatActivity() {
             showAddAlarmDialog()
         }
 
+        // Clock tap on Home starts this screen with EXTRA_OPEN_SETTER so the
+        // hand / sun / moon setter is already open. The list stays behind it.
+
         val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
         val topMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_top)
         val bottomMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_bottom)
+
+        if (savedInstanceState == null && intent.getBooleanExtra(EXTRA_OPEN_SETTER, false)) {
+            binding.alarmRootLayout.post {
+                if (!isFinishing) showAddAlarmDialog()
+            }
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.alarmRootLayout) { view, insets ->
             val systemBars = insets.getInsets(
@@ -282,5 +293,10 @@ class AlarmActivity : AppCompatActivity() {
 
     private fun cancelAlarmInSystem(alarm: Alarm) {
         AlarmScheduler.cancel(this, alarm.id.toInt())
+    }
+
+    companion object {
+        /** Home clock tap. Opens the hand / sun / moon setter on top of the list. */
+        const val EXTRA_OPEN_SETTER = "open_alarm_setter"
     }
 }
