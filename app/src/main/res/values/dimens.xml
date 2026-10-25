@@ -55,6 +55,10 @@
     <dimen name="fab_caretaker_icon_size">28dp</dimen>
     <dimen name="fab_caretaker_margin_horizontal">16dp</dimen>
     <dimen name="fab_caretaker_margin_bottom">24dp</dimen>
+    <!-- Two stacked 80dp buttons, the gap between them, the bottom margin, and a gap. -->
+    <dimen name="floating_content_clearance">208dp</dimen>
+    <!-- Keep a bottom label out of the corner buttons: button, side margin, and a gap. -->
+    <dimen name="floating_content_side_inset">112dp</dimen>
 
     <!-- Minimum for every interactive element (product rule 4) -->
     <dimen name="touch_target_min">80dp</dimen>

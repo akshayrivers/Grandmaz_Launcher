@@ -102,15 +102,16 @@ class CaretakerHelpActivity : AppCompatActivity() {
                 type = HelpRequestRepository.HelpType.GENERAL
             )
             withContext(Dispatchers.Main) {
-                if (isDestroyed) return@withContext
                 sending = false
-                binding.btnSendHelp.isEnabled = true
+                if (!isDestroyed) binding.btnSendHelp.isEnabled = true
                 when (result) {
                     is ApiClient.Result.Success -> goHome()
                     is ApiClient.Result.Error -> {
                         Log.e(TAG, "Help request failed: ${result.statusCode} ${result.code}")
-                        pulse()
-                        voice.speak(getString(R.string.spoken_help_again), null)
+                        if (!isDestroyed) {
+                            pulse()
+                            voice.speak(getString(R.string.spoken_help_again), null)
+                        }
                     }
                 }
             }
@@ -124,10 +125,15 @@ class CaretakerHelpActivity : AppCompatActivity() {
     }
 
     private fun goHome() {
-        startActivity(
-            Intent(this, HomeActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        )
+        inactivity.stop()
+        val home = Intent(this, HomeActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        if (isDestroyed) {
+            home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            applicationContext.startActivity(home)
+            return
+        }
+        startActivity(home)
         finish()
     }
 

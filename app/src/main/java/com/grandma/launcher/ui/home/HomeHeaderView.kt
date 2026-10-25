@@ -45,6 +45,8 @@ class HomeHeaderView @JvmOverloads constructor(
             layoutParams = LayoutParams(clockSize, clockSize).apply {
                 gravity = Gravity.CENTER
             }
+            contentDescription = context.getString(R.string.home_clock)
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
             setOnClickListener { openAlarmSetter(context) }
             setOnLongClickListener {
                 onClockLongPress?.invoke()
@@ -78,6 +80,7 @@ class HomeHeaderView @JvmOverloads constructor(
 
         weatherCard = WeatherCardView(context).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            contentDescription = context.getString(R.string.nav_weather)
             setOnClickListener { onWeatherClick?.invoke() }
         }
         rightLayout.addView(weatherCard)

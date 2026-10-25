@@ -55,8 +55,20 @@
         </intent>
         <intent>
             <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.APP_WEATHER" />
+            <category android:name="android.intent.category.APP_GALLERY" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VOICE_ASSIST" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.ASSIST" />
+        </intent>
+        <package android:name="com.miui.gallery" />
+        <package android:name="com.google.android.apps.photos" />
+        <package android:name="com.google.android.youtube" />
+        <package android:name="com.google.android.apps.bard" />
+        <package android:name="com.whatsapp" />
+        <package android:name="com.android.vending" />
         <package android:name="com.miui.camera" />
         <package android:name="com.android.camera2" />
         <package android:name="com.android.camera" />
