@@ -22,8 +22,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.grandma.launcher.BuildConfig
 import com.grandma.launcher.R
+import com.grandma.launcher.data.AppPreferences
 import com.grandma.launcher.databinding.ActivityRecordClipsBinding
+import com.grandma.launcher.remote.LocalHelpStore
 import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceConfigRepository
 import com.grandma.launcher.remote.DeviceRegistrationRepository
@@ -54,6 +57,7 @@ class RecordClipsActivity : AppCompatActivity() {
         binding.rvSlots.layoutManager = LinearLayoutManager(this)
         binding.rvSlots.adapter = SlotAdapter(VoiceSlots.all, this::begin, this::end)
         binding.btnBack.setOnClickListener { finish() }
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnBack)
         binding.btnOpenAlarms.setOnClickListener {
             startActivity(Intent(this, AlarmActivity::class.java))
         }
@@ -63,11 +67,39 @@ class RecordClipsActivity : AppCompatActivity() {
         binding.btnEditHome.setOnClickListener {
             startActivity(Intent(this, CaretakerConfigActivity::class.java))
         }
+        if (BuildConfig.DEBUG) {
+            binding.localFlowPanel.visibility = View.VISIBLE
+            val prefs = AppPreferences(this)
+            binding.switchLocalFlow.isChecked = prefs.localFlowEnabled
+            binding.switchLocalFlowFail.isChecked = prefs.localFlowFailNextHelp
+            binding.switchLocalFlow.setOnCheckedChangeListener { _, checked ->
+                prefs.localFlowEnabled = checked
+                refreshLocalFlowStatus()
+            }
+            binding.switchLocalFlowFail.setOnCheckedChangeListener { _, checked ->
+                prefs.localFlowFailNextHelp = checked
+            }
+            refreshLocalFlowStatus()
+        }
         val horizontal = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
         ViewCompat.setOnApplyWindowInsetsListener(binding.recordClipsRoot) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
             view.setPadding(horizontal, bars.top, horizontal, bars.bottom)
             insets
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (BuildConfig.DEBUG) refreshLocalFlowStatus()
+    }
+
+    private fun refreshLocalFlowStatus() {
+        val saved = LocalHelpStore.entries(this)
+        binding.tvLocalFlowStatus.text = if (saved.isEmpty()) {
+            getString(R.string.local_flow_status_empty)
+        } else {
+            getString(R.string.local_flow_status_count, saved.size, saved.last().type)
         }
     }
 

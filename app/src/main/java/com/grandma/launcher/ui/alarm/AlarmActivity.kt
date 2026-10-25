@@ -84,6 +84,12 @@ class AlarmActivity : AppCompatActivity() {
             }
         }
 
+        if (savedInstanceState == null && intent.getBooleanExtra(EXTRA_OPEN_SETTER, false)) {
+            binding.alarmRootLayout.post {
+                if (!isFinishing) showAddAlarmDialog()
+            }
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.alarmRootLayout) { view, insets ->
             val systemBars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or
