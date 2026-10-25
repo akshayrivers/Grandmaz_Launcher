@@ -25,7 +25,12 @@ class PairingCoordinator private constructor(private val context: Context) {
     sealed class State {
         object Idle : State()
         object Sending : State()
-        data class Waiting(val pairingCode: String, val expiresAtMs: Long, val connectionProblem: Boolean = false) : State()
+        data class Waiting(
+            val pairingCode: String,
+            val expiresAtMs: Long,
+            val connectionProblem: Boolean = false,
+            val acceptPath: String = ""
+        ) : State()
         object Linked : State()
         /** The phone already has a primary caretaker (PRIMARY_EXISTS). */
         object AlreadyLinked : State()
@@ -49,7 +54,11 @@ class PairingCoordinator private constructor(private val context: Context) {
         if (_state.value != State.Idle) return
         val id = appPrefs.pendingInvitationId
         if (id.isNotEmpty()) {
-            _state.value = State.Waiting(appPrefs.pendingPairingCode, appPrefs.pendingPairingExpiresAtMs)
+            _state.value = State.Waiting(
+                appPrefs.pendingPairingCode,
+                appPrefs.pendingPairingExpiresAtMs,
+                acceptPath = appPrefs.pendingAcceptPath
+            )
         } else if (appPrefs.isPaired) {
             _state.value = State.Linked
         }
@@ -68,13 +77,15 @@ class PairingCoordinator private constructor(private val context: Context) {
                     appPrefs.pendingInvitationId = inv.invitationId
                     appPrefs.pendingPairingCode = inv.pairingCode
                     appPrefs.pendingPairingExpiresAtMs = inv.expiresAtMs
-                    _state.value = State.Waiting(inv.pairingCode, inv.expiresAtMs)
+                    appPrefs.pendingAcceptPath = inv.acceptPath
+                    _state.value = State.Waiting(inv.pairingCode, inv.expiresAtMs, acceptPath = inv.acceptPath)
                     startPollingIfWatching()
                 }
                 is ApiClient.Result.Error -> {
                     Log.e(TAG, "Invitation failed: ${result.statusCode} ${result.code}")
                     _state.value = when {
-                        result.code == CaretakerInvitationRepository.CODE_PRIMARY_EXISTS -> {
+                        result.code == CaretakerInvitationRepository.CODE_PRIMARY_EXISTS ||
+                            result.code == CaretakerInvitationRepository.CODE_ALREADY_LINKED -> {
                             appPrefs.isPaired = true
                             State.AlreadyLinked
                         }

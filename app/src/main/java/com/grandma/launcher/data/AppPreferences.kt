@@ -198,11 +198,17 @@ class AppPreferences(context: Context) {
         get() = prefs.getLong(KEY_PENDING_PAIRING_EXPIRES_AT, 0L)
         set(value) = prefs.edit().putLong(KEY_PENDING_PAIRING_EXPIRES_AT, value).apply()
 
+    /** Accept path shown to the helper when the invitation email was not sent. */
+    var pendingAcceptPath: String
+        get() = prefs.getString(KEY_PENDING_ACCEPT_PATH, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_PENDING_ACCEPT_PATH, value).apply()
+
     fun clearPendingInvitation() {
         prefs.edit()
             .remove(KEY_PENDING_INVITATION_ID)
             .remove(KEY_PENDING_PAIRING_CODE)
             .remove(KEY_PENDING_PAIRING_EXPIRES_AT)
+            .remove(KEY_PENDING_ACCEPT_PATH)
             .apply()
     }
 
@@ -328,6 +334,7 @@ class AppPreferences(context: Context) {
                 .remove(KEY_PENDING_INVITATION_ID)
                 .remove(KEY_PENDING_PAIRING_CODE)
                 .remove(KEY_PENDING_PAIRING_EXPIRES_AT)
+                .remove(KEY_PENDING_ACCEPT_PATH)
                 .remove(KEY_PRIMARY_CARETAKER_PHONE)
         }
         editor.commit()
@@ -369,6 +376,7 @@ class AppPreferences(context: Context) {
         private const val KEY_PENDING_INVITATION_ID = "pending_invitation_id"
         private const val KEY_PENDING_PAIRING_CODE = "pending_pairing_code"
         private const val KEY_PENDING_PAIRING_EXPIRES_AT = "pending_pairing_expires_at"
+        private const val KEY_PENDING_ACCEPT_PATH = "pending_accept_path"
         private const val KEY_FCM_TOKEN = "fcm_token"
         private const val KEY_PENDING_MESSAGE = "pending_caretaker_message"
         private const val KEY_PENDING_MESSAGE_CLIP = "pending_caretaker_message_clip"

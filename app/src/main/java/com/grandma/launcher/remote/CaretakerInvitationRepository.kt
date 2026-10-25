@@ -14,7 +14,13 @@ class CaretakerInvitationRepository(
     private val tokens: DeviceTokenProvider = DeviceRegistrationRepository(context)
 ) {
 
-    data class Invitation(val invitationId: String, val pairingCode: String, val expiresAtMs: Long)
+    data class Invitation(
+        val invitationId: String,
+        val pairingCode: String,
+        val expiresAtMs: Long,
+        val role: String,
+        val acceptPath: String
+    )
 
     data class InvitationStatus(val status: String, val expiresAtMs: Long?)
 
@@ -31,7 +37,15 @@ class CaretakerInvitationRepository(
                 } else {
                     val expiresAt = DeviceRegistrationRepository.parseIsoMillis(data?.optString("expiresAt"))
                         ?: (System.currentTimeMillis() + DEFAULT_TTL_MS)
-                    ApiClient.Result.Success(Invitation(id, code, expiresAt))
+                    ApiClient.Result.Success(
+                        Invitation(
+                            id,
+                            code,
+                            expiresAt,
+                            data?.optString("role").orEmpty(),
+                            data?.optString("acceptPath").orEmpty()
+                        )
+                    )
                 }
             }
         }
@@ -62,6 +76,7 @@ class CaretakerInvitationRepository(
         const val STATUS_LOCKED = "locked"
 
         const val CODE_PRIMARY_EXISTS = "PRIMARY_EXISTS"
+        const val CODE_ALREADY_LINKED = "ALREADY_LINKED"
         const val CODE_INVITATION_NOT_FOUND = "INVITATION_NOT_FOUND"
 
         private const val DEFAULT_TTL_MS = 24 * 60 * 60 * 1000L
