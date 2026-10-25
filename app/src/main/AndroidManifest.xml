@@ -53,6 +53,10 @@
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.APP_WEATHER" />
+        </intent>
         <package android:name="com.miui.camera" />
         <package android:name="com.android.camera2" />
         <package android:name="com.android.camera" />

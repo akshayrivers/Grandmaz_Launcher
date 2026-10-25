@@ -82,6 +82,11 @@ class WeatherCardView @JvmOverloads constructor(
 
     fun bind(weather: WeatherData) {
         iconView.setCondition(weather.condition)
+        if (!weather.known) {
+            tempText.text = context.getString(R.string.weather_unavailable)
+            locationText.text = ""
+            return
+        }
         tempText.text = "${weather.temperatureCelsius}°"
         locationText.text = weather.locationName
     }
