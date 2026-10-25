@@ -27,6 +27,7 @@
     <string name="spoken_gallery">Gallery</string>
     <string name="spoken_youtube">YouTube</string>
     <string name="spoken_ask">Pucho</string>
+    <string name="spoken_gemini_install">Gemini lagao, sign in karo</string>
     <string name="spoken_apps">Apps</string>
     <string name="spoken_camera">Camera</string>
     <string name="spoken_whatsapp">WhatsApp</string>

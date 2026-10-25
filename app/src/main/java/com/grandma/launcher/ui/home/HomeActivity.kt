@@ -25,7 +25,6 @@ import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceSyncManager
 import com.grandma.launcher.remote.SosCoordinator
 import com.grandma.launcher.ui.apps.MoreAppsActivity
-import com.grandma.launcher.ui.assistant.TalkActivity
 import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import com.grandma.launcher.ui.common.InstalledApp
 import com.grandma.launcher.ui.caretaker.CaretakerPinDialog
@@ -358,8 +357,12 @@ class HomeActivity : AppCompatActivity(), Speaker {
             InstalledApp.openGallery(this)
         }
         binding.btnAsk.setOnClickListener {
-            voice.speakSlot(VoiceSlots.ASK, getString(R.string.spoken_ask))
-            startActivity(Intent(this, TalkActivity::class.java))
+            if (InstalledApp.geminiInstalled(this)) {
+                voice.speakSlot(VoiceSlots.ASK, getString(R.string.spoken_ask))
+            } else {
+                voice.speak(getString(R.string.spoken_gemini_install), null)
+            }
+            InstalledApp.openGemini(this)
         }
         binding.btnApps.setOnClickListener {
             voice.speakSlot(VoiceSlots.APPS, getString(R.string.spoken_apps))
