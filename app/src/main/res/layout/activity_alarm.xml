@@ -56,12 +56,12 @@
         android:id="@+id/btnAddNewAlarm"
         style="@style/Widget.Grandma.ConfirmButton.Amber"
         android:layout_width="0dp"
-        android:layout_height="@dimen/confirm_button_height"
+        android:layout_height="@dimen/primary_action_height"
         android:layout_marginStart="@dimen/space_md"
         android:layout_marginEnd="@dimen/space_md"
-        android:layout_marginBottom="@dimen/space_sm"
+        android:layout_marginBottom="@dimen/floating_content_clearance"
         android:text="@string/alarms_add"
-        app:layout_constraintBottom_toTopOf="@id/fabCaretaker"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

@@ -75,6 +75,14 @@ class AlarmActivity : AppCompatActivity() {
         val horizontalMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
         val topMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_top)
         val bottomMargin = resources.getDimensionPixelSize(R.dimen.screen_margin_bottom)
+        val fabBottom = resources.getDimensionPixelSize(R.dimen.fab_caretaker_margin_bottom)
+        val contentClearance = resources.getDimensionPixelSize(R.dimen.floating_content_clearance)
+
+        if (savedInstanceState == null && intent.getBooleanExtra(EXTRA_OPEN_SETTER, false)) {
+            binding.alarmRootLayout.post {
+                if (!isFinishing) showAddAlarmDialog()
+            }
+        }
 
         if (savedInstanceState == null && intent.getBooleanExtra(EXTRA_OPEN_SETTER, false)) {
             binding.alarmRootLayout.post {
@@ -93,10 +101,17 @@ class AlarmActivity : AppCompatActivity() {
                 horizontalMargin,
                 bottomMargin
             )
-            val btnParams = binding.btnAddNewAlarm.layoutParams as? ViewGroup.MarginLayoutParams
-            if (btnParams != null) {
-                btnParams.bottomMargin = resources.getDimensionPixelSize(R.dimen.space_md) + systemBars.bottom
-                binding.btnAddNewAlarm.layoutParams = btnParams
+            // The nav bar is not in the root padding. Lift the floating buttons and
+            // keep Add an alarm a full clearance above them.
+            listOf(binding.fabCaretaker, binding.btnAlarmBack).forEach { button ->
+                val params = button.layoutParams as? ViewGroup.MarginLayoutParams ?: return@forEach
+                params.bottomMargin = fabBottom + systemBars.bottom
+                button.layoutParams = params
+            }
+            val addParams = binding.btnAddNewAlarm.layoutParams as? ViewGroup.MarginLayoutParams
+            if (addParams != null) {
+                addParams.bottomMargin = contentClearance + systemBars.bottom
+                binding.btnAddNewAlarm.layoutParams = addParams
             }
             insets
         }

@@ -19,7 +19,7 @@
             android:paddingStart="@dimen/screen_margin_horizontal"
             android:paddingTop="@dimen/screen_margin_horizontal"
             android:paddingEnd="@dimen/screen_margin_horizontal"
-            android:paddingBottom="112dp">
+            android:paddingBottom="@dimen/floating_content_clearance">
 
             <TextView
                 android:layout_width="match_parent"

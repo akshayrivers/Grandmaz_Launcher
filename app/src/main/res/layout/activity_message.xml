@@ -11,7 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="120dp">
+    android:paddingBottom="@dimen/floating_content_clearance">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="160dp"

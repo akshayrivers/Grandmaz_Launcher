@@ -44,6 +44,14 @@
         android:inputType="textCapWords"
         android:textSize="22sp" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnOverlayPermission"
+        style="@style/Widget.Grandma.ConfirmButton.Amber"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target_min"
+        android:layout_marginTop="@dimen/space_lg"
+        android:text="@string/caretaker_overlay_permission" />
+
     <TextView
         android:id="@+id/tvConfigStatus"
         android:layout_width="match_parent"
