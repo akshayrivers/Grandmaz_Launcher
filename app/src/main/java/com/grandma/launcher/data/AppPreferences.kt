@@ -270,6 +270,11 @@ class AppPreferences(context: Context) {
         get() = prefs.getString(KEY_WEATHER_MODE, "city") ?: "city"
         set(value) = prefs.edit().putString(KEY_WEATHER_MODE, value).apply()
 
+    /** True after home has opened the display-over-other-apps page once. */
+    var overlayPermissionAsked: Boolean
+        get() = prefs.getBoolean(KEY_OVERLAY_ASKED, false)
+        set(value) = prefs.edit().putBoolean(KEY_OVERLAY_ASKED, value).apply()
+
     var inactivityReturnSec: Int
         get() = prefs.getInt(KEY_INACTIVITY_RETURN_SEC, 60)
         set(value) = prefs.edit().putInt(KEY_INACTIVITY_RETURN_SEC, value).apply()
@@ -353,6 +358,7 @@ class AppPreferences(context: Context) {
         private const val KEY_CONFIG_DIRTY = "config_dirty"
         private const val KEY_WEATHER_CITY = "weather_city"
         private const val KEY_WEATHER_MODE = "weather_mode"
+        private const val KEY_OVERLAY_ASKED = "overlay_permission_asked"
         private const val KEY_INACTIVITY_RETURN_SEC = "inactivity_return_sec"
         private const val KEY_SMS_FALLBACK = "sms_fallback"
         private const val KEY_PRIMARY_CARETAKER_USER_ID = "primary_caretaker_user_id"

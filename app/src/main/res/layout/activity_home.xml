@@ -112,29 +112,29 @@
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:id="@+id/btnWeather"
+                    android:id="@+id/btnYouTube"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/touch_target_min"
                     android:layout_marginEnd="@dimen/space_xs"
                     android:layout_weight="1"
                     android:background="@drawable/bg_control"
-                    android:contentDescription="@string/nav_weather"
+                    android:contentDescription="@string/nav_youtube"
                     android:padding="16dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_nav_sun" />
+                    android:src="@drawable/ic_nav_youtube" />
 
                 <ImageButton
-                    android:id="@+id/btnAddPerson"
+                    android:id="@+id/btnGallery"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/touch_target_min"
                     android:layout_marginStart="@dimen/space_xs"
                     android:layout_marginEnd="@dimen/space_xs"
                     android:layout_weight="1"
                     android:background="@drawable/bg_control"
-                    android:contentDescription="@string/nav_add_person"
+                    android:contentDescription="@string/nav_gallery"
                     android:padding="16dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_nav_add" />
+                    android:src="@drawable/ic_nav_gallery" />
 
                 <ImageButton
                     android:id="@+id/btnAsk"

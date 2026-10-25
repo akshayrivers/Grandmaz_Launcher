@@ -1,14 +1,12 @@
 package com.grandma.launcher.ui.home
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import androidx.core.view.updateLayoutParams
 import android.view.ViewGroup
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.GridLayout
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -27,8 +25,8 @@ import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceSyncManager
 import com.grandma.launcher.remote.SosCoordinator
 import com.grandma.launcher.ui.apps.MoreAppsActivity
-import com.grandma.launcher.ui.assistant.TalkActivity
 import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
+import com.grandma.launcher.ui.common.InstalledApp
 import com.grandma.launcher.ui.caretaker.CaretakerPinDialog
 import com.grandma.launcher.ui.common.CallLauncher
 import com.grandma.launcher.ui.contacts.AddContactActivity
@@ -151,7 +149,17 @@ class HomeActivity : AppCompatActivity(), Speaker {
         // Refresh contacts every time we return to home
         // (user may have added/removed a contact)
         loadContacts()
-        CaretakerFabHelper.syncOverlay(this, binding.fabCaretaker, binding.btnHouse)
+        if (appPrefs.isSetupComplete) {
+            CaretakerFabHelper.syncOverlay(
+                this,
+                binding.fabCaretaker,
+                binding.btnHouse,
+                listOf(binding.btnYouTube, binding.btnGallery)
+            )
+            if (CaretakerFabHelper.askOverlayPermission(this)) {
+                voice.speak(getString(R.string.spoken_overlay_permission), null)
+            }
+        }
         binding.homeHeader.updateDate()
         binding.homeHeader.updateWeather()
 
@@ -267,41 +275,35 @@ class HomeActivity : AppCompatActivity(), Speaker {
     }
 
     private fun openCamera() {
-        // Try to open the camera app directly rather than ACTION_IMAGE_CAPTURE
-        // (which captures a photo for us — not what we want here).
-        // We try known camera package names first, then fall back to a chooser.
         val cameraPackages = listOf(
+            "com.miui.camera",
             "com.android.camera",
             "com.android.camera2",
-            "com.miui.camera",           // Xiaomi / Redmi
             "com.oneplus.camera",
             "com.samsung.android.camera",
             "com.google.android.GoogleCamera"
         )
         for (pkg in cameraPackages) {
-            val intent = packageManager.getLaunchIntentForPackage(pkg)
-            if (intent != null) {
+            val intent = packageManager.getLaunchIntentForPackage(pkg) ?: continue
+            try {
                 startActivity(intent)
                 return
+            } catch (_: android.content.ActivityNotFoundException) {
             }
         }
-        // Fallback — let the system choose any camera app
         val fallback = Intent(android.provider.MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
-        if (fallback.resolveActivity(packageManager) != null) {
+        try {
             startActivity(fallback)
+        } catch (_: android.content.ActivityNotFoundException) {
+            com.grandma.launcher.ui.common.InstalledApp.openStore(this, "com.google.android.GoogleCamera")
         }
     }
 
     private fun openWhatsApp() {
-        val pm = packageManager
-        val whatsappPackage = "com.whatsapp"
-        try {
-            pm.getPackageInfo(whatsappPackage, 0)
-            val intent = pm.getLaunchIntentForPackage(whatsappPackage)
-            if (intent != null) startActivity(intent)
-        } catch (e: PackageManager.NameNotFoundException) {
-            Toast.makeText(this, R.string.whatsapp_not_installed, Toast.LENGTH_SHORT).show()
-        }
+        com.grandma.launcher.ui.common.InstalledApp.launchPackageOrStore(
+            this,
+            com.grandma.launcher.ui.common.InstalledApp.WHATSAPP
+        )
     }
 
     // ── SOS ──────────────────────────────────────────────────────────────────
@@ -334,21 +336,33 @@ class HomeActivity : AppCompatActivity(), Speaker {
     // ── Caretaker FAB ────────────────────────────────────────────────────────
 
     private fun setupFab() {
-        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnHouse)
+        CaretakerFabHelper.attach(
+            this,
+            binding.fabCaretaker,
+            binding.btnHouse,
+            listOf(binding.btnYouTube, binding.btnGallery)
+        )
     }
 
     // ── Navigation ───────────────────────────────────────────────────────────
 
     private fun setupDestinations() {
         binding.homeHeader.onWeatherClick = { openWeather() }
-        binding.btnWeather.setOnClickListener { openWeather() }
-        binding.btnAddPerson.setOnClickListener {
-            voice.speakSlot(VoiceSlots.ADD_PERSON, getString(R.string.spoken_add_person))
-            openAddContact()
+        binding.btnYouTube.setOnClickListener {
+            voice.speak(getString(R.string.spoken_youtube), null)
+            InstalledApp.openYouTube(this)
+        }
+        binding.btnGallery.setOnClickListener {
+            voice.speak(getString(R.string.spoken_gallery), null)
+            InstalledApp.openGallery(this)
         }
         binding.btnAsk.setOnClickListener {
-            voice.speakSlot(VoiceSlots.ASK, getString(R.string.spoken_ask))
-            startActivity(Intent(this, TalkActivity::class.java))
+            if (InstalledApp.geminiInstalled(this)) {
+                voice.speakSlot(VoiceSlots.ASK, getString(R.string.spoken_ask))
+            } else {
+                voice.speak(getString(R.string.spoken_gemini_install), null)
+            }
+            InstalledApp.openGemini(this)
         }
         binding.btnApps.setOnClickListener {
             voice.speakSlot(VoiceSlots.APPS, getString(R.string.spoken_apps))
