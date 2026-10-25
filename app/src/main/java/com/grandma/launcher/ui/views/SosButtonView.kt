@@ -97,6 +97,11 @@ class SosButtonView @JvmOverloads constructor(
 
     private val vibrator: Vibrator? = context.getSystemService()
 
+    init {
+        contentDescription = context.getString(R.string.action_sos)
+        importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+    }
+
     // Runnable that updates progress while the button is held
     private val progressRunnable = object : Runnable {
         override fun run() {

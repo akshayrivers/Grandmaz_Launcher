@@ -28,7 +28,7 @@ import com.grandma.launcher.remote.DeviceSyncManager
 import com.grandma.launcher.remote.SosCoordinator
 import com.grandma.launcher.ui.apps.MoreAppsActivity
 import com.grandma.launcher.ui.assistant.TalkActivity
-import com.grandma.launcher.ui.caretaker.CaretakerHelpActivity
+import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import com.grandma.launcher.ui.caretaker.CaretakerPinDialog
 import com.grandma.launcher.ui.common.CallLauncher
 import com.grandma.launcher.ui.contacts.AddContactActivity
@@ -120,6 +120,9 @@ class HomeActivity : AppCompatActivity(), Speaker {
             binding.btnHouse.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 this.bottomMargin = fabBottomMargin + systemBars.bottom
             }
+            // Root padding does not include the nav bar. The scroll's own
+            // bottom padding keeps the last row above the lifted buttons.
+            binding.homeScroll.updatePadding(bottom = systemBars.bottom)
 
             insets
         }
@@ -148,16 +151,7 @@ class HomeActivity : AppCompatActivity(), Speaker {
         // Refresh contacts every time we return to home
         // (user may have added/removed a contact)
         loadContacts()
-        if (android.provider.Settings.canDrawOverlays(this)) {
-            binding.fabCaretaker.visibility = View.GONE
-            binding.btnHouse.visibility = View.GONE
-            try {
-                startService(Intent(this, com.grandma.launcher.ui.caretaker.CaretakerFloatingService::class.java))
-            } catch (_: Exception) {}
-        } else {
-            binding.fabCaretaker.visibility = View.VISIBLE
-            binding.btnHouse.visibility = View.VISIBLE
-        }
+        CaretakerFabHelper.syncOverlay(this, binding.fabCaretaker, binding.btnHouse)
         binding.homeHeader.updateDate()
         binding.homeHeader.updateWeather()
 
@@ -340,26 +334,7 @@ class HomeActivity : AppCompatActivity(), Speaker {
     // ── Caretaker FAB ────────────────────────────────────────────────────────
 
     private fun setupFab() {
-        binding.fabCaretaker.setOnClickListener {
-            if (!android.provider.Settings.canDrawOverlays(this)) {
-                androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Enable Floating Caretaker")
-                    .setMessage("Would you like to make the Caretaker icon float on top of other apps? This helps you ask for help at any time, from any app.")
-                    .setPositiveButton("Enable") { _, _ ->
-                        val intent = Intent(
-                            android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                            android.net.Uri.parse("package:$packageName")
-                        )
-                        startActivity(intent)
-                    }
-                    .setNegativeButton("Not Now") { _, _ ->
-                        startActivity(Intent(this, CaretakerHelpActivity::class.java))
-                    }
-                    .show()
-            } else {
-                startActivity(Intent(this, CaretakerHelpActivity::class.java))
-            }
-        }
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnHouse)
     }
 
     // ── Navigation ───────────────────────────────────────────────────────────

@@ -1,13 +1,11 @@
 package com.grandma.launcher.ui.views
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -18,13 +16,30 @@ import kotlin.math.min
 import kotlin.math.sin
 
 /**
- * Analog clock — drawn entirely in code, zero theme dependency.
+ * Angles are degrees clockwise from 12 o'clock. Seconds are included so the
+ * minute hand keeps moving while the clock is on screen.
+ */
+internal object AnalogClockMath {
+    data class Hands(val hourDegrees: Float, val minuteDegrees: Float, val secondDegrees: Float)
+
+    fun hands(hourOfHalfDay: Int, minute: Int, second: Int, millis: Int): Hands {
+        val seconds = second + millis / 1000f
+        val minutes = minute + seconds / 60f
+        val hours = (hourOfHalfDay % 12) + minutes / 60f
+        return Hands(
+            hourDegrees = hours * 30f,
+            minuteDegrees = minutes * 6f,
+            secondDegrees = seconds * 6f
+        )
+    }
+}
+
+/**
+ * Analog clock. Tick marks only, no numerals.
  *
- * Root cause of previous blank clock: onMeasure was returning size=0
- * when the MeasureSpec mode was AT_MOST or UNSPECIFIED (which ConstraintLayout
- * uses before the first layout pass). The fix is to respect the spec mode:
- * use the spec size for EXACTLY/AT_MOST, and fall back to a sensible default
- * for UNSPECIFIED.
+ * Paint colours are the clock colour resources (ContextCompat, not a theme
+ * attribute). A one-second tick runs while the view is visible so the hands
+ * follow the real local time.
  */
 class AnalogClockView @JvmOverloads constructor(
     context: Context,
@@ -32,87 +47,79 @@ class AnalogClockView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    // ── Paints — From ContextCompat, never from theme ──────────────────────────────
-
-    private val facePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.color_clock_face)
-        style = Paint.Style.FILL
-    }
-
+    private val facePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.color_clock_border)
         style = Paint.Style.STROKE
         strokeWidth = 6f
     }
-
     private val hourHandPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.color_clock_hand_hour)
         style = Paint.Style.STROKE
         strokeWidth = 14f
         strokeCap = Paint.Cap.ROUND
     }
-
     private val minuteHandPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.color_clock_hand_minute)
         style = Paint.Style.STROKE
         strokeWidth = 8f
         strokeCap = Paint.Cap.ROUND
     }
-
+    private val secondHandPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 3f
+        strokeCap = Paint.Cap.ROUND
+    }
     private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.color_clock_tick_major)
         style = Paint.Style.STROKE
         strokeWidth = 6f
         strokeCap = Paint.Cap.ROUND
     }
+    private val centerDotPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
 
-    private val centerDotPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.color_clock_center)
-        style = Paint.Style.FILL
+    init {
+        applyPalette()
     }
-
-    // ── Geometry — computed in onSizeChanged ──────────────────────────────────
 
     private var cx = 0f
     private var cy = 0f
     private var radius = 0f
     private val faceRect = RectF()
 
-    // ── Time receiver ─────────────────────────────────────────────────────────
-
-    private val timeReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            invalidate()
-        }
-    }
+    private val ticker = Runnable { pulse() }
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        val filter = IntentFilter().apply {
-            addAction(Intent.ACTION_TIME_TICK)
-            addAction(Intent.ACTION_TIME_CHANGED)
-            addAction(Intent.ACTION_TIMEZONE_CHANGED)
-        }
-        context.registerReceiver(timeReceiver, filter)
-        invalidate() // Draw immediately on attach
+        startTicking()
     }
 
     override fun onDetachedFromWindow() {
+        stopTicking()
         super.onDetachedFromWindow()
-        try { context.unregisterReceiver(timeReceiver) } catch (_: Exception) {}
     }
 
-    // ── Measure — THE critical fix ────────────────────────────────────────────
-    // Previous version called MeasureSpec.getSize() unconditionally.
-    // When mode is UNSPECIFIED, getSize() returns 0 → radius=0 → nothing draws.
-    // We must handle all three modes correctly.
+    override fun onWindowVisibilityChanged(visibility: Int) {
+        super.onWindowVisibilityChanged(visibility)
+        if (visibility == VISIBLE) startTicking() else stopTicking()
+    }
+
+    private fun startTicking() {
+        mainHandler.removeCallbacks(ticker)
+        mainHandler.post(ticker)
+    }
+
+    private fun stopTicking() {
+        mainHandler.removeCallbacks(ticker)
+    }
+
+    private fun pulse() {
+        invalidate()
+        mainHandler.postDelayed(ticker, TICK_MS)
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val desiredSize = 540 // fallback in px if parent gives no constraint
-
+        val desiredSize = 540
         val w = resolveSize(desiredSize, widthMeasureSpec)
         val h = resolveSize(desiredSize, heightMeasureSpec)
-        val size = min(w, h) // always square
+        val size = min(w, h).coerceAtLeast(1)
         setMeasuredDimension(size, size)
     }
 
@@ -124,19 +131,20 @@ class AnalogClockView @JvmOverloads constructor(
         faceRect.set(cx - radius, cy - radius, cx + radius, cy + radius)
     }
 
-    // ── Draw ──────────────────────────────────────────────────────────────────
-
-    override fun onDraw(canvas: Canvas) {
-        if (radius <= 0f) return // safety — nothing to draw
-
-        // Resolve colors dynamically in case theme changes
+    private fun applyPalette() {
         facePaint.color = ContextCompat.getColor(context, R.color.color_clock_face)
         borderPaint.color = ContextCompat.getColor(context, R.color.color_clock_border)
         hourHandPaint.color = ContextCompat.getColor(context, R.color.color_clock_hand_hour)
-        minuteHandPaint.color = ContextCompat.getColor(context, R.color.color_clock_hand_minute)
+        val minuteInk = ContextCompat.getColor(context, R.color.color_clock_hand_minute)
+        minuteHandPaint.color = minuteInk
+        secondHandPaint.color = minuteInk
         tickPaint.color = ContextCompat.getColor(context, R.color.color_clock_tick_major)
         centerDotPaint.color = ContextCompat.getColor(context, R.color.color_clock_center)
+    }
 
+    override fun onDraw(canvas: Canvas) {
+        if (radius <= 0f) return
+        applyPalette()
         drawFace(canvas)
         drawTicks(canvas)
         drawHands(canvas)
@@ -165,36 +173,34 @@ class AnalogClockView @JvmOverloads constructor(
 
     private fun drawHands(canvas: Canvas) {
         val now = Calendar.getInstance()
-        val hour = now.get(Calendar.HOUR)
-        val minute = now.get(Calendar.MINUTE)
-
-        val hourAngle = Math.toRadians((hour * 30.0 + minute * 0.5) - 90.0)
-        val minuteAngle = Math.toRadians((minute * 6.0) - 90.0)
-
-        val hourLen = radius * 0.52f
-        val minuteLen = radius * 0.76f
-        val tailRatio = 0.15f
-
-        // Hour hand
-        canvas.drawLine(
-            (cx - cos(hourAngle) * hourLen * tailRatio).toFloat(),
-            (cy - sin(hourAngle) * hourLen * tailRatio).toFloat(),
-            (cx + cos(hourAngle) * hourLen).toFloat(),
-            (cy + sin(hourAngle) * hourLen).toFloat(),
-            hourHandPaint
+        val hands = AnalogClockMath.hands(
+            now.get(Calendar.HOUR),
+            now.get(Calendar.MINUTE),
+            now.get(Calendar.SECOND),
+            now.get(Calendar.MILLISECOND)
         )
+        drawHand(canvas, hands.hourDegrees, radius * 0.52f, hourHandPaint)
+        drawHand(canvas, hands.minuteDegrees, radius * 0.76f, minuteHandPaint)
+        drawHand(canvas, hands.secondDegrees, radius * 0.82f, secondHandPaint)
+    }
 
-        // Minute hand
+    private fun drawHand(canvas: Canvas, degreesFromTwelve: Float, length: Float, paint: Paint) {
+        val angle = Math.toRadians(degreesFromTwelve.toDouble() - 90.0)
+        val tail = length * 0.15f
         canvas.drawLine(
-            (cx - cos(minuteAngle) * minuteLen * tailRatio).toFloat(),
-            (cy - sin(minuteAngle) * minuteLen * tailRatio).toFloat(),
-            (cx + cos(minuteAngle) * minuteLen).toFloat(),
-            (cy + sin(minuteAngle) * minuteLen).toFloat(),
-            minuteHandPaint
+            (cx - cos(angle) * tail).toFloat(),
+            (cy - sin(angle) * tail).toFloat(),
+            (cx + cos(angle) * length).toFloat(),
+            (cy + sin(angle) * length).toFloat(),
+            paint
         )
     }
 
     private fun drawCenterDot(canvas: Canvas) {
         canvas.drawCircle(cx, cy, radius * 0.06f, centerDotPaint)
+    }
+
+    companion object {
+        private const val TICK_MS = 1000L
     }
 }

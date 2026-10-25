@@ -29,6 +29,11 @@ class AnalogTimePickerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    init {
+        contentDescription = context.getString(R.string.alarm_time_picker)
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
+    }
+
     enum class Mode { HOUR, MINUTE }
 
     var currentHour = 7
@@ -262,28 +267,22 @@ class AnalogTimePickerView @JvmOverloads constructor(
 
     private fun drawSelectionTabs(canvas: Canvas) {
         // Hour Tab
-        if (selectionMode == Mode.HOUR) {
-            canvas.drawRoundRect(tabHourRect, 20f, 20f, selectBgPaint)
-            canvas.drawRoundRect(tabHourRect, 20f, 20f, selectRingPaint)
-            tabTextPaint.color = ContextCompat.getColor(context, R.color.color_text_on_dark)
-        } else {
-            canvas.drawRoundRect(tabHourRect, 20f, 20f, bgPaint)
-            canvas.drawRoundRect(tabHourRect, 20f, 20f, borderPaint)
-            tabTextPaint.color = ContextCompat.getColor(context, R.color.color_text_primary)
-        }
-        canvas.drawText("HOUR", tabHourRect.centerX(), tabHourRect.centerY() + 15f, tabTextPaint)
+        drawModeTab(canvas, tabHourRect, "HOUR", selectionMode == Mode.HOUR)
+        drawModeTab(canvas, tabMinuteRect, "MINUTE", selectionMode == Mode.MINUTE)
+    }
 
-        // Minute Tab
-        if (selectionMode == Mode.MINUTE) {
-            canvas.drawRoundRect(tabMinuteRect, 20f, 20f, selectBgPaint)
-            canvas.drawRoundRect(tabMinuteRect, 20f, 20f, selectRingPaint)
-            tabTextPaint.color = ContextCompat.getColor(context, R.color.color_text_on_dark)
+    private fun drawModeTab(canvas: Canvas, rect: RectF, label: String, selected: Boolean) {
+        if (selected) {
+            canvas.drawRoundRect(rect, 20f, 20f, selectBgPaint)
+            canvas.drawRoundRect(rect, 20f, 20f, selectRingPaint)
+            // The selected fill is white. The old label used white too, so HOUR disappeared.
+            tabTextPaint.color = ContextCompat.getColor(context, R.color.color_bg_primary)
         } else {
-            canvas.drawRoundRect(tabMinuteRect, 20f, 20f, bgPaint)
-            canvas.drawRoundRect(tabMinuteRect, 20f, 20f, borderPaint)
+            canvas.drawRoundRect(rect, 20f, 20f, bgPaint)
+            canvas.drawRoundRect(rect, 20f, 20f, borderPaint)
             tabTextPaint.color = ContextCompat.getColor(context, R.color.color_text_primary)
         }
-        canvas.drawText("MINUTE", tabMinuteRect.centerX(), tabMinuteRect.centerY() + 15f, tabTextPaint)
+        canvas.drawText(label, rect.centerX(), rect.centerY() + 15f, tabTextPaint)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -297,6 +296,7 @@ class AnalogTimePickerView @JvmOverloads constructor(
                     isAm = true
                     vibrate()
                     onTimeChanged?.invoke(currentHour, currentMinute, isAm)
+                    invalidate()
                 }
                 return true
             }
@@ -307,6 +307,7 @@ class AnalogTimePickerView @JvmOverloads constructor(
                     isAm = false
                     vibrate()
                     onTimeChanged?.invoke(currentHour, currentMinute, isAm)
+                    invalidate()
                 }
                 return true
             }
@@ -316,6 +317,7 @@ class AnalogTimePickerView @JvmOverloads constructor(
                 if (selectionMode != Mode.HOUR) {
                     selectionMode = Mode.HOUR
                     vibrate()
+                    invalidate()
                 }
                 return true
             }
@@ -325,6 +327,7 @@ class AnalogTimePickerView @JvmOverloads constructor(
                 if (selectionMode != Mode.MINUTE) {
                     selectionMode = Mode.MINUTE
                     vibrate()
+                    invalidate()
                 }
                 return true
             }
@@ -344,6 +347,7 @@ class AnalogTimePickerView @JvmOverloads constructor(
                         currentHour = newHour
                         vibrate()
                         onTimeChanged?.invoke(currentHour, currentMinute, isAm)
+                        invalidate()
                     }
                 } else {
                     val minVal = (Math.round(angle / 6.0) % 60).toInt()
@@ -352,10 +356,13 @@ class AnalogTimePickerView @JvmOverloads constructor(
                         currentMinute = newMinute
                         vibrate()
                         onTimeChanged?.invoke(currentHour, currentMinute, isAm)
+                        invalidate()
                     }
                 }
                 return true
             }
+            // A drag often starts on the hub. Claim it so later moves still reach the ring.
+            if (dist <= radius * 1.25f) return true
         }
         return super.onTouchEvent(event)
     }

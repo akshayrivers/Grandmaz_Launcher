@@ -10,30 +10,17 @@
 
     <!-- ── HEADER ZONE ──────────────────────────────────────────────── -->
 
-    <ImageButton
-        android:id="@+id/btnAlarmBack"
-        android:layout_width="@dimen/touch_target_min"
-        android:layout_height="@dimen/touch_target_min"
-        android:layout_marginStart="@dimen/space_sm"
-        android:layout_marginTop="@dimen/space_sm"
-        android:background="@drawable/bg_control"
-        android:contentDescription="@string/action_home"
-        android:padding="18dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_house"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/tvAlarmTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_sm"
+        android:layout_marginTop="@dimen/space_md"
         android:text="@string/alarms_title"
-        android:textColor="@color/color_text_secondary"
         android:textAppearance="@style/TextAppearance.Grandma.Heading"
-        app:layout_constraintBottom_toBottomOf="@id/btnAlarmBack"
-        app:layout_constraintStart_toEndOf="@id/btnAlarmBack"
-        app:layout_constraintTop_toTopOf="@id/btnAlarmBack" />
+        android:textColor="@color/color_text_secondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- ── LIST ZONE ────────────────────────────────────────────────── -->
 
@@ -44,11 +31,10 @@
         android:layout_marginTop="@dimen/space_md"
         android:layout_marginBottom="@dimen/space_md"
         android:clipToPadding="false"
-        android:paddingBottom="88dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnAddNewAlarm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnAlarmBack" />
+        app:layout_constraintTop_toBottomOf="@id/tvAlarmTitle" />
 
     <!-- Empty state message -->
     <TextView
@@ -70,11 +56,43 @@
         android:id="@+id/btnAddNewAlarm"
         style="@style/Widget.Grandma.ConfirmButton.Amber"
         android:layout_width="0dp"
-        android:layout_height="@dimen/confirm_button_height"
-        android:layout_margin="@dimen/space_md"
+        android:layout_height="@dimen/primary_action_height"
+        android:layout_marginStart="@dimen/space_md"
+        android:layout_marginEnd="@dimen/space_md"
+        android:layout_marginBottom="@dimen/floating_content_clearance"
         android:text="@string/alarms_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/fabCaretaker"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
+        android:layout_marginStart="@dimen/fab_caretaker_margin_horizontal"
+        android:layout_marginBottom="@dimen/fab_caretaker_margin_bottom"
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/screen_ask_for_help"
+        android:elevation="12dp"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_caretaker_info"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnAlarmBack"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
+        android:layout_marginEnd="@dimen/fab_caretaker_margin_horizontal"
+        android:layout_marginBottom="@dimen/fab_caretaker_margin_bottom"
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/action_home"
+        android:elevation="12dp"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_house"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

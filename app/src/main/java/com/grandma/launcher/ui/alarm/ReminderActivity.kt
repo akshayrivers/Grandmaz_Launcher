@@ -13,6 +13,7 @@ import com.grandma.launcher.appScope
 import com.grandma.launcher.databinding.ActivityReminderBinding
 import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceRegistrationRepository
+import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import com.grandma.launcher.voice.VoiceManager
 import com.grandma.launcher.voice.VoiceSlots
 import kotlinx.coroutines.launch
@@ -64,6 +65,11 @@ class ReminderActivity : AppCompatActivity() {
             voice.speakSlot(VoiceSlots.MISSED, getString(R.string.spoken_missed))
             report("missed")
         }
+        binding.btnHome.setOnClickListener {
+            voice.speakSlot(VoiceSlots.HOME, getString(R.string.spoken_home))
+            finish()
+        }
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnHome)
     }
 
     override fun onDestroy() {

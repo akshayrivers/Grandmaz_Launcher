@@ -4,6 +4,7 @@
     android:layout_width="@dimen/touch_target_min"
     android:layout_height="@dimen/touch_target_min"
     android:background="@drawable/bg_control"
+    android:elevation="12dp"
     android:contentDescription="@string/action_home"
     android:padding="18dp"
     android:scaleType="fitCenter"

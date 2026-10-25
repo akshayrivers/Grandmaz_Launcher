@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/caretakerHelpRootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_bg_primary"
-    android:orientation="vertical"
-    android:padding="@dimen/screen_margin_horizontal">
+    android:background="@color/color_bg_primary">
 
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="@dimen/touch_target_min"
-        android:layout_height="@dimen/touch_target_min"
-        android:layout_marginTop="@dimen/screen_margin_top"
-        android:background="@drawable/bg_control"
-        android:contentDescription="@string/action_home"
-        android:padding="18dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_house" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/screen_margin_horizontal">
 
     <ImageButton
         android:id="@+id/btnSendHelp"
         android:layout_width="220dp"
         android:layout_height="220dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/space_xl"
+        android:layout_marginTop="@dimen/space_xxl"
         android:background="@drawable/bg_control"
         android:contentDescription="@string/screen_ask_for_help"
         android:padding="48dp"
@@ -35,14 +28,34 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    </LinearLayout>
+
     <TextView
         android:id="@+id/btnEditHome"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:padding="@dimen/space_md"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="@dimen/floating_content_side_inset"
+        android:layout_marginEnd="@dimen/floating_content_side_inset"
+        android:layout_marginBottom="@dimen/floating_content_clearance"
+        android:gravity="center"
+        android:minHeight="@dimen/touch_target_min"
         android:text="@string/caretaker_edit_home"
         android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
         android:textColor="@color/color_text_secondary" />
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/fab_caretaker_margin_horizontal"
+        android:layout_marginBottom="@dimen/fab_caretaker_margin_bottom"
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/action_home"
+        android:elevation="12dp"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_house" />
+
+</FrameLayout>

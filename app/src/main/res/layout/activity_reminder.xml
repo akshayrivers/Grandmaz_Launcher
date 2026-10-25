@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/reminderRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_bg_primary"
+    android:background="@color/color_bg_primary">
+
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:paddingBottom="@dimen/floating_content_clearance">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="160dp"
@@ -66,3 +71,33 @@
         android:layout_marginTop="12dp"
         android:text="@string/reminder_missed" />
 </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/fabCaretaker"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="@dimen/fab_caretaker_margin_horizontal"
+        android:layout_marginBottom="@dimen/fab_caretaker_margin_bottom"
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/screen_ask_for_help"
+        android:elevation="12dp"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_caretaker_info" />
+
+    <ImageButton
+        android:id="@+id/btnHome"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/fab_caretaker_margin_horizontal"
+        android:layout_marginBottom="@dimen/fab_caretaker_margin_bottom"
+        android:background="@drawable/bg_control"
+        android:contentDescription="@string/action_home"
+        android:elevation="12dp"
+        android:padding="18dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_house" />
+
+</FrameLayout>

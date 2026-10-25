@@ -8,6 +8,8 @@
     <string name="action_see_all">See All →</string>
     <string name="action_more_people">More people</string>
     <string name="action_home">Home</string>
+    <string name="home_clock">Clock</string>
+    <string name="alarm_time_picker">Alarm time. Move the hands. Sun is morning, moon is night.</string>
     <string name="action_add_contact">Add</string>
     <string name="action_camera">Camera</string>
     <string name="action_whatsapp">WhatsApp</string>
