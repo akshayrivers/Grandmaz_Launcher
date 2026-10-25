@@ -16,13 +16,18 @@
     <string name="action_more_apps">More Apps</string>
     <string name="nav_people">People</string>
     <string name="nav_weather">Weather</string>
+    <string name="nav_youtube">YouTube</string>
+    <string name="nav_gallery">Gallery</string>
     <string name="nav_add_person">Add a person</string>
     <string name="nav_ask">Ask</string>
     <string name="nav_apps">Apps</string>
     <string name="spoken_people">Log</string>
     <string name="spoken_weather">Mausam</string>
     <string name="spoken_add_person">Naya insaan</string>
+    <string name="spoken_gallery">Gallery</string>
+    <string name="spoken_youtube">YouTube</string>
     <string name="spoken_ask">Pucho</string>
+    <string name="spoken_gemini_install">Gemini lagao, sign in karo</string>
     <string name="spoken_apps">Apps</string>
     <string name="spoken_camera">Camera</string>
     <string name="spoken_whatsapp">WhatsApp</string>
@@ -76,6 +81,7 @@
     <string name="spoken_later">Baad mein</string>
     <string name="spoken_missed">Chhoot gaya</string>
     <string name="spoken_help">Madad</string>
+    <string name="spoken_overlay_permission">Upar button</string>
     <string name="spoken_sos">Bachao</string>
     <string name="slot_home">Home</string>
     <string name="slot_people">People</string>
@@ -115,6 +121,7 @@
     <string name="caretaker_send">YES, SEND FOR HELP</string>
     <string name="caretaker_cancel">GO BACK</string>
     <string name="caretaker_edit_home">Edit home and weather</string>
+    <string name="caretaker_overlay_permission">Allow buttons over other apps</string>
     <string name="caretaker_weather_city_label">Weather city</string>
     <string name="caretaker_weather_city_hint">Jammu</string>
     <string name="caretaker_save_home">Save on this phone</string>
