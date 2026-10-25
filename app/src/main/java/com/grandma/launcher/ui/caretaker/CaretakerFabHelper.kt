@@ -2,56 +2,44 @@ package com.grandma.launcher.ui.caretaker
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.provider.Settings
 import android.view.View
-import androidx.appcompat.app.AlertDialog
-import com.grandma.launcher.R
+import com.grandma.launcher.ui.home.HomeActivity
 
 /**
- * Attaches the caretaker button on screens other than Home.
- * When the overlay is allowed, the in-screen button hides and the floating
- * house and caretaker buttons are used instead.
+ * Caretaker (bottom start) and, when passed, the house (bottom end) sit above
+ * the screen. A tap on the caretaker opens help. It does not ask grandma to
+ * grant an overlay. If the overlay is already allowed, the in-screen buttons
+ * hide and the floating service draws both.
  */
 object CaretakerFabHelper {
 
-    fun attach(activity: Activity, button: View) {
+    fun attach(activity: Activity, caretaker: View, home: View? = null) {
+        caretaker.setOnClickListener {
+            activity.startActivity(Intent(activity, CaretakerHelpActivity::class.java))
+        }
+        syncOverlay(activity, caretaker, home)
+    }
+
+    fun syncOverlay(activity: Activity, caretaker: View, home: View? = null) {
         if (Settings.canDrawOverlays(activity)) {
-            button.visibility = View.GONE
+            caretaker.visibility = View.GONE
+            home?.visibility = View.GONE
             try {
                 activity.startService(Intent(activity, CaretakerFloatingService::class.java))
             } catch (_: Exception) {
             }
             return
         }
+        caretaker.visibility = View.VISIBLE
+        home?.visibility = View.VISIBLE
+        activity.stopService(Intent(activity, CaretakerFloatingService::class.java))
+    }
 
-        button.visibility = View.VISIBLE
-        button.setOnClickListener {
-            AlertDialog.Builder(activity)
-                .setTitle("Enable Floating Caretaker")
-                .setMessage("Would you like to make the Caretaker icon float on top of other apps? This helps you ask for help at any time, from any app.")
-                .setPositiveButton("Enable") { _, _ ->
-                    val intent = Intent(
-                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:${activity.packageName}")
-                    )
-                    activity.startActivity(intent)
-                }
-                .setNegativeButton("Not Now") { _, _ ->
-                    activity.startActivity(Intent(activity, CaretakerHelpActivity::class.java))
-                }
-                .show()
-        }
-
-        val bottomMargin = activity.resources.getDimensionPixelSize(R.dimen.fab_caretaker_margin_bottom)
-        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(button) { view, insets ->
-            val systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars())
-            val params = view.layoutParams as? android.view.ViewGroup.MarginLayoutParams
-            if (params != null) {
-                params.bottomMargin = bottomMargin + systemBars.bottom
-                view.layoutParams = params
-            }
-            insets
-        }
+    fun goHome(activity: Activity) {
+        activity.startActivity(
+            Intent(activity, HomeActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        )
     }
 }

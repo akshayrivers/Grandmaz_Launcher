@@ -1,6 +1,7 @@
 package com.grandma.launcher.ui.home
 
 import android.content.Context
+import android.content.Intent
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.TextView
 import com.grandma.launcher.R
 import com.grandma.launcher.data.WeatherData
 import com.grandma.launcher.data.WeatherRepository
+import com.grandma.launcher.ui.alarm.AlarmActivity
 import com.grandma.launcher.ui.views.AnalogClockView
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -17,7 +19,8 @@ import java.util.Locale
 /**
  * Custom header compound view that combines the Analog Clock (left)
  * and the Date + Weather Card (right) into a unified senior-friendly zone.
- * Tapping the clock stays on Home. A long press is for the helper.
+ * Tapping the clock opens the alarm setter (hands for the time, sun and moon
+ * for AM/PM). A long press is for the helper.
  */
 class HomeHeaderView @JvmOverloads constructor(
     context: Context,
@@ -42,6 +45,7 @@ class HomeHeaderView @JvmOverloads constructor(
             layoutParams = LayoutParams(clockSize, clockSize).apply {
                 gravity = Gravity.CENTER
             }
+            setOnClickListener { openAlarmSetter(context) }
             setOnLongClickListener {
                 onClockLongPress?.invoke()
                 true
@@ -95,5 +99,15 @@ class HomeHeaderView @JvmOverloads constructor(
 
     fun showWeather(data: WeatherData) {
         weatherCard.bind(data)
+    }
+
+    companion object {
+        /** Opens the alarm list with the hand / sun / moon setter already up. */
+        fun openAlarmSetter(context: Context) {
+            context.startActivity(
+                Intent(context, AlarmActivity::class.java)
+                    .putExtra(AlarmActivity.EXTRA_OPEN_SETTER, true)
+            )
+        }
     }
 }

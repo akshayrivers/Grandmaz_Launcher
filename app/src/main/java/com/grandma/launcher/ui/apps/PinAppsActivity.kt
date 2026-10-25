@@ -23,6 +23,7 @@ import com.grandma.launcher.databinding.ActivityPinAppsBinding
 import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.DeviceConfigRepository
 import com.grandma.launcher.remote.DeviceSyncManager
+import com.grandma.launcher.ui.caretaker.CaretakerFabHelper
 import kotlinx.coroutines.launch
 
 /** Helper list of every launcher app. Checked rows are the pictures on her apps screen. */
@@ -50,6 +51,7 @@ class PinAppsActivity : AppCompatActivity() {
         binding.rvPinApps.layoutManager = LinearLayoutManager(this)
         binding.rvPinApps.adapter = PinAdapter(rows)
         binding.btnBack.setOnClickListener { finish() }
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnBack)
         binding.btnSavePins.setOnClickListener { save() }
 
         val horizontal = resources.getDimensionPixelSize(R.dimen.screen_margin_horizontal)
