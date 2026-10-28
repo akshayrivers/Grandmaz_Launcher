@@ -8,7 +8,7 @@ import android.net.Uri
 /**
  * Opens an installed app, or the Play Store page for that package when it is missing.
  * Implicit intents are started inside try/catch. Callers declare the packages in queries.
- * Ask hands off to the Gemini app on this phone. This class does not call the Gemini API.
+ * Ask does not use this class. The in-app screen asks the backend for a short-lived token.
  */
 object InstalledApp {
     const val YOUTUBE = "com.google.android.youtube"
@@ -134,8 +134,8 @@ object InstalledApp {
     }
 
     /**
-     * Opens Gemini's voice entry on this phone. When the package is missing, opens the
-     * Play Store details page so a helper can install it and sign in.
+     * Opens the Gemini app on this phone. Ask does not call this. The hold-to-talk
+     * screen uses a short-lived token and never embeds an API key.
      */
     fun openGemini(context: Context): Handoff {
         val launch = context.packageManager.getLaunchIntentForPackage(GEMINI)

@@ -138,7 +138,7 @@ class DeviceConfigRepository(
                 )
                 if (!prefs.configDirty) {
                     prefs.configVersion = version
-                    withoutCloudModel(config)
+                    // voice.model stays. The caretaker chooses it. The phone never stores a Gemini key.
                     writeConfig(config)
                     apply(config)
                 }
@@ -148,7 +148,7 @@ class DeviceConfigRepository(
     }
 
     private suspend fun push(): ApiClient.Result<Unit> {
-        val config = withoutCloudModel(readConfig())
+        val config = readConfig()
         val result = ApiClient.deviceRequest(
             "PUT",
             "api/device/config",
@@ -269,18 +269,12 @@ class DeviceConfigRepository(
         val text = if (cacheFile.exists()) cacheFile.readText() else ""
         if (text.isNotBlank()) {
             return try {
-                withoutCloudModel(JSONObject(text))
+                JSONObject(text)
             } catch (_: Exception) {
                 defaultConfig()
             }
         }
         return defaultConfig()
-    }
-
-    /** Ask uses the Gemini app on the phone. A cloud model name is not part of config. */
-    private fun withoutCloudModel(config: JSONObject): JSONObject {
-        config.optJSONObject("voice")?.remove("model")
-        return config
     }
 
     private fun writeConfig(config: JSONObject) {
