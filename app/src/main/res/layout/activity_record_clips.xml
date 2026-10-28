@@ -137,18 +137,4 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_caretaker_info" />
 
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="@dimen/touch_target_min"
-        android:layout_height="@dimen/touch_target_min"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_caretaker_margin_horizontal"
-        android:layout_marginBottom="@dimen/fab_caretaker_margin_bottom"
-        android:background="@drawable/bg_control"
-        android:contentDescription="@string/action_home"
-        android:elevation="12dp"
-        android:padding="18dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_house" />
-
 </FrameLayout>

@@ -56,8 +56,7 @@ class RecordClipsActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.rvSlots.layoutManager = LinearLayoutManager(this)
         binding.rvSlots.adapter = SlotAdapter(VoiceSlots.all, this::begin, this::end)
-        binding.btnBack.setOnClickListener { finish() }
-        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnBack)
+        CaretakerFabHelper.attach(this, binding.fabCaretaker)
         binding.btnOpenAlarms.setOnClickListener {
             startActivity(Intent(this, AlarmActivity::class.java))
         }

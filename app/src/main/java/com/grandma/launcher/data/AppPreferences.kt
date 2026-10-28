@@ -235,6 +235,11 @@ class AppPreferences(context: Context) {
         return prefs.getInt(xKey, 0) to prefs.getInt(yKey, 0)
     }
 
+    /** True after the phone told the server it is being uninstalled, until this process is still here. */
+    var uninstallNoticePending: Boolean
+        get() = prefs.getBoolean(KEY_UNINSTALL_NOTICE_PENDING, false)
+        set(value) = prefs.edit().putBoolean(KEY_UNINSTALL_NOTICE_PENDING, value).apply()
+
     fun setOverlayPosition(help: Boolean, x: Int, y: Int) {
         val xKey = if (help) KEY_OVERLAY_HELP_X else KEY_OVERLAY_HOME_X
         val yKey = if (help) KEY_OVERLAY_HELP_Y else KEY_OVERLAY_HOME_Y
@@ -409,6 +414,7 @@ class AppPreferences(context: Context) {
         private const val KEY_OVERLAY_HELP_Y = "overlay_help_y"
         private const val KEY_OVERLAY_HOME_X = "overlay_home_x"
         private const val KEY_OVERLAY_HOME_Y = "overlay_home_y"
+        private const val KEY_UNINSTALL_NOTICE_PENDING = "uninstall_notice_pending"
         private const val KEY_FCM_TOKEN = "fcm_token"
         private const val KEY_PENDING_MESSAGE = "pending_caretaker_message"
         private const val KEY_PENDING_MESSAGE_CLIP = "pending_caretaker_message_clip"

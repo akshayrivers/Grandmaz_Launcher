@@ -20,6 +20,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -96,7 +97,7 @@ class AddContactActivity : AppCompatActivity() {
         editingContactId = intent.getLongExtra(EXTRA_CONTACT_ID, -1L).takeIf { it != -1L }
         editingContactId?.let { loadExistingContact(it) } ?: showPhotoStep()
 
-        binding.btnBack.setOnClickListener { onBackPressedStep() }
+        onBackPressedDispatcher.addCallback(this) { onBackPressedStep() }
         CaretakerFabHelper.attach(this, binding.fabCaretaker)
         binding.btnTakePhoto.setOnClickListener { launchCamera() }
         binding.btnChooseGallery.setOnClickListener { launchGallery() }

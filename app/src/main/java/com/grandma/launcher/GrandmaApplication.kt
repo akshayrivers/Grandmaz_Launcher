@@ -3,10 +3,12 @@ package com.grandma.launcher
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.grandma.launcher.data.AppPreferences
+import com.grandma.launcher.remote.DeviceLifecycleRepository
 import com.grandma.launcher.remote.DeviceSyncManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class GrandmaApplication : Application() {
 
@@ -22,6 +24,10 @@ class GrandmaApplication : Application() {
 
         val prefs = AppPreferences(this)
         prefs.migrateLegacySecurityState()
+        if (prefs.uninstallNoticePending) {
+            prefs.uninstallNoticePending = false
+            appScope.launch { DeviceLifecycleRepository(this@GrandmaApplication).reportStillInstalled() }
+        }
         if (prefs.isSetupComplete) {
             DeviceSyncManager.getInstance(this).schedulePeriodicSync()
         }

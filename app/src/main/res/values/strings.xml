@@ -123,6 +123,10 @@
     <!-- Caretaker Help Screen -->
     <string name="screen_ask_for_help">ASK FOR HELP</string>
     <string name="caretaker_help_subtitle">Your helper will be notified</string>
+    <string name="caretaker_help_people">Tells %1$s</string>
+    <string name="caretaker_help_note">She tapped the help picture on this phone.</string>
+    <string name="caretaker_uninstall">Uninstall from this phone</string>
+    <string name="caretaker_uninstalled">Caretakers can see that this launcher was removed.</string>
     <string name="caretaker_note_label">Add a note (optional):</string>
     <string name="caretaker_note_hint">Leave blank if not sure what to write</string>
     <string name="caretaker_send">YES, SEND FOR HELP</string>

@@ -1,8 +1,11 @@
 package com.grandma.launcher.ui.caretaker
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -17,6 +20,7 @@ import com.grandma.launcher.databinding.ActivityCaretakerConfigBinding
 import com.grandma.launcher.network.ApiClient
 import com.grandma.launcher.remote.CaretakerInvitationRepository
 import com.grandma.launcher.remote.DeviceConfigRepository
+import com.grandma.launcher.remote.DeviceLifecycleRepository
 import com.grandma.launcher.remote.DeviceProfileRepository
 import com.grandma.launcher.remote.DeviceSyncManager
 import kotlinx.coroutines.launch
@@ -41,11 +45,11 @@ class CaretakerConfigActivity : AppCompatActivity() {
 
         binding.etWeatherCity.setText(prefs.weatherCity)
         binding.tvConfigStatus.text = getString(R.string.caretaker_config_version, prefs.configVersion)
-        binding.btnBack.setOnClickListener { finish() }
-        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnBack)
+        CaretakerFabHelper.attach(this, binding.fabCaretaker)
         binding.btnSaveConfig.setOnClickListener { save() }
         binding.btnOverlayPermission.setOnClickListener { CaretakerFabHelper.openOverlaySettings(this) }
         binding.btnAddCaretaker.setOnClickListener { inviteCaretaker() }
+        binding.btnUninstall.setOnClickListener { reportUninstall() }
         showCaretakers(prefs.linkedCaretakers().map { (email, role) ->
             DeviceProfileRepository.LinkedCaretaker(email, role)
         })
@@ -60,7 +64,14 @@ class CaretakerConfigActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        CaretakerFabHelper.syncOverlay(this, binding.fabCaretaker, binding.btnBack)
+        CaretakerFabHelper.syncOverlay(this, binding.fabCaretaker)
+        if (prefs.uninstallNoticePending) {
+            prefs.uninstallNoticePending = false
+            binding.btnUninstall.isEnabled = true
+            lifecycleScope.launch {
+                DeviceLifecycleRepository(this@CaretakerConfigActivity).reportStillInstalled()
+            }
+        }
         loadCaretakers()
     }
 
@@ -123,6 +134,37 @@ class CaretakerConfigActivity : AppCompatActivity() {
                 }
             }
             binding.btnAddCaretaker.isEnabled = true
+        }
+    }
+
+    private fun reportUninstall() {
+        if (!internetConnected(this)) {
+            showOffline()
+            binding.tvInviteStatus.setText(R.string.caretaker_offline)
+            return
+        }
+        binding.btnUninstall.isEnabled = false
+        lifecycleScope.launch {
+            when (val result = DeviceLifecycleRepository(this@CaretakerConfigActivity).reportUninstalled()) {
+                is ApiClient.Result.Success -> {
+                    prefs.uninstallNoticePending = true
+                    binding.tvInviteStatus.setText(R.string.caretaker_uninstalled)
+                    try {
+                        startActivity(Intent(Intent.ACTION_DELETE, Uri.parse("package:$packageName")))
+                    } catch (_: ActivityNotFoundException) {
+                        prefs.uninstallNoticePending = false
+                        binding.btnUninstall.isEnabled = true
+                        DeviceLifecycleRepository(this@CaretakerConfigActivity).reportStillInstalled()
+                    }
+                }
+                is ApiClient.Result.Error -> {
+                    binding.btnUninstall.isEnabled = true
+                    if (result.isNetworkError) showOffline()
+                    binding.tvInviteStatus.setText(
+                        if (result.isNetworkError) R.string.caretaker_offline else R.string.caretaker_invite_failed
+                    )
+                }
+            }
         }
     }
 
