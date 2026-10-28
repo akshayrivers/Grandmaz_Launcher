@@ -40,6 +40,8 @@
     <string name="weather_spoken_rainy">Barish, %1$d</string>
     <string name="weather_spoken_storm">Garaj, %1$d</string>
     <string name="weather_spoken_snowy">Barf, %1$d</string>
+    <string name="weather_unavailable">—</string>
+    <string name="spoken_weather_unavailable">Mausam nahi</string>
     <string name="action_sos">SOS</string>
     <string name="sos_hold_hint">Hold to activate</string>
     <string name="sos_stop_alerts">Stop alerts</string>
@@ -129,7 +131,7 @@
     <string name="caretaker_edit_home">Edit home and weather</string>
     <string name="caretaker_overlay_permission">Allow buttons over other apps</string>
     <string name="caretaker_weather_city_label">Weather city</string>
-    <string name="caretaker_weather_city_hint">Jammu</string>
+    <string name="caretaker_weather_city_hint">City</string>
     <string name="caretaker_save_home">Save on this phone</string>
     <string name="caretaker_config_version">Saved version %1$d</string>
     <string name="caretaker_config_conflict">Someone else changed the phone. Open this screen again.</string>
