@@ -20,6 +20,10 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">@bool/window_light_system_bars</item>
 
+        <!-- Light parent would paint helper fields black on the black page. -->
+        <item name="android:editTextColor">@color/color_text_primary</item>
+        <item name="android:textColorHint">@color/color_text_secondary</item>
+
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:windowAnimationStyle">@null</item>
     </style>

@@ -11,33 +11,31 @@ import com.grandma.launcher.ui.home.HomeActivity
 
 /**
  * Help stays bottom-start and home stays bottom-end. When the overlay is allowed,
- * those in-screen copies hide and the floating service draws help, home, gallery,
- * and YouTube over other apps. The first time it is missing, home asks for it.
+ * those in-screen copies hide and the floating service draws only those two over
+ * other apps. Gallery, YouTube, and the rest stay on the home screen. The first
+ * time the overlay is missing, home asks for it.
  */
 object CaretakerFabHelper {
 
     fun attach(
         activity: Activity,
         caretaker: View,
-        home: View? = null,
-        coveredByOverlay: List<View> = emptyList()
+        home: View? = null
     ) {
         caretaker.setOnClickListener {
             activity.startActivity(Intent(activity, CaretakerHelpActivity::class.java))
         }
-        syncOverlay(activity, caretaker, home, coveredByOverlay)
+        syncOverlay(activity, caretaker, home)
     }
 
     fun syncOverlay(
         activity: Activity,
         caretaker: View,
-        home: View? = null,
-        coveredByOverlay: List<View> = emptyList()
+        home: View? = null
     ) {
         if (Settings.canDrawOverlays(activity)) {
             caretaker.visibility = View.GONE
             home?.visibility = View.GONE
-            coveredByOverlay.forEach { it.visibility = View.GONE }
             try {
                 activity.startService(Intent(activity, CaretakerFloatingService::class.java))
             } catch (_: Exception) {
@@ -46,7 +44,6 @@ object CaretakerFabHelper {
         }
         caretaker.visibility = View.VISIBLE
         home?.visibility = View.VISIBLE
-        coveredByOverlay.forEach { it.visibility = View.VISIBLE }
         activity.stopService(Intent(activity, CaretakerFloatingService::class.java))
     }
 

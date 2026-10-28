@@ -128,6 +128,16 @@
     <string name="caretaker_send">YES, SEND FOR HELP</string>
     <string name="caretaker_cancel">GO BACK</string>
     <string name="caretaker_edit_home">Edit home and weather</string>
+    <string name="caretaker_add_title">Add a caretaker</string>
+    <string name="caretaker_add_email_hint">Caretaker email</string>
+    <string name="caretaker_add_send">Send invitation</string>
+    <string name="caretaker_list_empty">No caretaker linked yet. An invitation does not pretend someone already accepted.</string>
+    <string name="caretaker_list_line">%1$s · %2$s</string>
+    <string name="caretaker_invite_sent">Pairing code %1$s. On the caretaker\'s own device open %2$s and enter the code. Email was not sent.</string>
+    <string name="caretaker_invite_emailed">Invitation emailed. Pairing code %1$s. They accept it on their own device.</string>
+    <string name="caretaker_already_linked">That email is already a caretaker.</string>
+    <string name="caretaker_invite_failed">Could not send the invitation.</string>
+    <string name="caretaker_offline">You are not connected to the internet.</string>
     <string name="caretaker_overlay_permission">Allow buttons over other apps</string>
     <string name="caretaker_weather_city_label">Weather city</string>
     <string name="caretaker_weather_city_hint">City</string>

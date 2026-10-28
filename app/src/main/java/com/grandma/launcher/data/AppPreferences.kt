@@ -206,6 +206,41 @@ class AppPreferences(context: Context) {
             .apply()
     }
 
+    /**
+     * Caretakers last seen from GET /api/device/me, so the helper screen can list them
+     * with no connection. Each entry is email then role. No PIN.
+     */
+    fun linkedCaretakers(): List<Pair<String, String>> {
+        val raw = prefs.getString(KEY_LINKED_CARETAKERS, "") ?: ""
+        if (raw.isBlank()) return emptyList()
+        return raw.lineSequence().mapNotNull { line ->
+            val tab = line.indexOf('\t')
+            if (tab <= 0 || tab == line.lastIndex) null
+            else line.substring(0, tab) to line.substring(tab + 1)
+        }.toList()
+    }
+
+    fun setLinkedCaretakers(people: List<Pair<String, String>>) {
+        val raw = people.joinToString("\n") { (email, role) ->
+            email.trim() + "\t" + role.trim()
+        }
+        prefs.edit().putString(KEY_LINKED_CARETAKERS, raw).apply()
+    }
+
+    /** Saved top-left of a floating button. Null until the helper drags it. */
+    fun overlayPosition(help: Boolean): Pair<Int, Int>? {
+        val xKey = if (help) KEY_OVERLAY_HELP_X else KEY_OVERLAY_HOME_X
+        val yKey = if (help) KEY_OVERLAY_HELP_Y else KEY_OVERLAY_HOME_Y
+        if (!prefs.contains(xKey) || !prefs.contains(yKey)) return null
+        return prefs.getInt(xKey, 0) to prefs.getInt(yKey, 0)
+    }
+
+    fun setOverlayPosition(help: Boolean, x: Int, y: Int) {
+        val xKey = if (help) KEY_OVERLAY_HELP_X else KEY_OVERLAY_HOME_X
+        val yKey = if (help) KEY_OVERLAY_HELP_Y else KEY_OVERLAY_HOME_Y
+        prefs.edit().putInt(xKey, x).putInt(yKey, y).apply()
+    }
+
     fun clearPairingState() {
         clearPendingInvitation()
         prefs.edit()
@@ -369,6 +404,11 @@ class AppPreferences(context: Context) {
         private const val KEY_PENDING_INVITATION_ID = "pending_invitation_id"
         private const val KEY_PENDING_PAIRING_CODE = "pending_pairing_code"
         private const val KEY_PENDING_PAIRING_EXPIRES_AT = "pending_pairing_expires_at"
+        private const val KEY_LINKED_CARETAKERS = "linked_caretakers"
+        private const val KEY_OVERLAY_HELP_X = "overlay_help_x"
+        private const val KEY_OVERLAY_HELP_Y = "overlay_help_y"
+        private const val KEY_OVERLAY_HOME_X = "overlay_home_x"
+        private const val KEY_OVERLAY_HOME_Y = "overlay_home_y"
         private const val KEY_FCM_TOKEN = "fcm_token"
         private const val KEY_PENDING_MESSAGE = "pending_caretaker_message"
         private const val KEY_PENDING_MESSAGE_CLIP = "pending_caretaker_message_clip"

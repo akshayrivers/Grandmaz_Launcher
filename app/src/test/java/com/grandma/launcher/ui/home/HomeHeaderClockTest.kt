@@ -33,6 +33,19 @@ class HomeHeaderClockTest {
     }
 
     @Test
+    fun clockLongPressReachesTheHelper() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val header = HomeHeaderView(activity)
+        val clock = (0 until header.childCount)
+            .map { header.getChildAt(it) }
+            .first { it is AnalogClockView }
+        var held = false
+        header.onClockLongPress = { held = true }
+        assertTrue(clock.performLongClick())
+        assertTrue(held)
+    }
+
+    @Test
     fun clockIsClickableAboveTheHeader() {
         val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
         val header = HomeHeaderView(activity)

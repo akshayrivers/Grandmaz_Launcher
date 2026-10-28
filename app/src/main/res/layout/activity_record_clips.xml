@@ -99,12 +99,24 @@
         android:textColor="@color/color_text_secondary" />
 
     <TextView
-        android:id="@+id/btnEditHome"
+        android:id="@+id/btnAddCaretaker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:minHeight="@dimen/touch_target_min"
         android:padding="@dimen/space_md"
-        android:layout_marginBottom="120dp"
+        android:text="@string/caretaker_add_title"
+        android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
+        android:textColor="@color/color_text_secondary" />
+
+    <TextView
+        android:id="@+id/btnEditHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/floating_content_clearance"
+        android:gravity="center"
+        android:minHeight="@dimen/touch_target_min"
+        android:padding="@dimen/space_md"
         android:text="@string/caretaker_edit_home"
         android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
         android:textColor="@color/color_text_secondary" />

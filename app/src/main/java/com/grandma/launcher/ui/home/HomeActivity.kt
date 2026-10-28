@@ -151,12 +151,7 @@ class HomeActivity : AppCompatActivity(), Speaker {
         // (user may have added/removed a contact)
         loadContacts()
         if (appPrefs.isSetupComplete) {
-            CaretakerFabHelper.syncOverlay(
-                this,
-                binding.fabCaretaker,
-                binding.btnHouse,
-                listOf(binding.btnYouTube, binding.btnGallery)
-            )
+            CaretakerFabHelper.syncOverlay(this, binding.fabCaretaker, binding.btnHouse)
             if (CaretakerFabHelper.askOverlayPermission(this)) {
                 voice.speak(getString(R.string.spoken_overlay_permission), null)
             }
@@ -337,12 +332,7 @@ class HomeActivity : AppCompatActivity(), Speaker {
     // ── Caretaker FAB ────────────────────────────────────────────────────────
 
     private fun setupFab() {
-        CaretakerFabHelper.attach(
-            this,
-            binding.fabCaretaker,
-            binding.btnHouse,
-            listOf(binding.btnYouTube, binding.btnGallery)
-        )
+        CaretakerFabHelper.attach(this, binding.fabCaretaker, binding.btnHouse)
     }
 
     // ── Navigation ───────────────────────────────────────────────────────────

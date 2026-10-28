@@ -1,0 +1,73 @@
+{
+  "ranAt": "2026-10-25T13:46:16.488Z",
+  "pass": true,
+  "steps": [
+    {
+      "pass": true,
+      "name": "Local backend URL for this device",
+      "detail": "http://172.20.10.4:3000/ Phone on Wi-Fi reached this Mac at 172.20.10.4:3000. That host was already on the debug cleartext list. Release cleartext was not enabled."
+    },
+    {
+      "pass": true,
+      "name": "Install debug APK",
+      "detail": "cached Gradle 8.13"
+    },
+    {
+      "pass": true,
+      "name": "Open home past the setup wizard",
+      "detail": "Setup was already complete and on-phone help is off. Existing prefs were left in place."
+    },
+    {
+      "pass": true,
+      "name": "Home clock is visible",
+      "detail": "content-desc Clock bounds [44,144][407,507]"
+    },
+    {
+      "pass": true,
+      "name": "Floating home control is visible",
+      "detail": "Home bounds [772,1880][992,2100]"
+    },
+    {
+      "pass": true,
+      "name": "Floating caretaker control is visible",
+      "detail": "ASK FOR HELP bounds [88,1880][308,2100]"
+    },
+    {
+      "pass": true,
+      "name": "Clock tap opens the alarm setter",
+      "detail": "Saw \"SET ALARM TIME\" and android.view.View (Alarm time. Move the hands. Sun is morning, moon is night.). Sun and moon are drawn in that view. Short swipe inside the picker from 540,1077 to 630,1027. Setter stayed open."
+    },
+    {
+      "pass": true,
+      "name": "Add an alarm is clear of the floating buttons",
+      "detail": "ADD AN ALARM bounds [88,1550][992,1836]. It does not intersect the floating buttons."
+    },
+    {
+      "pass": true,
+      "name": "Caretaker control opens help",
+      "detail": "Help screen send control bounds [237,296][842,901]."
+    },
+    {
+      "pass": true,
+      "name": "Edit home and weather is clear of the home button",
+      "detail": "Bounds [352,1616][728,1836]. It does not intersect the home button."
+    },
+    {
+      "pass": true,
+      "name": "Help request is on the caretaker list",
+      "detail": "Caretaker list for 105ad06b-4a41-4e01-b0df-47cffe9c1f8e includes \"Help requested from launcher\" (general). The link was already on the device; the script did not insert one."
+    },
+    {
+      "pass": true,
+      "name": "Help returns home after a successful post",
+      "detail": "Clock was visible again after the help request was stored."
+    }
+  ],
+  "device": {
+    "model": "Redmi Note 8 Pro",
+    "api": "30",
+    "release": "11",
+    "size": "Physical size: 1080x2340",
+    "density": "Physical density: 440"
+  }
+}

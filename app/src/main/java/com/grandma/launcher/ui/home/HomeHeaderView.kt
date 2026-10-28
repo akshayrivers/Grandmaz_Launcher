@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -51,6 +52,14 @@ class HomeHeaderView @JvmOverloads constructor(
             setOnLongClickListener {
                 onClockLongPress?.invoke()
                 true
+            }
+            // The home page scrolls. A long press is the helper's way into this phone's
+            // settings, so the scroll view must not steal that hold.
+            setOnTouchListener { view, event ->
+                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                    view.parent?.requestDisallowInterceptTouchEvent(true)
+                }
+                false
             }
         }
         addView(clockView)

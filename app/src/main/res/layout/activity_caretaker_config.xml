@@ -5,69 +5,132 @@
     android:layout_height="match_parent"
     android:background="@color/color_bg_primary">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/screen_margin_horizontal">
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/screen_margin_top">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true">
 
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_sm"
-            android:layout_weight="1"
-            android:text="@string/caretaker_edit_home"
-            android:textAppearance="@style/TextAppearance.Grandma.Display" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:padding="@dimen/screen_margin_horizontal">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_lg"
-        android:text="@string/caretaker_weather_city_label"
-        android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_sm"
+                android:paddingTop="@dimen/screen_margin_top"
+                android:text="@string/caretaker_edit_home"
+                android:textAppearance="@style/TextAppearance.Grandma.Display" />
 
-    <EditText
-        android:id="@+id/etWeatherCity"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/confirm_button_height"
-        android:layout_marginTop="@dimen/space_sm"
-        android:hint="@string/caretaker_weather_city_hint"
-        android:importantForAutofill="no"
-        android:inputType="textCapWords"
-        android:textSize="22sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:text="@string/caretaker_weather_city_label"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnOverlayPermission"
-        style="@style/Widget.Grandma.ConfirmButton.Amber"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/touch_target_min"
-        android:layout_marginTop="@dimen/space_lg"
-        android:text="@string/caretaker_overlay_permission" />
+            <EditText
+                android:id="@+id/etWeatherCity"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/confirm_button_height"
+                android:layout_marginTop="@dimen/space_sm"
+                android:background="@drawable/bg_control"
+                android:hint="@string/caretaker_weather_city_hint"
+                android:importantForAutofill="no"
+                android:inputType="textCapWords"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_md"
+                android:textColor="@color/color_text_primary"
+                android:textColorHint="@color/color_text_secondary"
+                android:textSize="22sp" />
 
-    <TextView
-        android:id="@+id/tvConfigStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_md"
-        android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOverlayPermission"
+                style="@style/Widget.Grandma.ConfirmButton.Amber"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/touch_target_min"
+                android:layout_marginTop="@dimen/space_lg"
+                android:text="@string/caretaker_overlay_permission" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSaveConfig"
-        style="@style/Widget.Grandma.ConfirmButton.Amber"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/confirm_button_height"
-        android:layout_marginTop="@dimen/space_xl"
-        android:layout_marginBottom="120dp"
-        android:text="@string/caretaker_save_home" />
-</LinearLayout>
+            <TextView
+                android:id="@+id/tvConfigStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveConfig"
+                style="@style/Widget.Grandma.ConfirmButton.Amber"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/confirm_button_height"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="@string/caretaker_save_home" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="@string/caretaker_add_title"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelLarge" />
+
+            <TextView
+                android:id="@+id/tvOffline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="@string/caretaker_offline"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelLarge"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvCaretakers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="@string/caretaker_list_empty"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
+                android:textColor="@color/color_text_secondary" />
+
+            <EditText
+                android:id="@+id/etCaretakerEmail"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/touch_target_min"
+                android:layout_marginTop="@dimen/space_md"
+                android:background="@drawable/bg_control"
+                android:hint="@string/caretaker_add_email_hint"
+                android:importantForAutofill="no"
+                android:inputType="textEmailAddress"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_md"
+                android:textColor="@color/color_text_primary"
+                android:textColorHint="@color/color_text_secondary"
+                android:textSize="22sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddCaretaker"
+                style="@style/Widget.Grandma.ConfirmButton.Yes"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/touch_target_min"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="@string/caretaker_add_send" />
+
+            <TextView
+                android:id="@+id/tvInviteStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:textAppearance="@style/TextAppearance.Grandma.LabelMedium"
+                android:textColor="@color/color_text_secondary" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/floating_content_clearance" />
+        </LinearLayout>
+    </ScrollView>
 
     <ImageButton
         android:id="@+id/fabCaretaker"

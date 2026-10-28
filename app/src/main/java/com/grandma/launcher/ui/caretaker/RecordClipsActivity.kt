@@ -67,6 +67,9 @@ class RecordClipsActivity : AppCompatActivity() {
         binding.btnEditHome.setOnClickListener {
             startActivity(Intent(this, CaretakerConfigActivity::class.java))
         }
+        binding.btnAddCaretaker.setOnClickListener {
+            startActivity(Intent(this, CaretakerConfigActivity::class.java))
+        }
         if (BuildConfig.DEBUG) {
             binding.localFlowPanel.visibility = View.VISIBLE
             val prefs = AppPreferences(this)
